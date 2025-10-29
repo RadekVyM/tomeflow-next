@@ -1,0 +1,6 @@
+.dropdown-button-menu {
+    position: fixed;
+    left: anchor(right);
+    top: anchor(bottom);
+    translate: -100%;
+}

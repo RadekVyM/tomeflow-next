@@ -1,0 +1,127 @@
+@reference "./index.css";
+
+.markdown {
+    * {
+        hyphens: auto;
+        overflow-wrap: break-word;
+    }
+
+    :where(h1, h2, h3, h4, h5, h6) {
+        @apply font-semibold mb-2 mt-6;
+    }
+    
+    h1 {
+        @apply text-2xl;
+    }
+
+    h2 {
+        @apply text-xl;
+    }
+    
+    h3 {
+        @apply text-lg;
+    }
+
+    a {
+        @apply text-primary hover:underline;
+    }
+
+    p:not(blockquote > *), ul:not(li > *), ol:not(li > *), pre, blockquote, table {
+        @apply mb-2.5;
+    }
+
+    li > p:only-child,
+    li:has(p + ul) > p {
+        @apply mb-0;
+    }
+
+    ul {
+        @apply ml-5 list-disc marker:text-primary;
+    }
+
+    ul.contains-task-list {
+        @apply list-none;
+    }
+
+    ul.contains-task-list:not(ul *) {
+        @apply ml-1;
+    }
+
+    li.task-list-item input {
+        @apply mr-1.5;
+    }
+
+    ol {
+        @apply ml-5 list-decimal marker:text-primary;
+    }
+
+    li > ul, li > ol {
+        @apply mt-1;
+    }
+
+    code:not(pre *) {
+        font-size: 0.9rem;
+        @apply font-mono bg-primary-lite text-on-surface px-1.5 py-0.5 rounded-sm;
+    }
+
+    /* TODO: I need italic font */
+    em {
+        @apply italic font-sans;
+    }
+
+    pre {
+        @apply bg-surface-container border border-outline rounded-lg overflow-hidden;
+    }
+
+    pre, pre div, pre code, pre span {
+        hyphens: initial;
+        overflow-x: initial;
+        text-overflow: initial;
+        font-size: 0.9rem;
+    }
+
+    pre div, pre div code, pre div code span {
+        background: var(--surface-container) !important;
+    }
+
+    pre:has(code.plain-code) {
+        @apply bg-surface-container border border-outline rounded-lg px-3 py-1 overflow-auto;
+    }
+
+    hr {
+        @apply text-outline my-4;
+    }
+
+    blockquote {
+        @apply text-primary bg-primary-lite rounded-lg px-4 py-2 text-lg;
+    }
+
+    table {
+        thead {
+            @apply border-b border-outline;
+        }
+
+        td, th {
+            @apply px-2 py-1;
+        }
+
+        tr:not(thead > *) {
+            @apply odd:bg-surface-light-dim-container;
+        }
+
+        &::after {
+            content: "";
+            @apply absolute inset-0 bg-transparent rounded-lg border border-outline pointer-events-none;
+        }
+
+        @apply bg-surface-container rounded-lg border-collapse relative;
+    }
+
+    input[type="checkbox"]:disabled {
+        @apply accent-primary text-primary bg-primary opacity-100;
+    }
+
+    :first-child {
+        @apply mt-0;
+    }
+}
