@@ -9,7 +9,7 @@ export const users = sqliteTable("user", {
     email: text("email").unique(),
     emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
     image: text("image"),
-})
+});
  
 export const accounts = sqliteTable(
     "account",
@@ -32,8 +32,7 @@ export const accounts = sqliteTable(
         primaryKey({
             columns: [account.provider, account.providerAccountId],
         }),
-    ]
-)
+    ]);
  
 export const sessions = sqliteTable("session", {
     sessionToken: text("sessionToken").primaryKey(),
@@ -41,7 +40,7 @@ export const sessions = sqliteTable("session", {
         .notNull()
         .references(() => users.id, { onDelete: "cascade" }),
     expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
-})
+});
  
 export const verificationTokens = sqliteTable(
     "verificationToken",
@@ -54,8 +53,7 @@ export const verificationTokens = sqliteTable(
         primaryKey({
             columns: [verificationToken.identifier, verificationToken.token],
         }),
-    ]
-)
+    ]);
  
 export const authenticators = sqliteTable(
     "authenticator",
@@ -77,5 +75,56 @@ export const authenticators = sqliteTable(
         primaryKey({
             columns: [authenticator.userId, authenticator.credentialID],
         }),
-    ]
-)
+    ]);
+
+export const projects = sqliteTable("projects", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+    lastRequestedAt: integer("last_requested_at").notNull(),
+
+    title: text("title").notNull(),
+    description: text("description"),
+});
+
+export const projectDocuments = sqliteTable("project_documents", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    projectId: text("project_id")
+        .notNull()
+        .references(() => projects.id, { onDelete: "cascade" }),
+
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+    lastRequestedAt: integer("last_requested_at").notNull(),
+
+    title: text("title").notNull(),
+    content: text("content").notNull(),
+});
+
+export const dataImages = sqliteTable("data_images", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    projectId: text("project_id")
+        .notNull()
+        .references(() => projects.id, { onDelete: "cascade" }),
+
+    uploadedAt: integer("uploaded_at").notNull(),
+
+    title: text("title").notNull(),
+    imageData: text("image_data").notNull(),
+});

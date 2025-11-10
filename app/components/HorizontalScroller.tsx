@@ -1,8 +1,10 @@
+"use client"
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { cn } from "../utils/tailwind";
-import Button from "./Button";
 import { isMobileUserAgent } from "../utils/userAgent";
+import Button from "./input/Button";
 
 export default function HorizontalScroller(props: {
     children?: React.ReactNode,

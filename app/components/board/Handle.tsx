@@ -1,8 +1,8 @@
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import Button from "../Button";
 import { cn } from "../../utils/tailwind";
 import { LuGripVertical } from "react-icons/lu";
+import Button from "../input/Button";
 
 export default function Handle(props: {
     className?: string,

@@ -10,13 +10,13 @@ import { useEffect, useRef, useState } from "react";
 import Handle from "./Handle";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { cn } from "../../utils/tailwind";
-import Button from "../Button";
 import { createPortal } from "react-dom";
 import { LuEllipsisVertical, LuSave, LuTrash } from "react-icons/lu";
 import BoardTextArea from "./BoardTextArea";
-import DropDownButton from "../DropdownButton";
+import DropDownButton from "../input/DropdownButton";
 import { confirm } from "../confirm";
-import Checkbox from "../Checkbox";
+import Checkbox from "../input/Checkbox";
+import Button from "../input/Button";
 
 type Item = {
     id: string,

@@ -1,11 +1,12 @@
-// @ts-nocheck
+"use client"
 
 import { LuPackagePlus } from "react-icons/lu";
 import useDialog from "../../hooks/useDialog";
 import useMediaQuery from "../../hooks/useMediaQuery";
-import { isNullOrWhiteSpace } from "../../utils/string";
-import Button from "../Button";
 import TextInputDialog from "../TextInputDialog";
+import { useAction } from "next-safe-action/hooks";
+import { createProjectAction } from "@/app/actions/projects";
+import Button from "../input/Button";
 
 export default function NewProjectButton(props: {
     className?: string,
@@ -13,16 +14,9 @@ export default function NewProjectButton(props: {
 }) {
     const isLarge = useMediaQuery("(width >= 25rem)");
     const dialogState = useDialog();
-    const { mutate: addProject } = useAddProject();
-
-    async function onCreateClick(title: string) {
-        if (isNullOrWhiteSpace(title)) {
-            return;
-        }
-
-        addProject(title);
-        await dialogState.hide();
-    }
+    const action = useAction(createProjectAction, {
+        onSuccess: async () => await dialogState.hide(),
+    });
 
     return (
         <>
@@ -40,7 +34,8 @@ export default function NewProjectButton(props: {
                 heading="New project"
                 placeholder="Title"
                 acceptTitle="Create project"
-                onAcceptClick={onCreateClick} />
+                onAcceptClick={(title) => action.execute({ title })}
+                disabled={action.isPending} />
         </>
     );
 }

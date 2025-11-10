@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ContentDialog from "./ContentDialog";
 import useDialog from "../hooks/useDialog";
-import Button from "./Button";
+import Button from "./input/Button";
 
 const REQUEST_CONFIRM_EVENT_KEY = "confirm-dialog-request";
 const RESULT_CONFIRM_EVENT_KEY = "confirm-dialog-result";

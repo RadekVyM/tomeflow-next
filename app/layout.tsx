@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Gabarito } from "next/font/google";
-import "./css/globals.css";
+import "@/app/css/animations.css";
+import "@/app/css/button.css";
+import "@/app/css/colors.css";
+import "@/app/css/markdown.css";
+import "@/app/css/globals.css";
 import { ConfirmDialogs } from "./components/confirm";
 import Header from "./components/layout/Header";
 

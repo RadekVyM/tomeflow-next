@@ -2,7 +2,6 @@
 
 import { LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
 import type { DialogState } from "../../types/DialogState";
-import Button from "../Button";
 import { confirm } from "../confirm";
 import ContentDialog from "../ContentDialog";
 import MarkdownPreviewer from "../MarkdownPreviewer";
@@ -14,7 +13,8 @@ import { isNullOrWhiteSpace } from "../../utils/string";
 import { cn } from "../../utils/tailwind";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import Checklist from "./Checklist";
-import Checkbox from "../Checkbox";
+import Checkbox from "../input/Checkbox";
+import Button from "../input/Button";
 
 export default function BoardItemDialog(props: {
     itemId: string,

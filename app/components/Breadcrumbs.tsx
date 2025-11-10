@@ -1,8 +1,8 @@
 import { LuChevronRight } from "react-icons/lu";
 import { cn } from "../utils/tailwind";
-import Button from "./Button";
 import HorizontalScroller from "./HorizontalScroller";
 import { Fragment } from "react/jsx-runtime";
+import Button from "./input/Button";
 
 export default function Breadcrumbs(props: {
     className?: string,

@@ -1,11 +1,11 @@
 "use client"
 
 import type { VariantProps } from "class-variance-authority";
-import { cn } from "../utils/tailwind";
-import { buttonVariants } from "./variants/buttonVariants";
 import { useRef } from "react";
-import Tooltip from "./Tooltip";
 import Link from "next/link";
+import { buttonVariants } from "../variants/buttonVariants";
+import { cn } from "@/app/utils/tailwind";
+import Tooltip from "../Tooltip";
 
 export default function Button({ className, href, variant, size, disabled, title, ref, shortcutKeys, ...rest }: {
     children: React.ReactNode,

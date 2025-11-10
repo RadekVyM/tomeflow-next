@@ -1,16 +1,19 @@
+"use client"
+
 import { useEffect, useRef, useState } from "react";
 import type { DialogState } from "../types/DialogState";
 import ContentDialog from "./ContentDialog";
-import Button from "./Button";
 import { isNullOrWhiteSpace } from "../utils/string";
+import Button from "./input/Button";
 
 export default function TextInputDialog(props: {
     state: DialogState,
     heading: string,
     placeholder: string,
     acceptTitle: string,
+    disabled?: boolean,
     initialValue?: string,
-    onAcceptClick: (text: string) => Promise<void>,
+    onAcceptClick: (text: string) => void,
 }) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [text, setText] = useState<string>("");
@@ -30,13 +33,17 @@ export default function TextInputDialog(props: {
             className="max-w-lg">
             <form
                 className="flex flex-col gap-3 pt-2"
-                onSubmit={async (e) => {
+                onSubmit={(e) => {
                     e.preventDefault();
-                    await props.onAcceptClick(text);
+
+                    if (!isNullOrWhiteSpace(text)) {
+                        props.onAcceptClick(text);
+                    }
                 }}>
                 <input
                     ref={inputRef}
                     className="bg-surface border border-outline rounded-lg py-1 px-2"
+                    disabled={props.disabled}
                     placeholder={props.placeholder}
                     type="text"
                     value={text}
@@ -45,7 +52,7 @@ export default function TextInputDialog(props: {
                     type="submit"
                     variant="primary"
                     className="self-end"
-                    disabled={isNullOrWhiteSpace(text)}>
+                    disabled={props.disabled || isNullOrWhiteSpace(text)}>
                     {props.acceptTitle}
                 </Button>
             </form>

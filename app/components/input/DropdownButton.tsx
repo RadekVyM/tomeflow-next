@@ -1,9 +1,11 @@
+"use client"
+
 import type { IconType } from "react-icons";
 import Button from "./Button";
 import "./DropdownButton.css";
 import type { VariantProps } from "class-variance-authority";
-import type { buttonVariants } from "./variants/buttonVariants";
-import { cn } from "../utils/tailwind";
+import type { buttonVariants } from "../variants/buttonVariants";
+import { cn } from "../../utils/tailwind";
 
 export default function DropDownButton(props: {
     id: string,

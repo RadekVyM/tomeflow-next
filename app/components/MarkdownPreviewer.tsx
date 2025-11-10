@@ -2,7 +2,6 @@ import useIsDark from "../hooks/useIsDark";
 import { cn } from "../utils/tailwind";
 import { useEffect, useRef, useState } from "react";
 import { LuEye, LuImage, LuPencil, LuSave, LuX } from "react-icons/lu";
-import Button from "./Button";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -14,6 +13,7 @@ import ImagesDialog from "./ImagesDialog";
 import LocalImage from "./LocalImage";
 import { Dialog } from "./Dialog";
 import { isNullOrWhiteSpace } from "../utils/string";
+import Button from "./input/Button";
 
 const SAVE_INTERVAL = 5000;
 

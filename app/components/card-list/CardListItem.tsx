@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import { formatRelativeTime } from "../utils/date";
-import { cn } from "../utils/tailwind";
-import Button from "./Button";
+import { cn } from "../../utils/tailwind";
 import type { IconType } from "react-icons";
+import CardListItemTime from "./CardListItemTime";
+import Button from "../input/Button";
 
 export default function CardListItem(props: {
     className?: string,
@@ -14,19 +13,8 @@ export default function CardListItem(props: {
     titleAs?: "h2" | "h3" | "h4" | "h5",
     icon?: IconType,
 }) {
-    const [timeKey, setTimeKey] = useState("");
-
     const Icon = props.icon;
     const Title = props.titleAs || "h3";
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const key = Math.random().toString();
-            setTimeKey(key);
-        }, 30000);
-
-        return () => clearInterval(interval);
-    }, []);
 
     return (
         <li
@@ -49,11 +37,8 @@ export default function CardListItem(props: {
                 </div>
                 <div
                     className="flex items-center justify-between w-full gap-2">
-                    <small
-                        className="text-xs text-on-surface-container-muted"
-                        key={timeKey}>
-                        Seen {formatRelativeTime(props.lastSeenDate)}
-                    </small>
+                    <CardListItemTime
+                        time={props.lastSeenDate} />
                     {Icon &&
                         <div
                             className="bg-primary-lite p-1.5 rounded-lg -mr-1">

@@ -1,7 +1,7 @@
 import { cn } from "../utils/tailwind";
 import { Dialog, type DialogProps } from "./Dialog";
 import { MdClose } from "react-icons/md";
-import Button from "./Button";
+import Button from "./input/Button";
 
 export default function ContentDialog(props: {
     ref: React.RefObject<HTMLDialogElement | null>,

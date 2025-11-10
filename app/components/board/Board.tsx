@@ -7,12 +7,12 @@ import { CSS } from "@dnd-kit/utilities";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { LuEllipsisVertical, LuPlus, LuSquareCheckBig, LuTextCursorInput, LuTrash } from "react-icons/lu";
 import { createPortal } from "react-dom";
-import Button from "../Button";
-import DropDownButton from "../DropdownButton";
+import DropDownButton from "../input/DropdownButton";
 import { cn } from "../../utils/tailwind";
 import NewItemForm from "./NewItemForm";
 import Handle from "./Handle";
-import Checkbox from "../Checkbox";
+import Checkbox from "../input/Checkbox";
+import Button from "../input/Button";
 
 // Based on:
 // https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx

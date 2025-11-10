@@ -1,6 +1,6 @@
 import { LuChevronLeft } from "react-icons/lu";
-import Button from "../Button";
 import { cn } from "../../utils/tailwind";
+import Button from "../input/Button";
 
 export default function BackButton(props: {
     title: string,

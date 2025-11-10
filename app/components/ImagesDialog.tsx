@@ -6,7 +6,7 @@ import LocalImage from "./LocalImage";
 import Button from "./Button";
 import useDialog from "../hooks/useDialog";
 import { useEffect, useState } from "react";
-import { FileSelection, LargeFileSelection } from "./FileSelection";
+import { FileSelection, LargeFileSelection } from "./input/FileSelection";
 import { LuTrash } from "react-icons/lu";
 import { confirm } from "./confirm";
 import { cn } from "../utils/tailwind";

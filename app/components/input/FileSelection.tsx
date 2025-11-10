@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { LuFile, LuFileUp } from "react-icons/lu";
-import { cn } from "../utils/tailwind";
+import { cn } from "../../utils/tailwind";
 import type { VariantProps } from "class-variance-authority";
-import type { buttonVariants } from "./variants/buttonVariants";
+import type { buttonVariants } from "../variants/buttonVariants";
 import Button from "./Button";
 
 export function FileSelection(props: {
