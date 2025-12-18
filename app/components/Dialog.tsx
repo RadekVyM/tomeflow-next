@@ -21,6 +21,7 @@ export function Dialog(props: {
         createPortal(
             <dialog
                 ref={props.ref}
+                onClose={props.state.onClose}
                 onCancel={async (e) => {
                     e.stopPropagation();
                     e.preventDefault();

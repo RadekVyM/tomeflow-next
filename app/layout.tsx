@@ -7,6 +7,7 @@ import "@/app/css/markdown.css";
 import "@/app/css/globals.css";
 import { ConfirmDialogs } from "./components/confirm";
 import Header from "./components/layout/Header";
+import QueryClientProvider from "./components/QueryClientProvider";
 
 const geistSans = Gabarito({
     variable: "--font-gabarito-sans",
@@ -26,15 +27,17 @@ export default function RootLayout({
     return (
         <html
             lang="en">
-            <body className={`${geistSans.variable} antialiased font-sans`}>
-                <div
-                    className="flex flex-col min-h-dvh">
-                    <Header
-                        className="fixed top-0 left-0 right-0 bg-surface md:bg-transparent" />
-                    {children}
-                </div>
-                <ConfirmDialogs />
-            </body>
+            <QueryClientProvider>
+                <body className={`${geistSans.variable} antialiased font-sans`}>
+                    <div
+                        className="flex flex-col min-h-dvh">
+                        <Header
+                            className="fixed top-0 left-0 right-0 bg-surface md:bg-transparent" />
+                        {children}
+                    </div>
+                    <ConfirmDialogs />
+                </body>
+            </QueryClientProvider>
         </html>
     );
 }

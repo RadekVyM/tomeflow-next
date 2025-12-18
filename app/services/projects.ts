@@ -36,3 +36,28 @@ export async function createProject(title: string, userId: string) {
 
     return newProject[0].id;
 }
+
+export async function updateProject(
+    userId: string,
+    projectId: string,
+    project: { title?: string, description?: string | null },
+) {
+    const updatedProject = await db.update(projects)
+        .set({
+            updatedAt: Date.now(),
+            ...project,
+        })
+        .where(and(eq(projects.userId, userId), eq(projects.id, projectId)))
+        .returning();
+
+    if (updatedProject.length === 0) {
+        throw new Error("Failed to update the project in database.");
+    }
+
+    return updatedProject[0];
+}
+
+export async function deleteProject(userId: string, projectId: string) {
+    await db.delete(projects)
+        .where(and(eq(projects.userId, userId), eq(projects.id, projectId)));
+}

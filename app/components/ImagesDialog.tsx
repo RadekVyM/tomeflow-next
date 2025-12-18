@@ -1,24 +1,28 @@
-// @ts-nocheck
+"use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { DialogState } from "../types/DialogState";
 import ContentDialog from "./ContentDialog";
 import LocalImage from "./LocalImage";
-import Button from "./Button";
 import useDialog from "../hooks/useDialog";
 import { useEffect, useState } from "react";
-import { FileSelection, LargeFileSelection } from "./input/FileSelection";
 import { LuTrash } from "react-icons/lu";
 import { confirm } from "./confirm";
 import { cn } from "../utils/tailwind";
 import LoadingSpinner from "./LoadingSpinner";
+import Button from "./input/Button";
+import { FileSelection, LargeFileSelection } from "./input/FileSelection";
+import { cacheDataImage, filterNonCachedIds, getCachedImages, removeDataImageFromCache } from "../services/client/images";
+import { DataImage, SimpleDataImage } from "../types/DataImage";
+import { fetchDelete, fetchPost } from "../services/client/fetch";
 
 export default function ImagesDialog(props: {
     state: DialogState,
     projectId: string,
-    onImageSelected?: (image: DataImageDto) => void,
+    onImageSelected?: (image: DataImage) => void,
 }) {
     const { isPending, error, data: images } = useImages(props.projectId);
-    const [selectedImage, setSelectedImage] = useState<DataImageDto | null>(null);
+    const [selectedImage, setSelectedImage] = useState<DataImage | null>(null);
 
     useEffect(() => {
         if (props.state.isOpen) {
@@ -78,7 +82,7 @@ export default function ImagesDialog(props: {
 }
 
 function Image(props: {
-    image: DataImageDto,
+    image: DataImage,
     isSelected: boolean,
     onClick: () => void,
 }) {
@@ -177,4 +181,76 @@ function UploadImageButton(props: {
             </ContentDialog>
         </>
     );
+}
+
+function useImages(projectId: string) {
+    const queryClient = useQueryClient();
+
+    return useQuery({
+        queryKey: ["images", { projectId }],
+        queryFn: async () => {
+            // await (await navigator.storage.getDirectory()).removeEntry("projects", { recursive: true });
+
+            const simpleDtos = await fetch(`/api/projects/${projectId}/images`)
+                .then((res) => res.json())
+                .then((data) => (data || []) as Array<SimpleDataImage>);
+
+            const imageIds = simpleDtos.map((s) => s.id);
+            const imageIdsToFetch = await filterNonCachedIds(imageIds);
+
+            if (imageIdsToFetch.length > 0) {
+                const dtos = await fetchPost(`/api/projects/images`, { imageIds: imageIdsToFetch })
+                    .then((res) => res.json())
+                    .then((data) => (data || []) as Array<DataImage>);
+
+                for (const dto of dtos) {
+                    queryClient.setQueryData(["image", { imageId: dto.id }], dto.dataUrl);
+                    await cacheDataImage(dto);
+                }
+            }
+
+            return await getCachedImages(imageIds);
+        },
+    });
+}
+
+function useUploadImage(projectId: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (file: File) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            const dataUrl = await new Promise<string>((resolve, reject) => {
+                reader.onload = () => {
+                    if (reader.result) {
+                        resolve(reader.result as string);
+                    }
+                    else {
+                        reject();
+                    }
+                };
+            });
+
+            await fetchPost(`/api/projects/${projectId}/images`, { dataUrl, title: file.name });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["images", { projectId }] });
+        },
+    });
+}
+
+function useDeleteImage(projectId: string, imageId: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async () => {
+            await removeDataImageFromCache(imageId);
+            await fetchDelete(`/api/projects/images/${imageId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["images", { projectId }] });
+        },
+    });
 }

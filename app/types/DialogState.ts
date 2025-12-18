@@ -5,5 +5,6 @@ export type DialogState = {
     isOpen: boolean,
     animationClass: string,
     show: () => Promise<void>,
-    hide: () => Promise<void>
+    hide: () => Promise<void>,
+    onClose?: () => void,
 }

@@ -1,5 +1,8 @@
+"use client"
+
 import { useEffect, useRef, useState } from "react";
 import type { DialogState } from "../types/DialogState";
+import { useRouter } from "next/navigation";
 
 const ANIMATION_LENGTH = 150;
 
@@ -47,6 +50,6 @@ export default function useDialog(
         animationClass,
         isOpen,
         show,
-        hide
+        hide,
     };
 }

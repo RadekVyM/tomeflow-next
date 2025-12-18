@@ -1,3 +1,5 @@
+"use client";
+
 import useIsDark from "../hooks/useIsDark";
 import { cn } from "../utils/tailwind";
 import { useEffect, useRef, useState } from "react";
@@ -14,13 +16,14 @@ import LocalImage from "./LocalImage";
 import { Dialog } from "./Dialog";
 import { isNullOrWhiteSpace } from "../utils/string";
 import Button from "./input/Button";
+import { DataImage } from "../types/DataImage";
 
 const SAVE_INTERVAL = 5000;
 
 export default function MarkdownPreviewer(props: {
     className?: string,
     actionsWrapperClassName?: string,
-    text?: string,
+    text?: string | null,
     editorType: "editor-first" | "preview-first",
     projectId: string,
     isSavePending?: boolean,
@@ -75,8 +78,7 @@ export default function MarkdownPreviewer(props: {
         props.setEditable(false);
     }
 
-    // @ts-expect-error
-    function onImageSelected(image: DataImageDto) {
+    function onImageSelected(image: DataImage) {
         if (!textAreaRef.current) {
             return;
         }
@@ -212,8 +214,7 @@ function ActionButtons(props: {
 function ImagesButton(props: {
     projectId: string,
     disabled?: boolean,
-    // @ts-expect-error
-    onImageSelected: (image: DataImageDto) => void,
+    onImageSelected: (image: DataImage) => void,
 }) {
     const dialogState = useDialog();
 
