@@ -13,7 +13,7 @@ export const POST = endpoint(async ({ userId, data }) => {
 
     return NextResponse.json<Array<DataImage>>(images.map((image) => ({
         id: image.id,
-        projectId: image.id,
+        projectId: image.projectId,
         title: image.title,
         dataUrl: image.imageData,
     })));

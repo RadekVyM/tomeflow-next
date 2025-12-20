@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
 import { cacheDataImage, tryGetCachedDataImage } from "../services/client/images";
 import { DataImage } from "../types/DataImage";
 
@@ -22,6 +21,7 @@ export default function LocalImage(props: {
     return (
         <img
             src={image.dataUrl}
+            alt={image?.title}
             className={props.className} />
     );
 }

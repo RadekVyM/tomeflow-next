@@ -7,7 +7,7 @@ import "@/app/css/markdown.css";
 import "@/app/css/globals.css";
 import { ConfirmDialogs } from "./components/confirm";
 import Header from "./components/layout/Header";
-import QueryClientProvider from "./components/QueryClientProvider";
+import QueryClientProvider from "./components/react-query/QueryClientProvider";
 
 const geistSans = Gabarito({
     variable: "--font-gabarito-sans",

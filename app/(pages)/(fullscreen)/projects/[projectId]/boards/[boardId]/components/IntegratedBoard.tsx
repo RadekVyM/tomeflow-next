@@ -1,15 +1,34 @@
-// @ts-nocheck
+"use client";
 
 import { useEffect, useRef, useState } from "react";
-import useDialog from "../../hooks/useDialog";
-import { isNullOrWhiteSpace } from "../../utils/string";
+import useDialog from "@/app/hooks/useDialog";
+import { isNullOrWhiteSpace } from "@/app/utils/string";
 import Board from "./Board";
-import { confirm } from "../confirm";
-import TextInputDialog from "../TextInputDialog";
+import { confirm } from "@/app/components/confirm";
+import TextInputDialog from "@/app/components/TextInputDialog";
 import BoardItemDialog from "./BoardItemDialog";
+import { useAddItem, useAddSection, useBoard, useDeleteSection, useRenameSection, useUpdateItemFromBoard, useUpdateItemPosition, useUpdateSectionPosition } from "./hooks";
+import { ProjectBoard } from "@/app/types/ProjectBoard";
 
 export default function IntegratedBoard(props: {
-    board: ProjectBoardDto,
+    boardId: string,
+    projectId: string,
+}) {
+    const { data: board, error } = useBoard(props.boardId);
+
+    if (!board || error) {
+        return undefined;
+    }
+
+    return (
+        <IntegratedBoardInternal
+            board={board}
+            projectId={props.projectId} />
+    );
+}
+
+function IntegratedBoardInternal(props: {
+    board: ProjectBoard,
     projectId: string,
 }) {
     const sectionPositionRef = useRef<number>(0);
@@ -19,13 +38,13 @@ export default function IntegratedBoard(props: {
     const itemDialogState = useDialog();
     const [editedSectionTitle, setEditedSectionTitle] = useState<string>("");
     const [selectedItem, setSelectedItem] = useState({ id: "", sectionId: "" });
-    const { mutate: addSection } = useAddSection(props.projectId, props.board.id);
-    const { mutate: addItem } = useAddItem(props.projectId, props.board.id);
-    const { mutateAsync: updateSectionPosition } = useUpdateSectionPosition(props.projectId, props.board.id);
-    const { mutate: renameSection } = useRenameSection(props.projectId, props.board.id);
-    const { mutateAsync: updateItemPosition } = useUpdateItemPosition(props.projectId, props.board.id);
-    const { mutate: updateItem } = useUpdateItemFromBoard(props.projectId, props.board.id);
-    const { mutateAsync: deleteSection } = useDeleteSection(props.projectId, props.board.id);
+    const { mutate: addSection } = useAddSection(props.board.id);
+    const { mutate: addItem } = useAddItem(props.board.id);
+    const { mutateAsync: updateSectionPosition } = useUpdateSectionPosition(props.board.id);
+    const { mutate: renameSection } = useRenameSection(props.board.id);
+    const { mutateAsync: updateItemPosition } = useUpdateItemPosition(props.board.id);
+    const { mutate: updateItem } = useUpdateItemFromBoard(props.board.id);
+    const { mutateAsync: deleteSection } = useDeleteSection(props.board.id);
 
     useEffect(() => {
         if (!itemDialogState.isOpen) {
@@ -50,7 +69,6 @@ export default function IntegratedBoard(props: {
         await updateItemPosition({
             itemId,
             position,
-            sectionId: section.id,
             targetSectionId: sectionId,
         });
     }
@@ -106,7 +124,7 @@ export default function IntegratedBoard(props: {
                     setSelectedItem({ id: itemId, sectionId });
                     await itemDialogState.show();
                 }}
-                onToggleItemClick={(sectionId, itemId, isDone) => updateItem({ sectionId, itemId, isDone })} />
+                onToggleItemClick={(itemId, isDone) => updateItem({ itemId, isDone })} />
 
             <TextInputDialog
                 state={addSectionDialogState}
@@ -128,7 +146,6 @@ export default function IntegratedBoard(props: {
                     state={itemDialogState}
                     projectId={props.projectId}
                     boardId={props.board.id}
-                    sectionId={selectedItem.sectionId}
                     itemId={selectedItem.id} />}
         </>
     );

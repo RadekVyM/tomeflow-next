@@ -5,12 +5,12 @@ import { confirm } from "@/app/components/confirm";
 import Button from "@/app/components/input/Button";
 import { MoreDropdownButton, MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import TextInputDialog from "@/app/components/TextInputDialog";
-import { ProjectPageContext } from "@/app/contexts/ProjectPageContext";
+import { ProjectPageContext } from "@/app/(pages)/(scrollable)/projects/[projectId]/components/ProjectPageContext";
 import useDialog from "@/app/hooks/useDialog";
-import { isNullOrWhiteSpace } from "@/app/utils/string";
 import { useAction } from "next-safe-action/hooks";
 import { useContext } from "react";
 import { LuDownload, LuLayoutDashboard, LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
+import { createBoardAction } from "@/app/actions/boards";
 
 export default function MoreButton(props: {
     projectId: string,
@@ -52,14 +52,6 @@ function RenameButton(props: {
         onSuccess: async () => await dialogState.hide(),
     });
 
-    async function onRenameClick(title: string) {
-        if (isNullOrWhiteSpace(title)) {
-            return;
-        }
-
-        action.execute({ id: props.projectId, title });
-    }
-
     return (
         <>
             <MoreDropdownListButton
@@ -73,7 +65,8 @@ function RenameButton(props: {
                 placeholder="Title"
                 acceptTitle="Rename"
                 initialValue={props.projectTitle}
-                onAcceptClick={onRenameClick} />
+                onAcceptClick={(title) => action.execute({ id: props.projectId, title })}
+                disabled={action.isPending} />
         </>
     );
 }
@@ -82,16 +75,9 @@ function NewBoardButton(props: {
     projectId: string,
 }) {
     const dialogState = useDialog();
-    //const { mutate: addBoard } = useAddBoard(props.projectId);
-
-    async function onCreateClick(title: string) {
-        if (isNullOrWhiteSpace(title)) {
-            return;
-        }
-
-        //addBoard({ title });
-        //await dialogState.hide();
-    }
+    const action = useAction(createBoardAction, {
+        onSuccess: async () => await dialogState.hide(),
+    });
 
     return (
         <>
@@ -105,12 +91,13 @@ function NewBoardButton(props: {
                 heading="New board"
                 placeholder="Title"
                 acceptTitle="Create board"
-                onAcceptClick={onCreateClick} />
+                onAcceptClick={(title) => action.execute({ title, projectId: props.projectId })}
+                disabled={action.isPending} />
         </>
     );
 }
 
-function ExportButton(props: {
+function ExportButton(_props: {
     projectId: string,
     projectTitle: string,
 }) {

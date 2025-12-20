@@ -7,6 +7,7 @@ import TextInputDialog from "../TextInputDialog";
 import { useAction } from "next-safe-action/hooks";
 import { createProjectAction } from "@/app/actions/projects";
 import Button from "../input/Button";
+import { isNullOrWhiteSpace } from "@/app/utils/string";
 
 export default function NewProjectButton(props: {
     className?: string,

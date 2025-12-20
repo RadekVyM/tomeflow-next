@@ -20,4 +20,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         sessionsTable: sessions,
         verificationTokensTable: verificationTokens,
     }),
+    trustHost: true,
 });

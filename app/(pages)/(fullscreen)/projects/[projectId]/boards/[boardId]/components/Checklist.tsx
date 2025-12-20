@@ -1,22 +1,23 @@
-// @ts-nocheck
+"use client";
 
 import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor, useSensors, type DragEndEvent, type DragStartEvent, type UniqueIdentifier } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { isNullOrWhiteSpace } from "../../utils/string";
-import { useAddCheckItem, useDeleteCheckItem, useUpdateCheckItem } from "./hooks";
+import { isNullOrWhiteSpace } from "@/app/utils/string";
 import NewItemForm from "./NewItemForm";
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useEffect, useRef, useState } from "react";
 import Handle from "./Handle";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import { cn } from "../../utils/tailwind";
+import { cn } from "@/app/utils/tailwind";
 import { createPortal } from "react-dom";
 import { LuEllipsisVertical, LuSave, LuTrash } from "react-icons/lu";
 import BoardTextArea from "./BoardTextArea";
-import DropDownButton from "../input/DropdownButton";
-import { confirm } from "../confirm";
-import Checkbox from "../input/Checkbox";
-import Button from "../input/Button";
+import DropDownButton from "@/app/components/input/DropdownButton";
+import { confirm } from "@/app/components/confirm";
+import Checkbox from "@/app/components/input/Checkbox";
+import Button from "@/app/components/input/Button";
+import { SimpleProjectBoardCheckItem } from "@/app/types/ProjectBoardCheckItem";
+import { useAddCheckItem, useDeleteCheckItem, useUpdateCheckItem } from "./hooks";
 
 type Item = {
     id: string,
@@ -27,15 +28,13 @@ type Item = {
 
 export default function Checklist(props: {
     className?: string,
-    projectId: string,
     boardId: string,
-    sectionId: string,
     itemId: string,
-    checkItems: Array<SimpleProjectBoardCheckItemDto>,
+    checkItems: Array<SimpleProjectBoardCheckItem>,
 }) {
-    const { mutate: addItem } = useAddCheckItem(props.projectId, props.boardId, props.sectionId, props.itemId);
-    const { mutateAsync: updateCheckItem } = useUpdateCheckItem(props.projectId, props.boardId, props.sectionId, props.itemId);
-    const { mutateAsync: deleteCheckItem } = useDeleteCheckItem(props.projectId, props.boardId, props.sectionId, props.itemId);
+    const { mutate: addItem } = useAddCheckItem(props.boardId, props.itemId);
+    const { mutateAsync: updateCheckItem } = useUpdateCheckItem(props.itemId);
+    const { mutateAsync: deleteCheckItem } = useDeleteCheckItem(props.boardId, props.itemId);
 
     async function moveCheckItem(checkItemId: string, position: number) {
         await updateCheckItem({
@@ -92,7 +91,7 @@ export default function Checklist(props: {
 }
 
 function SortableList(props: {
-    checkItems: Array<SimpleProjectBoardCheckItemDto>,
+    checkItems: Array<SimpleProjectBoardCheckItem>,
     removeCheckItem: (checkItemId: string) => Promise<void>,
     moveCheckItem: (checkItemId: string, position: number) => Promise<void>,
     toggleCheckItem: (checkItemId: string, isDone: boolean) => Promise<void>,
@@ -331,7 +330,7 @@ function ItemContent(props: {
     );
 }
 
-function createItems(checkItems: Array<SimpleProjectBoardCheckItemDto>): Array<Item> {
+function createItems(checkItems: Array<SimpleProjectBoardCheckItem>): Array<Item> {
     const items = [...checkItems];
     items.sort((a, b) => a.position - b.position);
     return items.map((item) => ({

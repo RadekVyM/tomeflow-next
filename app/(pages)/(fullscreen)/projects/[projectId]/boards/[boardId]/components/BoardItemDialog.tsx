@@ -1,29 +1,29 @@
-// @ts-nocheck
+"use client";
 
 import { LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
-import type { DialogState } from "../../types/DialogState";
-import { confirm } from "../confirm";
-import ContentDialog from "../ContentDialog";
-import MarkdownPreviewer from "../MarkdownPreviewer";
-import { useBoardItem, useDeleteItem, useUpdateItem } from "./hooks";
+import type { DialogState } from "@/app/types/DialogState";
+import { confirm } from "@/app/components/confirm";
+import ContentDialog from "@/app/components/ContentDialog";
+import MarkdownPreviewer from "@/app/components/MarkdownPreviewer";
 import { useEffect, useState } from "react";
-import useDialog from "../../hooks/useDialog";
-import TextInputDialog from "../TextInputDialog";
-import { isNullOrWhiteSpace } from "../../utils/string";
-import { cn } from "../../utils/tailwind";
-import useMediaQuery from "../../hooks/useMediaQuery";
+import useDialog from "@/app/hooks/useDialog";
+import TextInputDialog from "@/app/components/TextInputDialog";
+import { cn } from "@/app/utils/tailwind";
+import useMediaQuery from "@/app/hooks/useMediaQuery";
 import Checklist from "./Checklist";
-import Checkbox from "../input/Checkbox";
-import Button from "../input/Button";
+import Checkbox from "@/app/components/input/Checkbox";
+import Button from "@/app/components/input/Button";
+import { useBoardItem, useDeleteItem, useUpdateItem } from "./hooks";
+import { ProjectBoardItem } from "@/app/types/ProjectBoardItem";
+import { SimpleProjectBoardCheckItem } from "@/app/types/ProjectBoardCheckItem";
 
 export default function BoardItemDialog(props: {
     itemId: string,
-    sectionId: string,
     projectId: string,
     boardId: string,
     state: DialogState,
 }) {
-    const { data: item } = useBoardItem(props.projectId, props.boardId, props.sectionId, props.itemId);
+    const { data: item } = useBoardItem(props.boardId, props.itemId);
     const [descriptionEditable, setDescriptionEditable] = useState(false);
 
     useEffect(() => {
@@ -39,20 +39,15 @@ export default function BoardItemDialog(props: {
             state={props.state}
             heading={
                 <Heading
-                    projectId={props.projectId}
                     boardId={props.boardId}
-                    sectionId={props.sectionId}
                     itemId={props.itemId}
-                    item={item} />}
-            notHideOnSubsequentLoads>
+                    item={item} />}>
             {item &&
                 <div
                     className="-mx-5 -mb-4 grid grid-rows-[auto_1fr] flex-1 overflow-hidden">
                     <Actions
                         className="mt-1 mb-2 mx-5"
-                        projectId={props.projectId}
                         boardId={props.boardId}
-                        sectionId={props.sectionId}
                         itemId={props.itemId}
                         dialogState={props.state}
                         descriptionEditable={descriptionEditable}
@@ -65,15 +60,12 @@ export default function BoardItemDialog(props: {
                             className="pt-2"
                             projectId={props.projectId}
                             boardId={props.boardId}
-                            sectionId={props.sectionId}
                             itemId={props.itemId}
                             descriptionEditable={descriptionEditable}
                             setDescriptionEditable={setDescriptionEditable}
                             item={item} />
                         <ChecklistSection
-                            projectId={props.projectId}
                             boardId={props.boardId}
-                            sectionId={props.sectionId}
                             itemId={props.itemId}
                             checkItems={item.checkItems} />
                     </div>
@@ -83,13 +75,11 @@ export default function BoardItemDialog(props: {
 }
 
 function Heading(props: {
-    projectId: string,
     boardId: string,
-    sectionId: string,
     itemId: string,
-    item: ProjectBoardItemDto | undefined,
+    item: ProjectBoardItem | undefined,
 }) {
-    const { mutate: updateItem } = useUpdateItem(props.projectId, props.boardId, props.sectionId, props.itemId);
+    const { mutate: updateItem } = useUpdateItem(props.boardId, props.itemId);
 
     return (
         <div
@@ -109,25 +99,19 @@ function Heading(props: {
 
 function Actions(props: {
     className?: string,
-    projectId: string,
     boardId: string,
-    sectionId: string,
     itemId: string,
     dialogState: DialogState,
-    item: ProjectBoardItemDto,
+    item: ProjectBoardItem,
     descriptionEditable: boolean,
     setDescriptionEditable: (value: boolean) => void,
 }) {
     const isLarge = useMediaQuery("(width >= 30rem)");
-    const { mutate: updateItem } = useUpdateItem(props.projectId, props.boardId, props.sectionId, props.itemId);
-    const { mutate: deleteItem } = useDeleteItem(props.projectId, props.boardId, props.sectionId, props.itemId);
+    const { mutate: updateItem } = useUpdateItem(props.boardId, props.itemId);
+    const { mutate: deleteItem } = useDeleteItem(props.boardId, props.itemId);
     const renameItemDialogState = useDialog();
 
     async function onRenameItemClick(title: string) {
-        if (isNullOrWhiteSpace(title)) {
-            return;
-        }
-
         updateItem({ title });
         await renameItemDialogState.hide();
     }
@@ -186,13 +170,12 @@ function Description(props: {
     className?: string,
     projectId: string,
     boardId: string,
-    sectionId: string,
     itemId: string,
-    item: ProjectBoardItemDto,
+    item: ProjectBoardItem,
     descriptionEditable: boolean,
     setDescriptionEditable: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
-    const { isPending, mutate: updateItem } = useUpdateItem(props.projectId, props.boardId, props.sectionId, props.itemId);
+    const { isPending, mutate: updateItem } = useUpdateItem(props.boardId, props.itemId);
 
     return (
         <MarkdownPreviewer
@@ -209,11 +192,9 @@ function Description(props: {
 }
 
 function ChecklistSection(props: {
-    projectId: string,
     boardId: string,
-    sectionId: string,
     itemId: string,
-    checkItems: Array<SimpleProjectBoardCheckItemDto>,
+    checkItems: Array<SimpleProjectBoardCheckItem>,
 }) {
     return (
         <>

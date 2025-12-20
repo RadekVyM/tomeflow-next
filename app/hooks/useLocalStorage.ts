@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 // Copied and slightly modified from:
 // https://usehooks-ts.com/react-hook/use-local-storage
@@ -9,7 +9,6 @@ import { useEventListener } from "./useEventListener"
 import { localStorageChanged } from "../utils/localStorage"
 
 declare global {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     interface WindowEventMap {
         "local-storage": CustomEvent
     }
@@ -145,7 +144,6 @@ export function useLocalStorage<T>(
 
     useEffect(() => {
         setStoredValue(readValue())
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [key])
 
     const handleStorageChange = useCallback(

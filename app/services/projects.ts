@@ -9,6 +9,14 @@ export async function getAllProjects(userId: string) {
     });
 }
 
+export async function getRecentProjects(userId: string) {
+    return await db.query.projects.findMany({
+        where: eq(projects.userId, userId),
+        orderBy: [desc(projects.lastRequestedAt)],
+        limit: 6,
+    });
+}
+
 export async function getProject(userId: string, projectId: string) {
     await db.update(projects)
         .set({ lastRequestedAt: Date.now() })

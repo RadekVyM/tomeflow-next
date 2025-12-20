@@ -12,8 +12,6 @@ export function endpoint<TParams = any, TData = undefined>(
             return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
         }
 
-        request.auth.user?.id
-
         const params = (await context.params ?? {}) as TParams;
 
         if (schema) {

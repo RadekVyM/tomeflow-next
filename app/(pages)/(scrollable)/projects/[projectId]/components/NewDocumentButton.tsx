@@ -1,10 +1,11 @@
 "use client";
 
+import { createDocumentAction } from "@/app/actions/documents";
 import Button from "@/app/components/input/Button";
 import TextInputDialog from "@/app/components/TextInputDialog";
 import useDialog from "@/app/hooks/useDialog";
 import useMediaQuery from "@/app/hooks/useMediaQuery";
-import { isNullOrWhiteSpace } from "@/app/utils/string";
+import { useAction } from "next-safe-action/hooks";
 import { LuFilePlus } from "react-icons/lu";
 
 export default function NewDocumentButton(props: {
@@ -14,16 +15,9 @@ export default function NewDocumentButton(props: {
 }) {
     const isLarge = useMediaQuery("(width >= 40rem)");
     const dialogState = useDialog();
-    //const { mutate: addDocument } = useAddDocument(props.projectId);
-
-    async function onCreateClick(title: string) {
-        if (isNullOrWhiteSpace(title)) {
-            return;
-        }
-
-        //addDocument({ title });
-        //await dialogState.hide();
-    }
+    const action = useAction(createDocumentAction, {
+        onSuccess: async () => await dialogState.hide(),
+    });
 
     return (
         <>
@@ -41,7 +35,8 @@ export default function NewDocumentButton(props: {
                 heading="New document"
                 placeholder="Title"
                 acceptTitle="Create document"
-                onAcceptClick={onCreateClick} />
+                onAcceptClick={(title) => action.execute({ title, projectId: props.projectId })}
+                disabled={action.isPending} />
         </>
     );
 }

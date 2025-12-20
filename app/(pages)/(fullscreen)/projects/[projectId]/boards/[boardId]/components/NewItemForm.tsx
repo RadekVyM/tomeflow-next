@@ -1,9 +1,11 @@
+"use client";
+
 import { useRef, useState } from "react";
-import { cn } from "../../utils/tailwind";
-import { isNullOrWhiteSpace } from "../../utils/string";
+import { cn } from "@/app/utils/tailwind";
+import { isNullOrWhiteSpace } from "@/app/utils/string";
 import { LuPlus } from "react-icons/lu";
 import BoardTextArea from "./BoardTextArea";
-import Button from "../input/Button";
+import Button from "@/app/components/input/Button";
 
 export default function NewItemForm(props: {
     className?: string,

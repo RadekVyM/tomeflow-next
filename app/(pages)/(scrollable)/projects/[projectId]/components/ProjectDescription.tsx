@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 import MarkdownPreviewer from "../../../../../components/MarkdownPreviewer";
-import { ProjectPageContext } from "@/app/contexts/ProjectPageContext";
+import { ProjectPageContext } from "@/app/(pages)/(scrollable)/projects/[projectId]/components/ProjectPageContext";
 import { updateProjectDescriptionAction } from "@/app/actions/projects";
 import { useAction } from "next-safe-action/hooks";
 

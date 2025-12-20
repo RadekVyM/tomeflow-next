@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import ContentDialog from "./ContentDialog";
@@ -9,7 +9,6 @@ const REQUEST_CONFIRM_EVENT_KEY = "confirm-dialog-request";
 const RESULT_CONFIRM_EVENT_KEY = "confirm-dialog-result";
 
 declare global {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     interface WindowEventMap {
         "confirm-dialog-request": ConfirmDialogRequestEvent,
         "confirm-dialog-result": ConfirmDialogResultEvent,

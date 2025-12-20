@@ -1,4 +1,4 @@
-// @ts-nocheck
+"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { closestCenter, DndContext, DragOverlay, getFirstCollision, MeasuringStrategy, MouseSensor, pointerWithin, rectIntersection, TouchSensor, useSensor, useSensors, type CollisionDetection, type DragEndEvent, type DragOverEvent, type DragStartEvent, type UniqueIdentifier } from "@dnd-kit/core";
@@ -7,12 +7,14 @@ import { CSS } from "@dnd-kit/utilities";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { LuEllipsisVertical, LuPlus, LuSquareCheckBig, LuTextCursorInput, LuTrash } from "react-icons/lu";
 import { createPortal } from "react-dom";
-import DropDownButton from "../input/DropdownButton";
-import { cn } from "../../utils/tailwind";
-import NewItemForm from "./NewItemForm";
+import DropDownButton from "@/app/components/input/DropdownButton";
+import { cn } from "@/app/utils/tailwind";
 import Handle from "./Handle";
-import Checkbox from "../input/Checkbox";
-import Button from "../input/Button";
+import Checkbox from "@/app/components/input/Checkbox";
+import Button from "@/app/components/input/Button";
+import { ProjectBoard } from "@/app/types/ProjectBoard";
+import NewItemForm from "./NewItemForm";
+import { SimpleProjectBoardItem } from "@/app/types/ProjectBoardItem";
 
 // Based on:
 // https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx
@@ -34,7 +36,7 @@ type Item = {
 }
 
 export default function Board(props: {
-    board: ProjectBoardDto,
+    board: ProjectBoard,
     disabled?: boolean,
     moveSection: (sectionId: string, position: number) => Promise<void>,
     moveItem: (itemId: string, sectionId: string, position: number) => Promise<void>,
@@ -43,7 +45,7 @@ export default function Board(props: {
     onRemoveSectionClick: (sectionId: string) => void,
     onRenameSectionClick: (sectionId: string, title: string) => void,
     onItemClick: (sectionId: string, itemId: string) => void,
-    onToggleItemClick: (sectionId: string, itemId: string, isDone: boolean) => void,
+    onToggleItemClick: (itemId: string, isDone: boolean) => void,
 }) {
     const [sections, setSections] = useState<Array<Section>>([]);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
@@ -261,7 +263,7 @@ export default function Board(props: {
                                         disabled={isSortingContainer || props.disabled}
                                         item={item}
                                         onClick={() => props.onItemClick(section.id, item.id)}
-                                        onCheckboxClick={() => props.onToggleItemClick(section.id, item.id, !item.isDone)} />)}
+                                        onCheckboxClick={() => props.onToggleItemClick(item.id, !item.isDone)} />)}
                                 {section.items.length === 0 &&
                                     <NoItems />}
                             </SortableContext>
@@ -554,7 +556,7 @@ function useCollisionDetectionStrategy(
     return collisionDetectionStrategy;
 }
 
-function sortedItems(items: Array<SimpleProjectBoardItemDto>) {
+function sortedItems(items: Array<SimpleProjectBoardItem>) {
     const sorted = [...items];
 
     sorted.sort((a, b) => a.position - b.position);
@@ -562,7 +564,7 @@ function sortedItems(items: Array<SimpleProjectBoardItemDto>) {
     return sorted;
 }
 
-function createSections(board: ProjectBoardDto): Array<Section> {
+function createSections(board: ProjectBoard): Array<Section> {
     const sections = [...board.sections];
     sections.sort((a, b) => a.position - b.position);
 

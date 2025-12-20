@@ -1,5 +1,7 @@
+"use client";
+
 import { useRef } from "react";
-import { cn } from "../../utils/tailwind";
+import { cn } from "@/app/utils/tailwind";
 
 export default function BoardTextArea(props: {
     disabled?: boolean,

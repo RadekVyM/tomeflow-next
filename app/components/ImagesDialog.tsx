@@ -15,8 +15,35 @@ import { FileSelection, LargeFileSelection } from "./input/FileSelection";
 import { cacheDataImage, filterNonCachedIds, getCachedImages, removeDataImageFromCache } from "../services/client/images";
 import { DataImage, SimpleDataImage } from "../types/DataImage";
 import { fetchDelete, fetchPost } from "../services/client/fetch";
+import useIsClient from "../hooks/useIsClient";
 
 export default function ImagesDialog(props: {
+    state: DialogState,
+    projectId: string,
+    onImageSelected?: (image: DataImage) => void,
+}) {
+    const isClient = useIsClient();
+
+    if (!isClient) {
+        return undefined;
+    }
+
+    return (
+        <>
+            <ContentDialog
+                ref={props.state.dialogRef}
+                state={props.state}
+                heading="Images"
+                className="max-w-5xl max-h-full overflow-hidden px-0 pb-0"
+                headerClassName="px-5">
+                <DialogContent
+                    {...props} />
+            </ContentDialog>
+        </>
+    );
+}
+
+function DialogContent(props: {
     state: DialogState,
     projectId: string,
     onImageSelected?: (image: DataImage) => void,
@@ -32,51 +59,44 @@ export default function ImagesDialog(props: {
 
     return (
         <>
-            <ContentDialog
-                ref={props.state.dialogRef}
-                state={props.state}
-                heading="Images"
-                className="max-w-5xl max-h-full overflow-hidden px-0 pb-0"
-                headerClassName="px-5">
+            <div
+                className="flex flex-col gap-4 overflow-hidden max-h-full">
                 <div
-                    className="flex flex-col gap-4 overflow-hidden max-h-full">
-                    <div
-                        className="flex-1 overflow-auto max-h-full px-5 py-2">
-                        {isPending && <LoadingSpinner />}
-                        {error && "Images could not be loaded"}
-                        {images && images.length === 0 &&
-                            "No images"}
-                        {images && images.length > 0 &&
-                            <div
-                                className="grid items-start grid-cols-[repeat(auto-fill,_minmax(min(calc(var(--spacing)*48),_100%),_1fr))] gap-3">
-                                {images.map((image) =>
-                                    <Image
-                                        key={image.id}
-                                        image={image}
-                                        isSelected={image.id === selectedImage?.id}
-                                        onClick={() => setSelectedImage(image)} />)}
-                            </div>}
-                    </div>
-                    
-                    <div
-                        className="flex justify-between px-5 pb-4">
-                        <UploadImageButton
-                            projectId={props.projectId} />
-                        
-                        <Button
-                            variant="primary"
-                            disabled={!selectedImage}
-                            onClick={async () => {
-                                if (selectedImage) {
-                                    props.onImageSelected?.(selectedImage);
-                                    await props.state.hide();
-                                }
-                            }}>
-                            Select
-                        </Button>
-                    </div>
+                    className="flex-1 overflow-auto max-h-full px-5 py-2">
+                    {isPending && <LoadingSpinner />}
+                    {error && "Images could not be loaded"}
+                    {images && images.length === 0 &&
+                        "No images"}
+                    {images && images.length > 0 &&
+                        <div
+                            className="grid items-start grid-cols-[repeat(auto-fill,_minmax(min(calc(var(--spacing)*48),_100%),_1fr))] gap-3">
+                            {images.map((image) =>
+                                <Image
+                                    key={image.id}
+                                    image={image}
+                                    isSelected={image.id === selectedImage?.id}
+                                    onClick={() => setSelectedImage(image)} />)}
+                        </div>}
                 </div>
-            </ContentDialog>
+
+                <div
+                    className="flex justify-between px-5 pb-4">
+                    <UploadImageButton
+                        projectId={props.projectId} />
+
+                    <Button
+                        variant="primary"
+                        disabled={!selectedImage}
+                        onClick={async () => {
+                            if (selectedImage) {
+                                props.onImageSelected?.(selectedImage);
+                                await props.state.hide();
+                            }
+                        }}>
+                        Select
+                    </Button>
+                </div>
+            </div>
         </>
     );
 }
@@ -235,8 +255,8 @@ function useUploadImage(projectId: string) {
 
             await fetchPost(`/api/projects/${projectId}/images`, { dataUrl, title: file.name });
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["images", { projectId }] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["images", { projectId }] });
         },
     });
 }
@@ -246,11 +266,11 @@ function useDeleteImage(projectId: string, imageId: string) {
 
     return useMutation({
         mutationFn: async () => {
-            await removeDataImageFromCache(imageId);
             await fetchDelete(`/api/projects/images/${imageId}`);
+            await removeDataImageFromCache(imageId);
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["images", { projectId }] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["images", { projectId }] });
         },
     });
 }

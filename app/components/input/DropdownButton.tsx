@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import type { IconType } from "react-icons";
 import Button from "./Button";

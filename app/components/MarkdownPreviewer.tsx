@@ -177,8 +177,7 @@ function ActionButtons(props: {
     setIsPreview: React.Dispatch<React.SetStateAction<boolean>>,
     setEditable: React.Dispatch<React.SetStateAction<boolean>>,
     onSaveClick: () => void,
-    // @ts-expect-error
-    onImageSelected: (image: DataImageDto) => void,
+    onImageSelected: (image: DataImage) => void,
 }) {
     if (!props.editable) {
         return (
@@ -313,6 +312,7 @@ function CustomImage(props: {
                             imageId={props.src} /> :
                         <img
                             className="rounded-md max-h-[calc(100dvh-10rem)]"
+                            alt={props.alt}
                             {...props} />}
                 </button>
             </span>

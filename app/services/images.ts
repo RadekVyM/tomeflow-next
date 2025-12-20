@@ -2,6 +2,12 @@ import { db } from "@/db";
 import { dataImages } from "@/db/schema";
 import { and, eq, inArray } from "drizzle-orm";
 
+export async function getImage(userId: string, imageId: string) {
+    return await db.query.dataImages.findFirst({
+        where: and(eq(dataImages.userId, userId), eq(dataImages.id, imageId)),
+    });
+}
+
 export async function getImagesFromProject(userId: string, projectId: string) {
     return await db.query.dataImages.findMany({
         where: and(eq(dataImages.userId, userId), eq(dataImages.projectId, projectId)),
