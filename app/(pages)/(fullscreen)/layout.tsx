@@ -3,7 +3,7 @@ export default function Layout(props: {
 }) {
     return (
         <main
-            className={"flex-1"}>
+            className={"flex-1 overflow-hidden"}>
             {props.children}
         </main>
     );

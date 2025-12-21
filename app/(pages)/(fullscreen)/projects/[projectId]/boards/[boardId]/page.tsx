@@ -51,9 +51,12 @@ export default async function BoardPage(props: {
                 </div>
             </Header>
 
-            <IntegratedBoard
-                boardId={params.boardId}
-                projectId={params.projectId} />
+            <section
+                className="flex-1 overflow-x-auto overflow-y-hidden">
+                <IntegratedBoard
+                    boardId={params.boardId}
+                    projectId={params.projectId} />
+            </section>
         </div>
     );
 }

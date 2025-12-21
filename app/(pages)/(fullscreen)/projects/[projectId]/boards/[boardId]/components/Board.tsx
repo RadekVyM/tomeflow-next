@@ -37,7 +37,7 @@ type Item = {
 
 export default function Board(props: {
     board: ProjectBoard,
-    disabled?: boolean,
+    isPending?: boolean,
     moveSection: (sectionId: string, position: number) => Promise<void>,
     moveItem: (itemId: string, sectionId: string, position: number) => Promise<void>,
     onAddSectionClick: (position: number) => void,
@@ -249,7 +249,6 @@ export default function Board(props: {
                             id={section.id}
                             title={section.title}
                             items={section.items}
-                            disabled={props.disabled}
                             onItemSubmit={(text) => props.onItemSubmit(section.items.length, section.id, text)}
                             onRemoveSectionClick={() => props.onRemoveSectionClick(section.id)}
                             onRenameSectionClick={() => props.onRenameSectionClick(section.id, section.title)}>
@@ -260,7 +259,6 @@ export default function Board(props: {
                                     <SortableItem
                                         key={item.id}
                                         id={item.id}
-                                        disabled={isSortingContainer || props.disabled}
                                         item={item}
                                         onClick={() => props.onItemClick(section.id, item.id)}
                                         onCheckboxClick={() => props.onToggleItemClick(item.id, !item.isDone)} />)}
@@ -289,11 +287,13 @@ const animateLayoutChanges: AnimateLayoutChanges = (args) =>
 
 function AddSectionButton(props: {
     onClick: () => void,
+    disabled?: boolean,
 }) {
     return (
         <Button
             className="min-w-72 h-full border border-outline-variant rounded-lg place-content-center text-on-surface-muted"
-            onClick={props.onClick}>
+            onClick={props.onClick}
+            disabled={props.disabled}>
             <LuPlus /> New section
         </Button>
     );
@@ -342,7 +342,7 @@ function DroppableContainer(props: {
 
     return (
         <article
-            ref={props.disabled ? undefined : setNodeRef}
+            ref={props.isDragOverlay ? undefined : setNodeRef}
             className={cn(
                 "grid grid-rows-[auto_1fr_auto] min-w-72 max-w-72 h-full border border-outline-variant rounded-lg bg-surface-container",
                 isOverContainer && "bg-surface-dim-container",
@@ -367,7 +367,7 @@ function DroppableContainer(props: {
                         title="Actions"
                         size="sm"
                         icon={LuEllipsisVertical}
-                        disabled={props.isDragOverlay}>
+                        disabled={props.isDragOverlay || props.disabled}>
                         {!props.isDragOverlay &&
                             <ul
                                 className="flex flex-col items-stretch gap-1 p-1.5">
@@ -409,6 +409,7 @@ function DroppableContainer(props: {
                 className="px-4 pt-2 pb-3"
                 placeholder="New item"
                 submitTitle="Add item"
+                disabled={props.disabled}
                 onSubmit={props.onItemSubmit} />
         </article>
     );
@@ -434,7 +435,8 @@ function ItemContent(props: {
             style={props.style}>
             <Button
                 className="px-2 py-1.5 w-full block wrap-anywhere max-w-full text-start pr-8"
-                onClick={props.onClick}>
+                onClick={props.onClick}
+                disabled={props.disabled}>
                 <div
                     className="mt-[2px] ml-7 text-sm">
                     {props.item.title}
@@ -454,7 +456,8 @@ function ItemContent(props: {
                 className="absolute top-1 left-3"
                 title={props.item.isDone ? "Mark incomplete" : "Mark complete"}
                 checked={props.item.isDone}
-                onClick={props.onCheckboxClick} />
+                onClick={props.onCheckboxClick}
+                disabled={props.disabled} />
             <Handle
                 className="absolute right-0 top-1/2 -translate-y-1/2 mr-2"
                 size="sm"
@@ -494,7 +497,8 @@ function SortableItem(props: {
                 transform: CSS.Translate.toString(transform),
             }}
             setActivatorNodeRef={setActivatorNodeRef}
-            listeners={listeners} />
+            listeners={listeners}
+            disabled={props.disabled} />
     );
 }
 

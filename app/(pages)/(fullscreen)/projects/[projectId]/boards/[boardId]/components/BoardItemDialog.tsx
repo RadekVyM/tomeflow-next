@@ -16,6 +16,7 @@ import Button from "@/app/components/input/Button";
 import { useBoardItem, useDeleteItem, useUpdateItem } from "./hooks";
 import { ProjectBoardItem } from "@/app/types/ProjectBoardItem";
 import { SimpleProjectBoardCheckItem } from "@/app/types/ProjectBoardCheckItem";
+import { isNullOrWhiteSpace } from "@/app/utils/string";
 
 export default function BoardItemDialog(props: {
     itemId: string,
@@ -42,7 +43,6 @@ export default function BoardItemDialog(props: {
                     boardId={props.boardId}
                     itemId={props.itemId}
                     item={item} />}>
-            {item &&
                 <div
                     className="-mx-5 -mb-4 grid grid-rows-[auto_1fr] flex-1 overflow-hidden">
                     <Actions
@@ -55,9 +55,8 @@ export default function BoardItemDialog(props: {
                         item={item} />
 
                     <div
-                        className="px-5 pb-4 overflow-y-auto max-h-full thin-scrollbar">
+                        className="px-5 pb-4 pt-2 overflow-y-auto max-h-full thin-scrollbar">
                         <Description
-                            className="pt-2"
                             projectId={props.projectId}
                             boardId={props.boardId}
                             itemId={props.itemId}
@@ -67,9 +66,9 @@ export default function BoardItemDialog(props: {
                         <ChecklistSection
                             boardId={props.boardId}
                             itemId={props.itemId}
-                            checkItems={item.checkItems} />
+                            checkItems={item?.checkItems || []} />
                     </div>
-                </div>}
+                </div>
         </ContentDialog>
     );
 }
@@ -91,7 +90,7 @@ function Heading(props: {
                 onClick={() => props.item && updateItem({ isDone: !props.item.isDone })} />
             <div
                 className="mt-[0.5px]">
-                {props.item?.title}
+                {props.item?.title || "Loading..."}
             </div>
         </div>
     );
@@ -102,7 +101,7 @@ function Actions(props: {
     boardId: string,
     itemId: string,
     dialogState: DialogState,
-    item: ProjectBoardItem,
+    item: ProjectBoardItem | undefined,
     descriptionEditable: boolean,
     setDescriptionEditable: (value: boolean) => void,
 }) {
@@ -116,7 +115,7 @@ function Actions(props: {
         await renameItemDialogState.hide();
     }
 
-    const descriptionButtonTitle = `${props.item.description ? "Edit" : "Add"} description`;
+    const descriptionButtonTitle = `${props.item?.description ? "Edit" : "Add"} description`;
 
     return (
         <>
@@ -160,7 +159,7 @@ function Actions(props: {
                 acceptTitle="Rename"
                 heading="Rename item"
                 placeholder="Title"
-                initialValue={props.item.title}
+                initialValue={props.item?.title}
                 onAcceptClick={onRenameItemClick} />
         </>
     );
@@ -171,11 +170,15 @@ function Description(props: {
     projectId: string,
     boardId: string,
     itemId: string,
-    item: ProjectBoardItem,
+    item: ProjectBoardItem | undefined,
     descriptionEditable: boolean,
     setDescriptionEditable: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
     const { isPending, mutate: updateItem } = useUpdateItem(props.boardId, props.itemId);
+
+    if (!props.item) {
+        return undefined;
+    }
 
     return (
         <MarkdownPreviewer

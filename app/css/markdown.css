@@ -22,6 +22,10 @@
         @apply text-lg;
     }
 
+    strong, b {
+        @apply font-semibold;
+    }
+
     a {
         @apply text-primary hover:underline;
     }

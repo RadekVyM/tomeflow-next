@@ -8,8 +8,9 @@ import "@/app/css/globals.css";
 import { ConfirmDialogs } from "./components/confirm";
 import Header from "./components/layout/Header";
 import QueryClientProvider from "./components/react-query/QueryClientProvider";
+import { cn } from "./utils/tailwind";
 
-const geistSans = Gabarito({
+const gabarito = Gabarito({
     variable: "--font-gabarito-sans",
     subsets: ["latin"],
 });
@@ -28,7 +29,7 @@ export default function RootLayout({
         <html
             lang="en">
             <QueryClientProvider>
-                <body className={`${geistSans.variable} antialiased font-sans`}>
+                <body className={cn(gabarito.variable, "antialiased font-sans")}>
                     <div
                         className="flex flex-col min-h-dvh">
                         <Header

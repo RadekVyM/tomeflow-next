@@ -38,13 +38,21 @@ function IntegratedBoardInternal(props: {
     const itemDialogState = useDialog();
     const [editedSectionTitle, setEditedSectionTitle] = useState<string>("");
     const [selectedItem, setSelectedItem] = useState({ id: "", sectionId: "" });
-    const { mutate: addSection } = useAddSection(props.board.id);
-    const { mutate: addItem } = useAddItem(props.board.id);
-    const { mutateAsync: updateSectionPosition } = useUpdateSectionPosition(props.board.id);
-    const { mutate: renameSection } = useRenameSection(props.board.id);
-    const { mutateAsync: updateItemPosition } = useUpdateItemPosition(props.board.id);
-    const { mutate: updateItem } = useUpdateItemFromBoard(props.board.id);
-    const { mutateAsync: deleteSection } = useDeleteSection(props.board.id);
+    const { mutate: addSection, isPending: isAddSectionPending } = useAddSection(props.board.id);
+    const { mutate: addItem, isPending: isAddItemPending } = useAddItem(props.board.id);
+    const { mutateAsync: updateSectionPosition, isPending: isUpdateSectionPositionPending } = useUpdateSectionPosition(props.board.id);
+    const { mutate: renameSection, isPending: isRenameSectionPending } = useRenameSection(props.board.id);
+    const { mutateAsync: updateItemPosition, isPending: isUpdateItemPositionPending } = useUpdateItemPosition(props.board.id);
+    const { mutate: updateItem, isPending: isUpdateItemPending } = useUpdateItemFromBoard(props.board.id);
+    const { mutateAsync: deleteSection, isPending: isDeleteSectionPending } = useDeleteSection(props.board.id);
+
+    const isSyncing = isAddSectionPending ||
+        isAddItemPending ||
+        isUpdateSectionPositionPending ||
+        isRenameSectionPending ||
+        isUpdateItemPositionPending ||
+        isUpdateItemPending ||
+        isDeleteSectionPending;
 
     useEffect(() => {
         if (!itemDialogState.isOpen) {

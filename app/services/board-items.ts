@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { projectBoardItems } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 export async function getBoardItem(userId: string, itemId: string) {
     return await db.query.projectBoardItems.findFirst({
@@ -11,10 +11,11 @@ export async function getBoardItem(userId: string, itemId: string) {
     });
 }
 
-export async function createBoardItem(title: string, position: number, userId: string, sectionId: string) {
+export async function createBoardItem(itemId: string, title: string, position: number, userId: string, sectionId: string) {
     const now = Date.now();
 
     const newItem = await db.insert(projectBoardItems).values({
+        id: itemId,
         title: title,
         userId: userId,
         parentId: sectionId,
@@ -42,6 +43,19 @@ export async function updateBoardItem(
         isDone?: boolean,
     },
 ) {
+    if (item.sectionId !== undefined && item.position !== undefined) {
+        await moveBoardItemToSection(userId, itemId, item.sectionId, item.position);
+        delete item.sectionId;
+        delete item.position;
+    }
+    else if (item.position !== undefined) {
+        await updateBoardItemPosition(userId, itemId, item.position);
+        delete item.position;
+    }
+    else if (item.sectionId !== undefined) {
+        throw new Error("Target position needs to be defined too.");
+    }
+
     const updatedItem = await db.update(projectBoardItems)
         .set({
             updatedAt: Date.now(),
@@ -49,13 +63,6 @@ export async function updateBoardItem(
         })
         .where(and(eq(projectBoardItems.userId, userId), eq(projectBoardItems.id, itemId)))
         .returning();
-
-    if (item.position !== undefined) {
-        // TODO: Update positions of other items
-
-        if (item.sectionId !== undefined) {
-        }
-    }
 
     if (updatedItem.length === 0) {
         throw new Error("Failed to update the board item in database.");
@@ -69,9 +76,87 @@ export async function deleteBoardItem(userId: string, itemId: string) {
         .where(and(eq(projectBoardItems.userId, userId), eq(projectBoardItems.id, itemId)))
         .returning();
 
+    // TODO: Recalculate positions of other items in the same section
+
     if (item.length === 0) {
         throw new Error("Failed to delete the board item in database.");
     }
 
     return item[0];
+}
+
+async function moveBoardItemToSection(userId: string, itemId: string, targetSectionId: string, newPosition: number) {
+    const itemToUpdate = await findItemById(userId, itemId);
+
+    if (targetSectionId === itemToUpdate.parentId) {
+        await updateBoardItemPosition(userId, itemId, newPosition);
+        return;
+    }
+
+    await db.transaction(async () => {
+        const sourceSectionId = itemToUpdate.parentId;
+        const targetItems = await getItemsFromSection(userId, targetSectionId);
+        targetItems.splice(newPosition, 0, { id: itemId, position: itemToUpdate.position, parentId: itemToUpdate.parentId, });
+        await updatePositionsOfSortedItems(targetItems, targetSectionId);
+
+        const sourceItems = await getItemsFromSection(userId, sourceSectionId);
+        await updatePositionsOfSortedItems(sourceItems);
+    });
+}
+
+async function updateBoardItemPosition(userId: string, itemId: string, newPosition: number) {
+    const itemToUpdate = await findItemById(userId, itemId);
+
+    await db.transaction(async () => {
+        const items = await getItemsFromSection(userId, itemToUpdate.parentId);
+
+        const oldPosition = items.findIndex((item) => item.id === itemToUpdate.id);
+        const itemToMove = items.splice(oldPosition, 1)[0];
+        items.splice(newPosition, 0, itemToMove);
+
+        await updatePositionsOfSortedItems(items);
+    });
+}
+
+async function findItemById(userId: string, itemId: string) {
+    const item = await db.query.projectBoardItems.findFirst({
+        where: and(eq(projectBoardItems.userId, userId), eq(projectBoardItems.id, itemId))
+    });
+
+    if (!item) {
+        throw new Error(`Item "${itemId}" could not be found.`);
+    }
+
+    return item;
+}
+
+async function getItemsFromSection(userId: string, sectionId: string) {
+    return await db.query.projectBoardItems.findMany({
+        where: and(eq(projectBoardItems.userId, userId), eq(projectBoardItems.parentId, sectionId)),
+        orderBy: [asc(projectBoardItems.position)],
+        columns: {
+            id: true,
+            position: true,
+            parentId: true,
+        },
+    });
+}
+
+async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, parentId: string, }>, sectionId?: string) {
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const now = Date.now();
+
+        if (item.position === i && sectionId === item.parentId) {
+            continue;
+        }
+
+        await db.update(projectBoardItems)
+            .set({
+                updatedAt: now,
+                position: i,
+                parentId: sectionId,
+            })
+            .where(eq(projectBoardItems.id, item.id));
+    }
 }

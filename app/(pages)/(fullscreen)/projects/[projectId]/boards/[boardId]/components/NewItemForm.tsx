@@ -11,6 +11,7 @@ export default function NewItemForm(props: {
     className?: string,
     placeholder: string,
     submitTitle: string,
+    disabled?: boolean,
     onSubmit?: (text: string) => void,
 }) {
     const formRef = useRef<HTMLFormElement>(null);
@@ -23,7 +24,7 @@ export default function NewItemForm(props: {
             onSubmit={(e) => {
                 e.preventDefault();
 
-                if (isNullOrWhiteSpace(text)) {
+                if (props.disabled || isNullOrWhiteSpace(text)) {
                     return;
                 }
 
@@ -32,10 +33,12 @@ export default function NewItemForm(props: {
             }}>
             <BoardTextArea
                 className="flex-1"
+                disabled={props.disabled}
                 placeholder={props.placeholder}
                 value={text}
                 onChange={setText} />
             <Button
+                disabled={props.disabled}
                 type="submit"
                 variant="icon-primary"
                 title={props.submitTitle}

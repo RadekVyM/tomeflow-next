@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { projectBoardCheckItems } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 export async function getBoardItemCheckItems(userId: string, itemId: string) {
     return await db.query.projectBoardCheckItems.findMany({
@@ -8,10 +8,11 @@ export async function getBoardItemCheckItems(userId: string, itemId: string) {
     });
 }
 
-export async function createBoardCheckItem(title: string, position: number, userId: string, itemId: string) {
+export async function createBoardCheckItem(checkItemId: string, title: string, position: number, userId: string, itemId: string) {
     const now = Date.now();
 
     const newItem = await db.insert(projectBoardCheckItems).values({
+        id: checkItemId,
         title: title,
         userId: userId,
         parentId: itemId,
@@ -36,6 +37,11 @@ export async function updateBoardCheckItem(
         isDone?: boolean,
     },
 ) {
+    if (checkItem.position !== undefined) {
+        await updateBoardCheckItemPosition(userId, checkItemId, checkItem.position);
+        delete checkItem.position;
+    }
+
     const updatedItem = await db.update(projectBoardCheckItems)
         .set({
             updatedAt: Date.now(),
@@ -43,11 +49,6 @@ export async function updateBoardCheckItem(
         })
         .where(and(eq(projectBoardCheckItems.userId, userId), eq(projectBoardCheckItems.id, checkItemId)))
         .returning();
-
-    if (checkItem.position !== undefined) {
-        // TODO: Update positions of other items
-
-    }
 
     if (updatedItem.length === 0) {
         throw new Error("Failed to update the board check item in database.");
@@ -61,9 +62,52 @@ export async function deleteBoardCheckItem(userId: string, checkItemId: string) 
         .where(and(eq(projectBoardCheckItems.userId, userId), eq(projectBoardCheckItems.id, checkItemId)))
         .returning();
 
+    // TODO: Recalculate positions of other check items
+
     if (item.length === 0) {
         throw new Error("Failed to delete the board check item in database.");
     }
 
     return item[0];
+}
+
+async function updateBoardCheckItemPosition(userId: string, checkItemId: string, newPosition: number) {
+    const itemToUpdate = await db.query.projectBoardCheckItems.findFirst({
+        where: and(eq(projectBoardCheckItems.userId, userId), eq(projectBoardCheckItems.id, checkItemId))
+    });
+
+    if (!itemToUpdate) {
+        throw new Error(`Check item "${checkItemId}" could not be found.`);
+    }
+
+    await db.transaction(async () => {
+        const items = await db.query.projectBoardCheckItems.findMany({
+            where: and(eq(projectBoardCheckItems.userId, userId), eq(projectBoardCheckItems.parentId, itemToUpdate.parentId)),
+            orderBy: [asc(projectBoardCheckItems.position)],
+            columns: {
+                id: true,
+                position: true,
+            },
+        });
+
+        const oldPosition = items.findIndex((item) => item.id === itemToUpdate.id);
+        const itemToMove = items.splice(oldPosition, 1)[0];
+        items.splice(newPosition, 0, itemToMove);
+
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const now = Date.now();
+
+            if (item.position === i) {
+                continue;
+            }
+
+            await db.update(projectBoardCheckItems)
+                .set({
+                    updatedAt: now,
+                    position: i,
+                })
+                .where(eq(projectBoardCheckItems.id, item.id));
+        }
+    });
 }
