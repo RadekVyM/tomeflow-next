@@ -20,7 +20,7 @@ export default async function Page() {
     if (!session?.user?.id) {
         return (
             <div
-                className="grid w-full h-[100dvh] place-content-center">
+                className="grid w-full h-full flex-1 place-content-center">
                 <SignInButton />
             </div>
         );

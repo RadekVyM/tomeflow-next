@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { endpoint } from "../../utils";
 import z from "zod";
 import { getImages } from "@/app/services/images";
-import { DataImage } from "@/app/types/DataImage";
+import { VercelImage } from "@/app/types/VercelImage";
 
 const ImageIdsSchema = z.object({
     imageIds: z.array(z.string()),
@@ -11,10 +11,10 @@ const ImageIdsSchema = z.object({
 export const POST = endpoint(async ({ userId, data }) => {
     const images = await getImages(userId, data.imageIds);
 
-    return NextResponse.json<Array<DataImage>>(images.map((image) => ({
+    return NextResponse.json<Array<VercelImage>>(images.map((image) => ({
         id: image.id,
         projectId: image.projectId,
         title: image.title,
-        dataUrl: image.imageData,
+        vercelUrl: image.blobUrl,
     })));
 }, ImageIdsSchema);

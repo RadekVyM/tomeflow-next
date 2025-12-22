@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { and, desc, eq } from "drizzle-orm";
+import { deleteImagesFromProject } from "./images";
 
 export async function getAllProjects(userId: string) {
     return await db.query.projects.findMany({
@@ -66,6 +67,13 @@ export async function updateProject(
 }
 
 export async function deleteProject(userId: string, projectId: string) {
+    try {
+        await deleteImagesFromProject(userId, projectId);
+    }
+    catch (error) {
+        console.error((error as Error).message);
+    }
+
     await db.delete(projects)
         .where(and(eq(projects.userId, userId), eq(projects.id, projectId)));
 }

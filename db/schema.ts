@@ -189,7 +189,7 @@ export const projectBoardCheckItems = sqliteTable("project_board_check_items", {
     isDone: integer("is_done", { mode: "boolean" }).notNull().default(false),
 });
 
-export const dataImages = sqliteTable("data_images", {
+export const vercelImages = sqliteTable("vercel_images", {
     id: text("id")
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
@@ -203,7 +203,7 @@ export const dataImages = sqliteTable("data_images", {
     uploadedAt: integer("uploaded_at").notNull(),
 
     title: text("title").notNull(),
-    imageData: text("image_data").notNull(),
+    blobUrl: text("blob_url").notNull(),
 });
 
 export const projectDocumentsRelations = relations(projectDocuments, ({ one }) => ({

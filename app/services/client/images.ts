@@ -1,8 +1,8 @@
 "use client";
 
-// TODO: Delete unused images
-
+import { VercelImage } from "@/app/types/VercelImage";
 import { DataImage } from "../../types/DataImage";
+// TODO: Delete unused images
 
 export async function filterNonCachedIds(imageIds: Array<string>) {
     const images = await getImagesDirectory();
@@ -61,17 +61,35 @@ export async function removeDataImageFromCache(imageId: string) {
     catch {}
 }
 
-export async function cacheDataImage(image: DataImage) {
+export async function cacheDataImage(image: VercelImage): Promise<DataImage> {
     const images = await getImagesDirectory();
+
+    const file = await fetchImageBlob(image.vercelUrl);
+    const reader = new FileReader();
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+    });
+
+    const dataImage: DataImage = {
+        id: image.id,
+        projectId: image.projectId,
+        title: image.title,
+        dataUrl,
+    };
 
     try {
         const imageFileHandle = await images.getFileHandle(image.id, { create: true });
         const writableStream = await imageFileHandle.createWritable();
-        await writableStream.write(JSON.stringify(image));
+        await writableStream.write(JSON.stringify(dataImage));
         await writableStream.close();
     }
     catch (e) {
         console.error(e);
+    }
+    finally {
+        return dataImage;
     }
 }
 
@@ -79,4 +97,11 @@ export async function getImagesDirectory() {
     const root = await navigator.storage.getDirectory();
     const projects = await root.getDirectoryHandle("projects", { create: true });
     return await projects.getDirectoryHandle("images", { create: true });
+}
+
+async function fetchImageBlob(vercelUrl: string) {
+    const blob = await fetch(vercelUrl)
+        .then((response) => response.blob());
+
+    return blob;
 }

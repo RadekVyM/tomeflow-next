@@ -8,6 +8,7 @@ import "@/app/css/globals.css";
 import { ConfirmDialogs } from "./components/confirm";
 import Header from "./components/layout/Header";
 import QueryClientProvider from "./components/react-query/QueryClientProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const gabarito = Gabarito({
     variable: "--font-gabarito-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
                             className="fixed top-0 left-0 right-0 bg-surface md:bg-transparent" />
                         {children}
                     </div>
+                    <Analytics />
                     <ConfirmDialogs />
                 </body>
             </QueryClientProvider>

@@ -10,6 +10,8 @@ import CardListItem from "@/app/components/card-list/CardListItem";
 import { lastSeenAt } from "@/app/utils/entities";
 import { LuPackage } from "react-icons/lu";
 import CardList from "@/app/components/card-list/CardList";
+import { Suspense } from "react";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default async function Page() {
     return (
@@ -34,7 +36,10 @@ export default async function Page() {
                 </div>
             </header>
 
-            <ProjectsList />
+            <Suspense
+                fallback={<LoadingSpinner />}>
+                <ProjectsList />
+            </Suspense>
         </>
     );
 }

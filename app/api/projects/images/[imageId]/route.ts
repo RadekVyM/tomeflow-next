@@ -1,6 +1,6 @@
 import { endpoint, ok } from "@/app/api/utils";
 import { deleteImage, getImage } from "@/app/services/images";
-import { DataImage } from "@/app/types/DataImage";
+import { VercelImage } from "@/app/types/VercelImage";
 import { NextResponse } from "next/server";
 
 export const GET = endpoint<{ imageId: string }>(async ({ params, userId }) => {
@@ -12,11 +12,11 @@ export const GET = endpoint<{ imageId: string }>(async ({ params, userId }) => {
         return NextResponse.json({ message: "Not found" }, { status: 404 });
     }
 
-    const result: DataImage = {
+    const result: VercelImage = {
         id: image.id,
         projectId: image.projectId,
         title: image.title,
-        dataUrl: image.imageData,
+        vercelUrl: image.blobUrl,
     };
 
     return ok(result);

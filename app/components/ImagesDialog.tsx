@@ -16,6 +16,8 @@ import { cacheDataImage, filterNonCachedIds, getCachedImages, removeDataImageFro
 import { DataImage, SimpleDataImage } from "../types/DataImage";
 import { fetchDelete, fetchPost } from "../services/client/fetch";
 import useIsClient from "../hooks/useIsClient";
+import { upload } from "@vercel/blob/client";
+import { VercelImage } from "../types/VercelImage";
 
 export default function ImagesDialog(props: {
     state: DialogState,
@@ -150,17 +152,35 @@ function UploadImageButton(props: {
     projectId: string,
 }) {
     const dialogState = useDialog();
-    const { isPending, mutateAsync: uploadImage } = useUploadImage(props.projectId);
     const [selectedFile, setSelectedFile] = useState<File | null | undefined>(null);
+    const [uploadPercentage, setUploadPercentage] = useState(0);
+    const [uploadInProgress, setUploadInProgress] = useState(false);
 
     async function onUploadClick() {
         if (!selectedFile) {
             return;
         }
 
-        await uploadImage(selectedFile);
-        await dialogState.hide();
-        setSelectedFile(null);
+        setUploadInProgress(true);
+
+        try {
+            await upload(selectedFile.name, selectedFile, {
+                access: "public",
+                handleUploadUrl: "/api/projects/images/upload",
+                clientPayload: JSON.stringify({
+                    projectId: props.projectId,
+                    title: selectedFile.name,
+                }),
+                onUploadProgress: (e) => setUploadPercentage(e.percentage),
+            });
+        }
+        finally {
+            await dialogState.hide();
+            
+            setUploadInProgress(false);
+            setUploadPercentage(0);
+            setSelectedFile(null);
+        }
     }
 
     return (
@@ -183,13 +203,13 @@ function UploadImageButton(props: {
                             file={selectedFile}
                             onFileSelect={setSelectedFile}
                             accept="image/*"
-                            disabled={isPending} />
-                        
+                            disabled={uploadInProgress} />
+
                         <Button
                             className="justify-self-end"
                             onClick={onUploadClick}
                             variant="primary"
-                            disabled={isPending}>
+                            disabled={uploadInProgress}>
                             Upload
                         </Button>
                     </div> :
@@ -221,11 +241,11 @@ function useImages(projectId: string) {
             if (imageIdsToFetch.length > 0) {
                 const dtos = await fetchPost(`/api/projects/images`, { imageIds: imageIdsToFetch })
                     .then((res) => res.json())
-                    .then((data) => (data || []) as Array<DataImage>);
+                    .then((data) => (data || []) as Array<VercelImage>);
 
                 for (const dto of dtos) {
-                    queryClient.setQueryData(["image", { imageId: dto.id }], dto.dataUrl);
-                    await cacheDataImage(dto);
+                    const dataImage = await cacheDataImage(dto);
+                    queryClient.setQueryData(["image", { imageId: dto.id }], dataImage);
                 }
             }
 

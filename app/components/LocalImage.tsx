@@ -1,8 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { cacheDataImage, tryGetCachedDataImage } from "../services/client/images";
+import { cacheDataImage as cacheVercelImage, tryGetCachedDataImage } from "../services/client/images";
 import { DataImage } from "../types/DataImage";
+import { VercelImage } from "../types/VercelImage";
 
 export default function LocalImage(props: {
     imageId: string,
@@ -38,11 +39,9 @@ function useDataImage(imageId: string) {
 
             const image = await fetch(`/api/projects/images/${imageId}`)
                 .then((res) => res.json())
-                .then((data) => data as DataImage);
+                .then((data) => data as VercelImage);
 
-            await cacheDataImage(image);
-
-            return image;
+            return await cacheVercelImage(image);
         },
     });
 }
