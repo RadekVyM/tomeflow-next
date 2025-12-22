@@ -8,7 +8,6 @@ import "@/app/css/globals.css";
 import { ConfirmDialogs } from "./components/confirm";
 import Header from "./components/layout/Header";
 import QueryClientProvider from "./components/react-query/QueryClientProvider";
-import { cn } from "./utils/tailwind";
 
 const gabarito = Gabarito({
     variable: "--font-gabarito-sans",

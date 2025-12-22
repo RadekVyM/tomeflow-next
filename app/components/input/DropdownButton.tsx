@@ -29,7 +29,6 @@ export default function DropDownButton(props: {
                 title={props.disabled ? undefined : props.title}
                 popoverTarget={popoverId}
                 style={{
-                    // @ts-expect-error
                     "anchorName": anchorId,
                 }}
                 disabled={props.disabled}>
@@ -43,7 +42,6 @@ export default function DropDownButton(props: {
                     drop-shadow-xl drop-shadow-shade"
                 popover="auto"
                 style={{
-                    // @ts-expect-error
                     "positionAnchor": anchorId,
                 }}
                 onClick={() => document.getElementById(popoverId)?.hidePopover()}>
