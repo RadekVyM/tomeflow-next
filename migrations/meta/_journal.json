@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1761766097107,
-      "tag": "0000_deep_rumiko_fujikawa",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1766092129930,
-      "tag": "0001_damp_wrecker",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1766234701012,
-      "tag": "0002_cynical_madame_hydra",
+      "when": 1766408227981,
+      "tag": "0000_orange_the_order",
       "breakpoints": true
     }
   ]
