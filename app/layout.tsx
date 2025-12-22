@@ -27,9 +27,9 @@ export default function RootLayout({
 }>) {
     return (
         <html
-            lang="en">
+            lang="en" className={gabarito.variable}>
             <QueryClientProvider>
-                <body className={cn(gabarito.variable, "antialiased font-sans")}>
+                <body className="antialiased font-sans">
                     <div
                         className="flex flex-col min-h-dvh">
                         <Header

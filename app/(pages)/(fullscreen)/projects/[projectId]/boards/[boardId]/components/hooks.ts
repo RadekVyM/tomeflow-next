@@ -202,14 +202,14 @@ export function useDeleteItem(boardId: string, itemId: string) {
     });
 }
 
-export function useAddCheckItem(boardId: string, itemId: string) {
+export function useAddCheckItem(itemId: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (data: { title: string, position: number }) => {
             const id = crypto.randomUUID();
 
-            // TODO: Optimistic update
+            optimisticAddCheckItem(queryClient, itemId, id, data.title, data.position);
 
             await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             await fetchPost(`/api/projects/board-items/${itemId}/check-items`, {
@@ -217,12 +217,7 @@ export function useAddCheckItem(boardId: string, itemId: string) {
                 ...data,
             });
         },
-        onSettled: async () => {
-            await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
-                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
-            ]);
-        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
     });
 }
 
@@ -230,8 +225,8 @@ export function useUpdateCheckItem(itemId: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (data: { position?: number, title?: string, isDone?: boolean, checkItemId: string }) => {
-            // TODO: Optimistic update
+        mutationFn: async (data: { checkItemId: string, position?: number, title?: string, isDone?: boolean, }) => {
+            optimisticUpdateCheckItem(queryClient, itemId, data.checkItemId, data);
 
             await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             await fetchPut(
@@ -242,22 +237,17 @@ export function useUpdateCheckItem(itemId: string) {
     });
 }
 
-export function useDeleteCheckItem(boardId: string, itemId: string) {
+export function useDeleteCheckItem(itemId: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (checkItemId: string) => {
-            // TODO: Optimistic update
+            optimisticDeleteCheckItem(queryClient, itemId, checkItemId);
 
             await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             await fetchDelete(`/api/projects/board-check-items/${checkItemId}`);
         },
-        onSettled: async () => {
-            await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
-                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
-            ]);
-        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
     });
 }
 
@@ -322,12 +312,15 @@ function optimisticRenameSection(queryClient: QueryClient, boardId: string, sect
 }
 
 function optimisticDeleteSection(queryClient: QueryClient, boardId: string, sectionId: string) {
-    // TODO: Recalculate positions of other sections
+    queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => {
+        const sections = old.sections.filter((section) => section.id !== sectionId);
+        sections.sort((a, b) => a.position - b.position);
 
-    queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => ({
-        ...old,
-        sections: old.sections.filter((section) => section.id !== sectionId),
-    }));
+        return {
+            ...old,
+            sections: sections.map((section, i) => ({ ...section, position: i, })),
+        };
+    });
 }
 
 function optimisticAddItem(queryClient: QueryClient, boardId: string, sectionId: string, itemId: string, title: string, position: number) {
@@ -419,8 +412,6 @@ function optimisticUpdateItemPosition(queryClient: QueryClient, boardId: string,
 }
 
 function optimisticDeleteItem(queryClient: QueryClient, boardId: string, itemId: string) {
-    // TODO: Recalculate positions of other items in the same section
-
     queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => {
         const sections = [...old.sections];
 
@@ -428,9 +419,12 @@ function optimisticDeleteItem(queryClient: QueryClient, boardId: string, itemId:
             const section = sections[i];
 
             if (section.items.find((item) => item.id === itemId)) {
+                const items = section.items.filter((item) => item.id !== itemId);
+                items.sort((a, b) => a.position - b.position);
+
                 sections[i] = {
                     ...section,
-                    items: section.items.filter((item) => item.id !== itemId),
+                    items: items.map((item, i) => ({ ...item, position: i, })),
                 };
                 break;
             }
@@ -439,6 +433,66 @@ function optimisticDeleteItem(queryClient: QueryClient, boardId: string, itemId:
         return {
             ...old,
             sections,
+        };
+    });
+}
+
+function optimisticAddCheckItem(queryClient: QueryClient, itemId: string, checkItemId: string, title: string, position: number) {
+    queryClient.setQueryData(["board-item", { itemId }], (old: ProjectBoardItem) => {
+        const result: ProjectBoardItem = {
+            ...old,
+            checkItems: [
+                ...old.checkItems,
+                {
+                    id: checkItemId,
+                    position: position,
+                    title: title,
+                    isDone: false,
+                    itemId: itemId,
+                }
+            ],
+        };
+
+        return result;
+    });
+}
+
+function optimisticUpdateCheckItem(
+    queryClient: QueryClient,
+    itemId: string,
+    checkItemId: string,
+    data: { position?: number, title?: string, isDone?: boolean, },
+) {
+    queryClient.setQueryData(["board-item", { itemId }], (old: ProjectBoardItem) => {
+        const checkItems = [...old.checkItems];
+        checkItems.sort((a, b) => a.position - b.position);
+        const oldPosition = checkItems.findIndex((item) => item.id === checkItemId);
+        checkItems[oldPosition] = { ...checkItems[oldPosition], ...data };
+
+        if (data.position !== undefined) {
+
+            const checkItemToMove = checkItems.splice(oldPosition, 1)[0];
+            checkItems.splice(data.position, 0, checkItemToMove);
+        }
+
+        return {
+            ...old,
+            checkItems: checkItems.map((checkItem, i) => ({
+                ...checkItem,
+                position: i,
+            })),
+        };
+    });
+}
+
+function optimisticDeleteCheckItem(queryClient: QueryClient, itemId: string, checkItemId: string) {
+    queryClient.setQueryData(["board-item", { itemId }], (old: ProjectBoardItem) => {
+        const checkItems = old.checkItems.filter((item) => item.id !== checkItemId);
+        checkItems.sort((a, b) => a.position - b.position);
+
+        return {
+            ...old,
+            checkItems: checkItems.map((item, i) => ({ ...item, position: i, })),
         };
     });
 }

@@ -67,11 +67,16 @@ export async function deleteBoardSection(userId: string, sectionId: string) {
         .where(and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.id, sectionId)))
         .returning();
 
-    // TODO: Recalculate positions of other sections
-
     if (section.length === 0) {
         throw new Error("Failed to delete the board section in database.");
     }
+
+    const boardId = section[0].parentId;
+
+    await db.transaction(async () => {
+        const items = await getSectionsFromBoard(userId, boardId);
+        await updatePositionsOfSortedItems(items);
+    });
 
     return section[0];
 }
@@ -86,33 +91,41 @@ async function updateBoardSectionPosition(userId: string, sectionId: string, new
     }
 
     await db.transaction(async () => {
-        const items = await db.query.projectBoardSections.findMany({
-            where: and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.parentId, sectionToUpdate.parentId)),
-            orderBy: [asc(projectBoardSections.position)],
-            columns: {
-                id: true,
-                position: true,
-            },
-        });
+        const items = await getSectionsFromBoard(userId, sectionToUpdate.parentId);
 
         const oldPosition = items.findIndex((item) => item.id === sectionToUpdate.id);
         const itemToMove = items.splice(oldPosition, 1)[0];
         items.splice(newPosition, 0, itemToMove);
 
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            const now = Date.now();
-
-            if (item.position === i) {
-                continue;
-            }
-
-            await db.update(projectBoardSections)
-                .set({
-                    updatedAt: now,
-                    position: i,
-                })
-                .where(eq(projectBoardSections.id, item.id));
-        }
+        await updatePositionsOfSortedItems(items);
     });
+}
+
+async function getSectionsFromBoard(userId: string, boardId: string) {
+    return await db.query.projectBoardSections.findMany({
+        where: and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.parentId, boardId)),
+        orderBy: [asc(projectBoardSections.position)],
+        columns: {
+            id: true,
+            position: true,
+        },
+    });
+}
+
+async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, }>) {
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const now = Date.now();
+
+        if (item.position === i) {
+            continue;
+        }
+
+        await db.update(projectBoardSections)
+            .set({
+                updatedAt: now,
+                position: i,
+            })
+            .where(eq(projectBoardSections.id, item.id));
+    }
 }

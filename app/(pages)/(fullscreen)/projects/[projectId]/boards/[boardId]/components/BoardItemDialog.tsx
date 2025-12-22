@@ -16,7 +16,6 @@ import Button from "@/app/components/input/Button";
 import { useBoardItem, useDeleteItem, useUpdateItem } from "./hooks";
 import { ProjectBoardItem } from "@/app/types/ProjectBoardItem";
 import { SimpleProjectBoardCheckItem } from "@/app/types/ProjectBoardCheckItem";
-import { isNullOrWhiteSpace } from "@/app/utils/string";
 
 export default function BoardItemDialog(props: {
     itemId: string,
@@ -64,9 +63,9 @@ export default function BoardItemDialog(props: {
                             setDescriptionEditable={setDescriptionEditable}
                             item={item} />
                         <ChecklistSection
-                            boardId={props.boardId}
                             itemId={props.itemId}
-                            checkItems={item?.checkItems || []} />
+                            checkItems={item?.checkItems || []}
+                            disabled={!item} />
                     </div>
                 </div>
         </ContentDialog>
@@ -126,14 +125,15 @@ function Actions(props: {
                     variant={isLarge ? "container" : "icon-container"}
                     title={isLarge ? undefined : descriptionButtonTitle}
                     onClick={() => props.setDescriptionEditable(true)}
-                    disabled={props.descriptionEditable}>
+                    disabled={props.descriptionEditable || !props.item}>
                     <LuPencil /> {isLarge && descriptionButtonTitle}
                 </Button>
                 <Button
                     size="sm"
                     variant={isLarge ? "container" : "icon-container"}
                     title={isLarge ? undefined : "Rename"}
-                    onClick={renameItemDialogState.show}>
+                    onClick={renameItemDialogState.show}
+                    disabled={!props.item}>
                     <LuTextCursorInput /> {isLarge && "Rename"}
                 </Button>
                 <Button
@@ -149,7 +149,8 @@ function Actions(props: {
                         deleteItem();
 
                         await props.dialogState.hide();
-                    }}>
+                    }}
+                    disabled={!props.item}>
                     <LuTrash /> {isLarge && "Remove"}
                 </Button>
             </div>
@@ -195,9 +196,9 @@ function Description(props: {
 }
 
 function ChecklistSection(props: {
-    boardId: string,
     itemId: string,
     checkItems: Array<SimpleProjectBoardCheckItem>,
+    disabled?: boolean,
 }) {
     return (
         <>

@@ -22,7 +22,7 @@
         @apply text-lg;
     }
 
-    strong, b {
+    strong, b, th {
         @apply font-semibold;
     }
 

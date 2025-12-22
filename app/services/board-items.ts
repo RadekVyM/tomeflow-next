@@ -76,11 +76,16 @@ export async function deleteBoardItem(userId: string, itemId: string) {
         .where(and(eq(projectBoardItems.userId, userId), eq(projectBoardItems.id, itemId)))
         .returning();
 
-    // TODO: Recalculate positions of other items in the same section
-
     if (item.length === 0) {
         throw new Error("Failed to delete the board item in database.");
     }
+
+    const sectionId = item[0].parentId;
+
+    await db.transaction(async () => {
+        const items = await getItemsFromSection(userId, sectionId);
+        await updatePositionsOfSortedItems(items);
+    });
 
     return item[0];
 }

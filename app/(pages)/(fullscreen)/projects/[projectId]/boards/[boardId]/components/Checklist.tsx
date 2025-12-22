@@ -28,13 +28,13 @@ type Item = {
 
 export default function Checklist(props: {
     className?: string,
-    boardId: string,
+    disabled?: boolean,
     itemId: string,
     checkItems: Array<SimpleProjectBoardCheckItem>,
 }) {
-    const { mutate: addItem } = useAddCheckItem(props.boardId, props.itemId);
+    const { mutate: addItem } = useAddCheckItem(props.itemId);
     const { mutateAsync: updateCheckItem } = useUpdateCheckItem(props.itemId);
-    const { mutateAsync: deleteCheckItem } = useDeleteCheckItem(props.boardId, props.itemId);
+    const { mutateAsync: deleteCheckItem } = useDeleteCheckItem(props.itemId);
 
     async function moveCheckItem(checkItemId: string, position: number) {
         await updateCheckItem({
@@ -77,11 +77,13 @@ export default function Checklist(props: {
                         return;
                     }
 
-                    addItem({ title, position: 0 });
-                }} />
+                    addItem({ title, position: props.checkItems.length, });
+                }}
+                disabled={props.disabled} />
 
             <SortableList
                 checkItems={props.checkItems}
+                disabled={props.disabled}
                 moveCheckItem={moveCheckItem}
                 toggleCheckItem={toggleCheckItem}
                 renameCheckItem={renameCheckItem}
@@ -92,6 +94,7 @@ export default function Checklist(props: {
 
 function SortableList(props: {
     checkItems: Array<SimpleProjectBoardCheckItem>,
+    disabled?: boolean,
     removeCheckItem: (checkItemId: string) => Promise<void>,
     moveCheckItem: (checkItemId: string, position: number) => Promise<void>,
     toggleCheckItem: (checkItemId: string, isDone: boolean) => Promise<void>,
@@ -179,7 +182,8 @@ function SortableList(props: {
                             toggleIsEdited={(isEdited) => setItems((old) => old.map((oldItem) => ({
                                 ...oldItem,
                                 isEdited: oldItem.id === item.id ? isEdited : false,
-                            })))} />)}
+                            })))}
+                            disabled={props.disabled} />)}
                 </ul>
             </SortableContext>
 

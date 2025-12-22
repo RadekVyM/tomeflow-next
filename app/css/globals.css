@@ -45,6 +45,10 @@
   --font-mono: Consolas, "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
 }
 
+:root {
+  --font-sans: var(--font-gabarito-sans);
+}
+
 html {
   padding: 0;
   margin: 0;
@@ -53,6 +57,9 @@ html {
   font-size: 15px;
   /* This is needed because Safari is weird (and way too bold) */
   font-synthesis: none;
+
+  /* This allows transitions to/from 'auto' keywords */
+  interpolate-size: allow-keywords;
 }
 
 body {
@@ -67,6 +74,10 @@ body {
 
 #root {
   height: 100%;
+}
+
+dialog > article {
+  transition: height 5s ease;
 }
 
 .thin-scrollbar {
