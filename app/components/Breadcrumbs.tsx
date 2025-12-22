@@ -3,10 +3,11 @@ import { cn } from "../utils/tailwind";
 import HorizontalScroller from "./HorizontalScroller";
 import { Fragment } from "react/jsx-runtime";
 import Button from "./input/Button";
+import Skeleton from "./skeleton/Skeleton";
 
 export default function Breadcrumbs(props: {
     className?: string,
-    locations: Array<{ href: string, title: string }>,
+    locations: Array<{ href: string, title: string } | null>,
 }) {
     return (
         <HorizontalScroller
@@ -15,13 +16,16 @@ export default function Breadcrumbs(props: {
             as="nav">
             {props.locations.map((location, index) =>
                 <Fragment
-                    key={location.href}>
-                    <Button
-                        href={location.href}
-                        className="text-on-surface-muted pt-0.5 min-w-max"
-                        size="sm">
-                        {location.title}
-                    </Button>
+                    key={location?.href || index}>
+                    {location ? 
+                        <Button
+                            href={location.href}
+                            className="text-on-surface-muted pt-0.5 min-w-max"
+                            size="sm">
+                            {location.title}
+                        </Button> :
+                        <Skeleton
+                            className="text-sm max-w-15 mx-2" />}
 
                     {index !== props.locations.length - 1 &&
                         <LuChevronRight

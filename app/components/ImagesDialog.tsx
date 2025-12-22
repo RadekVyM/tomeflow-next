@@ -152,6 +152,7 @@ function UploadImageButton(props: {
     projectId: string,
 }) {
     const dialogState = useDialog();
+    const queryClient = useQueryClient();
     const [selectedFile, setSelectedFile] = useState<File | null | undefined>(null);
     const [uploadPercentage, setUploadPercentage] = useState(0);
     const [uploadInProgress, setUploadInProgress] = useState(false);
@@ -173,6 +174,7 @@ function UploadImageButton(props: {
                 }),
                 onUploadProgress: (e) => setUploadPercentage(e.percentage),
             });
+            await queryClient.invalidateQueries({ queryKey: ["images", { projectId: props.projectId, }] });
         }
         finally {
             await dialogState.hide();
@@ -182,6 +184,9 @@ function UploadImageButton(props: {
             setSelectedFile(null);
         }
     }
+
+    // TODO: Dispaly the progress in the UI
+    useEffect(() => console.log(uploadPercentage), [uploadPercentage]);
 
     return (
         <>
@@ -250,33 +255,6 @@ function useImages(projectId: string) {
             }
 
             return await getCachedImages(imageIds);
-        },
-    });
-}
-
-function useUploadImage(projectId: string) {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: async (file: File) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            const dataUrl = await new Promise<string>((resolve, reject) => {
-                reader.onload = () => {
-                    if (reader.result) {
-                        resolve(reader.result as string);
-                    }
-                    else {
-                        reject();
-                    }
-                };
-            });
-
-            await fetchPost(`/api/projects/${projectId}/images`, { dataUrl, title: file.name });
-        },
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["images", { projectId }] });
         },
     });
 }
