@@ -1,16 +1,11 @@
 import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { createImage } from "@/app/services/images";
 
-export const POST = auth(async (request) => {
-    if (!request.auth) {
-        return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
-    }
-
+export const POST = async (request: NextRequest) => {
     const body = (await request.json()) as HandleUploadBody;
-    const userId = request.auth.user?.id!;
-
+    
     try {
         const jsonResponse = await handleUpload({
             body,
@@ -19,6 +14,13 @@ export const POST = auth(async (request) => {
                 if (!clientPayload) {
                     throw new Error("Client payload is missing.");
                 }
+
+                const session = await auth();
+
+                if (!session?.user?.id) {
+                    throw new Error("Not authenticated");
+                }
+                const userId = session.user.id;
 
                 const { title, projectId } = JSON.parse(clientPayload);
 
@@ -53,9 +55,11 @@ export const POST = auth(async (request) => {
         return NextResponse.json(jsonResponse);
     }
     catch (error) {
+        console.log((error as Error).message);
+
         return NextResponse.json(
             { error: (error as Error).message },
             { status: 400 },
         );
     }
-});
+};
