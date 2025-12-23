@@ -182,19 +182,33 @@ function UploadImageButton(props: {
         setUploadInProgress(true);
 
         try {
-            await upload(selectedFile.name, selectedFile, {
+            const id = crypto.randomUUID();
+            const title = selectedFile.name;
+
+            const uploadedImage = await upload(selectedFile.name, selectedFile, {
                 access: "public",
                 handleUploadUrl: "/api/projects/images/upload",
                 clientPayload: JSON.stringify({
+                    id: id,
                     projectId: props.projectId,
-                    title: selectedFile.name,
+                    title: title,
                 }),
                 onUploadProgress: (e) => setUploadPercentage(e.percentage),
             });
+
+            const dataImage = await cacheDataImage({
+                id: id,
+                projectId: props.projectId,
+                title: title,
+                vercelUrl: uploadedImage.url,
+            });
+            await queryClient.setQueryData(["images", { projectId: props.projectId, }], (old: Array<DataImage>) => [
+                ...old,
+                dataImage,
+            ]);
         }
         finally {
             await dialogState.hide();
-            await queryClient.invalidateQueries({ queryKey: ["images", { projectId: props.projectId, }] });
 
             setUploadInProgress(false);
             setUploadPercentage(0);

@@ -7,17 +7,17 @@ import { redirect } from "next/navigation";
 import { createBoard, deleteBoard, updateBoard } from "../services/boards";
 
 const createSchema = z.object({
-    projectId: z.string().nonempty(),
+    projectId: z.uuid().nonempty(),
     title: z.string().nonempty(),
 });
 
 const renameSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
     title: z.string().nonempty(),
 });
 
 const selectSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
 });
 
 export const createBoardAction = authActionClient

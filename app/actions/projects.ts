@@ -12,17 +12,17 @@ const createSchema = z.object({
 });
 
 const renameSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
     title: z.string().nonempty(),
 });
 
 const updateProjectDescriptionSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
     description: z.string().nullable(),
 });
 
 const selectSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
 });
 
 export const createProjectAction = authActionClient

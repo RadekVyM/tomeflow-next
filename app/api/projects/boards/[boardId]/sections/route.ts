@@ -3,7 +3,7 @@ import { createBoardSection } from "@/app/services/board-sections";
 import z from "zod";
 
 const PostSectionSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
     title: z.string().nonempty(),
     position: z.number().int(),
 });

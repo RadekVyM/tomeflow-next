@@ -21,10 +21,11 @@ export async function getImages(userId: string, imageIds: Array<string>) {
     });
 }
 
-export async function createImage(blobUrl: string, title: string, projectId: string, userId: string) {
+export async function createImage(imageId: string, blobUrl: string, title: string, projectId: string, userId: string) {
     const now = Date.now();
 
     const newImage = await db.insert(vercelImages).values({
+        id: imageId,
         blobUrl: blobUrl,
         title: title,
         userId: userId,

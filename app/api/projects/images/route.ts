@@ -5,7 +5,7 @@ import { getImages } from "@/app/services/images";
 import { VercelImage } from "@/app/types/VercelImage";
 
 const ImageIdsSchema = z.object({
-    imageIds: z.array(z.string()),
+    imageIds: z.array(z.uuid()),
 });
 
 export const POST = endpoint(async ({ userId, data }) => {

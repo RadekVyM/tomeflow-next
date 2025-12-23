@@ -9,7 +9,7 @@ import z from "zod";
 const PutItemSchema = z.object({
     title: z.string().nonempty().optional(),
     description: z.string().nullable().optional(),
-    sectionId: z.string().nonempty().optional(),
+    sectionId: z.uuid().nonempty().optional(),
     position: z.number().int().optional(),
     isDone: z.boolean().optional(),
 });

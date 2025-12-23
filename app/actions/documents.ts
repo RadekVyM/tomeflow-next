@@ -7,22 +7,22 @@ import { redirect } from "next/navigation";
 import { createDocument, deleteDocument, updateDocument } from "../services/documents";
 
 const createSchema = z.object({
-    projectId: z.string().nonempty(),
+    projectId: z.uuid().nonempty(),
     title: z.string().nonempty(),
 });
 
 const renameSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
     title: z.string().nonempty(),
 });
 
 const updateContentSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
     content: z.string(),
 });
 
 const selectSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
 });
 
 export const createDocumentAction = authActionClient

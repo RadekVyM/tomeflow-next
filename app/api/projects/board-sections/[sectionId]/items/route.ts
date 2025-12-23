@@ -3,7 +3,7 @@ import { createBoardItem } from "@/app/services/board-items";
 import z from "zod";
 
 const PostItemSchema = z.object({
-    id: z.string().nonempty(),
+    id: z.uuid().nonempty(),
     title: z.string().nonempty(),
     position: z.number().int(),
 });
