@@ -15,6 +15,7 @@ import Button from "@/app/components/input/Button";
 import { ProjectBoard } from "@/app/types/ProjectBoard";
 import NewItemForm from "./NewItemForm";
 import { SimpleProjectBoardItem } from "@/app/types/ProjectBoardItem";
+import AddSectionButton from "./AddSectionButton";
 
 // Based on:
 // https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx
@@ -284,20 +285,6 @@ export default function Board(props: {
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
     defaultAnimateLayoutChanges({...args, wasDragging: true});
-
-function AddSectionButton(props: {
-    onClick: () => void,
-    disabled?: boolean,
-}) {
-    return (
-        <Button
-            className="min-w-72 h-full border border-outline-variant rounded-lg place-content-center text-on-surface-muted"
-            onClick={props.onClick}
-            disabled={props.disabled}>
-            <LuPlus /> New section
-        </Button>
-    );
-}
 
 function NoItems() {
     return (

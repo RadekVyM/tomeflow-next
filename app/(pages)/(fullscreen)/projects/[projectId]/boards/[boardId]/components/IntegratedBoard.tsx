@@ -9,6 +9,8 @@ import TextInputDialog from "@/app/components/TextInputDialog";
 import BoardItemDialog from "./BoardItemDialog";
 import { useAddItem, useAddSection, useBoard, useDeleteSection, useRenameSection, useUpdateItemFromBoard, useUpdateItemPosition, useUpdateSectionPosition } from "./hooks";
 import { ProjectBoard } from "@/app/types/ProjectBoard";
+import AddSectionButton from "./AddSectionButton";
+import Skeleton from "@/app/components/skeleton/Skeleton";
 
 export default function IntegratedBoard(props: {
     boardId: string,
@@ -16,8 +18,12 @@ export default function IntegratedBoard(props: {
 }) {
     const { data: board, error } = useBoard(props.boardId);
 
-    if (!board || error) {
-        return undefined;
+    if (!board) {
+        return <BoardSkeleton />;
+    }
+
+    if (error) {
+        return "Board could not be loaded.";
     }
 
     return (
@@ -156,5 +162,20 @@ function IntegratedBoardInternal(props: {
                     boardId={props.board.id}
                     itemId={selectedItem.id} />}
         </>
+    );
+}
+
+function BoardSkeleton() {
+    return (
+        <div
+            className="h-full w-fit pb-4 px-4 flex gap-3 isolate">
+            <Skeleton
+                className="min-w-72 max-w-72 h-full" />
+            <Skeleton
+                className="min-w-72 max-w-72 h-full" />
+
+            <AddSectionButton
+                disabled />
+        </div>
     );
 }

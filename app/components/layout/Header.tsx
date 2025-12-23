@@ -1,19 +1,15 @@
 import { LuUser } from "react-icons/lu";
 import { cn } from "../../utils/tailwind";
 import Image from "next/image";
-import { auth } from "@/auth";
 import UserInfoPopover from "./UserInfoPopover";
 import Button from "../input/Button";
+import { getSessionCached } from "@/app/utils/session";
 
 export default async function Header(props: {
     className?: string,
     children?: React.ReactNode,
 }) {
-    const session = await auth();
-
-    if (!session?.user) {
-        return;
-    }
+    const session = await getSessionCached();
 
     return (
         <header

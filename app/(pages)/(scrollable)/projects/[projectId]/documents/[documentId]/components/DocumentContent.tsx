@@ -2,6 +2,7 @@
 
 import { updateDocumentContentAction } from "@/app/actions/documents";
 import MarkdownPreviewer from "@/app/components/MarkdownPreviewer";
+import { isNullOrWhiteSpace } from "@/app/utils/string";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 
@@ -11,7 +12,7 @@ export default function DocumentContent(props: {
     projectId: string,
     documentId: string,
 }) {
-    const [editable, setEditable] = useState(false);
+    const [editable, setEditable] = useState(isNullOrWhiteSpace(props.content));
     const action = useAction(updateDocumentContentAction);
 
     return (

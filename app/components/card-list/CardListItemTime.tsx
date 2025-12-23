@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import useIsClient from "@/app/hooks/useIsClient";
 import { formatRelativeTime } from "@/app/utils/date";

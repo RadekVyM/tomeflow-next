@@ -18,6 +18,7 @@ import { fetchDelete, fetchPost } from "../services/client/fetch";
 import useIsClient from "../hooks/useIsClient";
 import { upload } from "@vercel/blob/client";
 import { VercelImage } from "../types/VercelImage";
+import Skeleton from "./skeleton/Skeleton";
 
 export default function ImagesDialog(props: {
     state: DialogState,
@@ -65,20 +66,24 @@ function DialogContent(props: {
                 className="flex flex-col gap-4 overflow-hidden max-h-full">
                 <div
                     className="flex-1 overflow-auto max-h-full px-5 py-2">
-                    {isPending && <LoadingSpinner />}
-                    {error && "Images could not be loaded"}
-                    {images && images.length === 0 &&
-                        "No images"}
-                    {images && images.length > 0 &&
+                    {isPending && <ImagesSkeleton />}
+                    {(error || images && images.length === 0) &&
                         <div
-                            className="grid items-start grid-cols-[repeat(auto-fill,_minmax(min(calc(var(--spacing)*48),_100%),_1fr))] gap-3">
+                            className="grid place-content-center text-on-surface-container-muted py-16">
+                            {error &&
+                                "Images could not be loaded"}
+                            {images && images.length === 0 &&
+                                "No images found"}
+                        </div>}
+                    {images && images.length > 0 &&
+                        <ImagesContainer>
                             {images.map((image) =>
                                 <Image
                                     key={image.id}
                                     image={image}
                                     isSelected={image.id === selectedImage?.id}
                                     onClick={() => setSelectedImage(image)} />)}
-                        </div>}
+                        </ImagesContainer>}
                 </div>
 
                 <div
@@ -100,6 +105,18 @@ function DialogContent(props: {
                 </div>
             </div>
         </>
+    );
+}
+
+function ImagesContainer(props: {
+    className?: string,
+    children?: React.ReactNode,
+}) {
+    return (
+        <div
+            className={cn("grid items-start grid-cols-[repeat(auto-fill,_minmax(min(calc(var(--spacing)*48),_100%),_1fr))] gap-3", props.className)}>
+            {props.children}
+        </div>
     );
 }
 
@@ -174,11 +191,11 @@ function UploadImageButton(props: {
                 }),
                 onUploadProgress: (e) => setUploadPercentage(e.percentage),
             });
-            await queryClient.invalidateQueries({ queryKey: ["images", { projectId: props.projectId, }] });
         }
         finally {
             await dialogState.hide();
-            
+            await queryClient.invalidateQueries({ queryKey: ["images", { projectId: props.projectId, }] });
+
             setUploadInProgress(false);
             setUploadPercentage(0);
             setSelectedFile(null);
@@ -228,6 +245,18 @@ function UploadImageButton(props: {
     );
 }
 
+function ImagesSkeleton() {
+    return (
+        <ImagesContainer
+            className="overflow-hidden">
+            <Skeleton
+                className="max-w-full w-full h-full aspect-square" />
+            <Skeleton
+                className="max-w-full w-full h-full aspect-square" />
+        </ImagesContainer>
+    );
+}
+
 function useImages(projectId: string) {
     const queryClient = useQueryClient();
 
@@ -235,7 +264,6 @@ function useImages(projectId: string) {
         queryKey: ["images", { projectId }],
         queryFn: async () => {
             // await (await navigator.storage.getDirectory()).removeEntry("projects", { recursive: true });
-
             const simpleDtos = await fetch(`/api/projects/${projectId}/images`)
                 .then((res) => res.json())
                 .then((data) => (data || []) as Array<SimpleDataImage>);
@@ -264,11 +292,12 @@ function useDeleteImage(projectId: string, imageId: string) {
 
     return useMutation({
         mutationFn: async () => {
+            queryClient.setQueryData(["images", { projectId }], (old: Array<DataImage>) =>
+                old.filter((image) => image.id !== imageId));
+
             await fetchDelete(`/api/projects/images/${imageId}`);
             await removeDataImageFromCache(imageId);
         },
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["images", { projectId }] });
-        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["images", { projectId }] }),
     });
 }

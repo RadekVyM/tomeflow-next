@@ -12,6 +12,7 @@ import { LuPackage } from "react-icons/lu";
 import CardList from "@/app/components/card-list/CardList";
 import { Suspense } from "react";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
+import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
 
 export default async function Page() {
     return (
@@ -37,7 +38,7 @@ export default async function Page() {
             </header>
 
             <Suspense
-                fallback={<LoadingSpinner />}>
+                fallback={<CardListSkeleton withIcon itemsCount={5} />}>
                 <ProjectsList />
             </Suspense>
         </>

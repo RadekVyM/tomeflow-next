@@ -16,6 +16,7 @@ import Button from "@/app/components/input/Button";
 import { useBoardItem, useDeleteItem, useUpdateItem } from "./hooks";
 import { ProjectBoardItem } from "@/app/types/ProjectBoardItem";
 import { SimpleProjectBoardCheckItem } from "@/app/types/ProjectBoardCheckItem";
+import Skeleton from "@/app/components/skeleton/Skeleton";
 
 export default function BoardItemDialog(props: {
     itemId: string,
@@ -87,10 +88,13 @@ function Heading(props: {
                 title={props.item?.isDone ? "Mark incomplete" : "Mark complete"}
                 checked={!!props.item?.isDone}
                 onClick={() => props.item && updateItem({ isDone: !props.item.isDone })} />
-            <div
-                className="mt-[0.5px]">
-                {props.item?.title || "Loading..."}
-            </div>
+            {props.item ?
+                <div
+                    className="mt-[0.5px]">
+                    {props.item.title}
+                </div> :
+                <Skeleton
+                    className="mt-[0.5px] w-60 max-w-full self-center"/>}
         </div>
     );
 }

@@ -18,6 +18,9 @@ import { getSessionCached } from "@/app/utils/session";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import BreadcrumbsSkeleton from "@/app/components/skeleton/BreadcrumbsSkeleton";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
+import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
+import Skeleton from "@/app/components/skeleton/Skeleton";
+import ParagraphSkeleton from "@/app/components/skeleton/ParagraphSkeleton";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
@@ -69,9 +72,11 @@ export default async function Page(props: {
                 </div>
             </header>
 
-            <Suspense fallback={<LoadingSpinner />}>
+            <Suspense fallback={<ParagraphSkeleton />}>
                 <SuspendedProjectDescription
                     projectId={params.projectId} />
+            </Suspense>
+            <Suspense fallback={<DocumentsBoardsSkeleton />}>
                 <DocumentsBoards
                     projectId={params.projectId} />
             </Suspense>
@@ -201,6 +206,39 @@ function ItemsSection(props: {
             <CardList>
                 {props.children}
             </CardList>
+        </section>
+    );
+}
+
+function DocumentsBoardsSkeleton() {
+    return (
+        <>
+            <ItemsSectionSkeleton
+                className="mt-8"
+                headingClassName="max-w-28"
+                itemsCount={2} />
+            <ItemsSectionSkeleton
+                className="mt-8"
+                headingClassName="max-w-36"
+                itemsCount={3} />
+        </>
+    );
+}
+
+function ItemsSectionSkeleton(props: {
+    className?: string,
+    headingClassName?: string,
+    itemsCount?: number,
+}) {
+    return (
+        <section
+            className={props.className}>
+            <Skeleton
+                className={cn("font-semibold text-3xl mb-4", props.headingClassName)} />
+
+            <CardListSkeleton
+                withIcon
+                itemsCount={props.itemsCount} />
         </section>
     );
 }

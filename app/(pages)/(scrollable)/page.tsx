@@ -1,23 +1,24 @@
 import CardList from "@/app/components/card-list/CardList";
 import CardListItem from "@/app/components/card-list/CardListItem";
 import Button from "@/app/components/input/Button";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
 import NewProjectButton from "@/app/components/project/NewProjectButton";
 import SignInButton from "@/app/components/SignInButton";
+import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
+import Skeleton from "@/app/components/skeleton/Skeleton";
 import Time from "@/app/components/Time";
 import { getRecentBoards } from "@/app/services/boards";
 import { getRecentDocuments } from "@/app/services/documents";
 import { getRecentProjects } from "@/app/services/projects";
 import { lastSeenAt } from "@/app/utils/entities";
+import { getSessionCached } from "@/app/utils/session";
 import { cn } from "@/app/utils/tailwind";
-import { auth } from "@/auth";
 import { Suspense } from "react";
 import { LuFile, LuLayoutDashboard, LuPackage } from "react-icons/lu";
 
 export default async function Page() {
-    const session = await auth();
+    const session = await getSessionCached();
 
-    if (!session?.user?.id) {
+    if (!session) {
         return (
             <div
                 className="grid w-full h-full flex-1 place-content-center">
@@ -52,19 +53,19 @@ export default async function Page() {
             </div>
 
             <Suspense
-                fallback={<LoadingSpinner />}>
+                fallback={<CardListSkeleton className="mb-8" withIcon itemsCount={3} />}>
                 <ProjectsList
                     userId={session.user.id} />
             </Suspense>
 
             <Suspense
-                fallback={<LoadingSpinner />}>
+                fallback={<ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />}>
                 <Boards
                     userId={session.user.id} />
             </Suspense>
 
             <Suspense
-                fallback={<LoadingSpinner />}>
+                fallback={<ItemsSectionSkeleton headingClassName="max-w-56" itemsCount={5} />}>
                 <Documents
                     userId={session.user.id} />
             </Suspense>
@@ -153,5 +154,24 @@ async function ProjectsList(props: {
                     lastSeenDate={new Date(lastSeenAt(project))}
                     icon={LuPackage} />)}
         </CardList>
+    );
+}
+
+function ItemsSectionSkeleton(props: {
+    className?: string,
+    headingClassName?: string,
+    itemsCount?: number,
+}) {
+    return (
+        <>
+            <Skeleton
+                className={cn("font-semibold text-2xl mb-4", props.headingClassName)} />
+
+            <CardListSkeleton
+                className="mb-8"
+                withIcon
+                withSubtitle
+                itemsCount={props.itemsCount} />
+        </>
     );
 }

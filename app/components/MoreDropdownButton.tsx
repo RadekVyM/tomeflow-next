@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { LuEllipsisVertical } from "react-icons/lu";
 import DropDownButton from "./input/DropdownButton";

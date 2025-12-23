@@ -32,8 +32,6 @@ export default function RootLayout({
                 <body className="antialiased font-sans">
                     <div
                         className="flex flex-col min-h-dvh">
-                        <Header
-                            className="fixed top-0 left-0 right-0 bg-surface md:bg-transparent" />
                         {children}
                     </div>
                     <Analytics />
