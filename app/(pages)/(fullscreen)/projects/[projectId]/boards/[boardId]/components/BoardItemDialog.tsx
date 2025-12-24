@@ -17,6 +17,7 @@ import { useBoardItem, useDeleteItem, useUpdateItem } from "./hooks";
 import { ProjectBoardItem } from "@/app/types/ProjectBoardItem";
 import { SimpleProjectBoardCheckItem } from "@/app/types/ProjectBoardCheckItem";
 import Skeleton from "@/app/components/skeleton/Skeleton";
+import { isNullOrWhiteSpace } from "@/app/utils/string";
 
 export default function BoardItemDialog(props: {
     itemId: string,
@@ -36,7 +37,8 @@ export default function BoardItemDialog(props: {
     return (
         <ContentDialog
             ref={props.state.dialogRef}
-            className="max-w-4xl overflow-hidden max-h-full"
+            outerClassName="items-start py-10"
+            className="max-w-4xl overflow-hidden max-h-full mt-0"
             state={props.state}
             heading={
                 <Heading
@@ -108,7 +110,7 @@ function Actions(props: {
     descriptionEditable: boolean,
     setDescriptionEditable: (value: boolean) => void,
 }) {
-    const isLarge = useMediaQuery("(width >= 30rem)");
+    const isLarge = useMediaQuery("(width >= 40rem)");
     const { mutate: updateItem } = useUpdateItem(props.boardId, props.itemId);
     const { mutate: deleteItem } = useDeleteItem(props.boardId, props.itemId);
     const renameItemDialogState = useDialog();
@@ -126,23 +128,23 @@ function Actions(props: {
                 className={cn("flex gap-2", props.className)}>
                 <Button
                     size="sm"
-                    variant={isLarge ? "container" : "icon-container"}
+                    variant="dynamic-container"
                     title={isLarge ? undefined : descriptionButtonTitle}
                     onClick={() => props.setDescriptionEditable(true)}
                     disabled={props.descriptionEditable || !props.item}>
-                    <LuPencil /> {isLarge && descriptionButtonTitle}
+                    <LuPencil /> <span>{descriptionButtonTitle}</span>
                 </Button>
                 <Button
                     size="sm"
-                    variant={isLarge ? "container" : "icon-container"}
+                    variant="dynamic-container"
                     title={isLarge ? undefined : "Rename"}
                     onClick={renameItemDialogState.show}
                     disabled={!props.item}>
-                    <LuTextCursorInput /> {isLarge && "Rename"}
+                    <LuTextCursorInput /> <span>Rename</span>
                 </Button>
                 <Button
                     size="sm"
-                    variant={isLarge ? "container" : "icon-container"}
+                    variant="dynamic-container"
                     title={isLarge ? undefined : "Remove"}
                     className="text-danger"
                     onClick={async () => {
@@ -155,7 +157,7 @@ function Actions(props: {
                         await props.dialogState.hide();
                     }}
                     disabled={!props.item}>
-                    <LuTrash /> {isLarge && "Remove"}
+                    <LuTrash /> <span>Remove</span>
                 </Button>
             </div>
 
@@ -188,7 +190,9 @@ function Description(props: {
     return (
         <MarkdownPreviewer
             editButtonHidden
-            className={props.className}
+            className={cn(
+                props.className,
+                (props.descriptionEditable || !isNullOrWhiteSpace(props.item.description)) && "my-2")}
             isSavePending={isPending}
             editorType="editor-first"
             projectId={props.projectId}

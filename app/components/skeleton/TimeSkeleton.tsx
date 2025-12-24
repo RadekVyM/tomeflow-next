@@ -6,19 +6,10 @@ export default function TimeSkeleton(props: {
     return (
         <div
             className={props.className}>
-            <div
-                className="font-bold text-6xl">
-                <Skeleton className="inline-block w-15" />:
-                <Skeleton className="inline-block w-15" />
-                <span
-                    className="text-4xl">
-                    :<Skeleton className="inline-block w-10" />
-                </span>
-            </div>
-            <div
-                className="font-semibold text-xl text-on-surface-muted -mb-2.5">
-                <Skeleton className="inline-block w-30" />
-            </div>
+            <Skeleton
+                className="font-bold text-6xl max-w-48 mb-1" />
+            <Skeleton
+                className="font-semibold text-xl max-w-28 mb-1" />
         </div>
     );
 }

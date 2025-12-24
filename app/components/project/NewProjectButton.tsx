@@ -13,7 +13,7 @@ export default function NewProjectButton(props: {
     disabled?: boolean,
     size?: "sm" | "default",
 }) {
-    const isLarge = useMediaQuery("(width >= 25rem)");
+    const isLarge = useMediaQuery("(width >= 40rem)");
     const dialogState = useDialog();
     const action = useAction(createProjectAction, {
         onSuccess: async () => await dialogState.hide(),
@@ -22,13 +22,13 @@ export default function NewProjectButton(props: {
     return (
         <>
             <Button
-                variant={isLarge ? "primary" : "icon-primary"}
+                variant={"dynamic-primary"}
                 size={props.size}
                 title={isLarge ? undefined : "New project"}
                 className={props.className}
                 onClick={dialogState.show}
                 disabled={props.disabled}>
-                <LuPackagePlus /> {isLarge && "New project"}
+                <LuPackagePlus /> <span>New project</span>
             </Button>
 
             <TextInputDialog

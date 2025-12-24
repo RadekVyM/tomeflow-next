@@ -7,7 +7,7 @@ export default function NewProjectButtonSkeleton(props: {
 }) {
     return (
         <Button
-            variant={"icon-primary"}
+            variant="dynamic-primary"
             size={props.size}
             className={props.className}
             disabled>

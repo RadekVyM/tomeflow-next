@@ -30,6 +30,18 @@ export const buttonVariants = cva(
                     "btn-container btn-icon px-0",
                 "icon-plain":
                     "",
+                "dynamic-default":
+                    "btn-default btn-dynamic max-sm:px-0",
+                "dynamic-destructive":
+                    "btn-destructive btn-dynamic max-sm:px-0",
+                "dynamic-primary":
+                    "btn-primary btn-dynamic max-sm:px-0",
+                "dynamic-secondary":
+                    "btn-secondary btn-dynamic max-sm:px-0",
+                "dynamic-container":
+                    "btn-container btn-dynamic max-sm:px-0",
+                "dynamic-plain":
+                    "",
             },
             size: {
                 default: "btn-md",
@@ -52,6 +64,21 @@ export const buttonVariants = cva(
                 variant: ["icon-container", "icon-default", "icon-destructive", "icon-primary", "icon-secondary", "icon-plain"],
                 size: "lg",
                 className: "min-w-10",
+            },
+            {
+                variant: ["dynamic-container", "dynamic-default", "dynamic-destructive", "dynamic-primary", "dynamic-secondary", "dynamic-plain"],
+                size: "default",
+                className: "max-sm:min-w-8",
+            },
+            {
+                variant: ["dynamic-container", "dynamic-default", "dynamic-destructive", "dynamic-primary", "dynamic-secondary", "dynamic-plain"],
+                size: "sm",
+                className: "max-sm:min-w-7",
+            },
+            {
+                variant: ["dynamic-container", "dynamic-default", "dynamic-destructive", "dynamic-primary", "dynamic-secondary", "dynamic-plain"],
+                size: "lg",
+                className: "max-sm:min-w-10",
             },
         ],
         defaultVariants: {

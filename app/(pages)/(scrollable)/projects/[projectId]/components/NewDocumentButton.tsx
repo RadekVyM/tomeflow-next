@@ -22,12 +22,12 @@ export default function NewDocumentButton(props: {
     return (
         <>
             <Button
-                variant={isLarge ? "primary" : "icon-primary"}
+                variant={"dynamic-primary"}
                 title={isLarge ? undefined : "New document"}
                 className={props.className}
                 onClick={dialogState.show}
                 disabled={props.disabled}>
-                <LuFilePlus /> {isLarge && "New document"}
+                <LuFilePlus /> <span>New document</span>
             </Button>
 
             <TextInputDialog

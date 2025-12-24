@@ -80,16 +80,19 @@ dialog > article {
   transition: height 5s ease;
 }
 
+.markdown pre > div,
 .thin-scrollbar {
   scrollbar-color: var(--outline) transparent;
   scrollbar-width: thin;
 }
 
+.markdown pre > div::-webkit-scrollbar,
 .thin-scrollbar::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
 }
 
+.markdown pre > div::-webkit-scrollbar-thumb,
 .thin-scrollbar::-webkit-scrollbar-thumb {
   --thumb: var(--outline-variant);
 
@@ -97,10 +100,12 @@ dialog > article {
   border-radius: 0.2rem;
 }
 
+.markdown pre > div::-webkit-scrollbar-thumb:hover,
 .thin-scrollbar::-webkit-scrollbar-thumb:hover {
   --thumb: var(--outline);
 }
 
+.markdown pre > div::-webkit-scrollbar-track,
 .thin-scrollbar::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
@@ -112,4 +117,10 @@ dialog > article {
 }
 .hidden-scrollbar::-webkit-scrollbar {
   display: none; /* for Chrome, Safari, and Opera */
+}
+
+.scrollable-header {
+  @media (width < 1000px) {
+    @apply bg-surface;
+  }
 }
