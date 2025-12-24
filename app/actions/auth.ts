@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
@@ -26,8 +26,8 @@ export const signInAction = noauthActionClient.action(async () => {
 
 export const signOutAction = noauthActionClient.action(async () => {
     try {
-        await signOut({ redirectTo: "/" });
-        revalidatePath("/");
+        await signOut({ redirectTo: "/auth" });
+        revalidatePath("/auth");
     }
     catch (error) {
         if (error instanceof AuthError) {

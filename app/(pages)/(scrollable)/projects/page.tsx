@@ -11,37 +11,33 @@ import { lastSeenAt } from "@/app/utils/entities";
 import { LuPackage } from "react-icons/lu";
 import CardList from "@/app/components/card-list/CardList";
 import { Suspense } from "react";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
 import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
+import PageLayout from "@/app/components/layout/PageLayout";
 
 export default async function Page() {
     return (
-        <>
-            <header
-                className="mb-8">
+        <PageLayout
+            breadcrumbs={
                 <Breadcrumbs
                     locations={[
                         { href: "/", title: "Home" },
                         { href: "/projects", title: "Projects" },
-                    ]} />
-                <div
-                    className="flex justify-between items-start">
-                    <PageHeading>
-                        Projects
-                    </PageHeading>
-                    <div
-                        className="flex gap-2">
-                        <NewProjectButton />
-                        <MoreButton />
-                    </div>
-                </div>
-            </header>
+                    ]} />}
+            pageHeading={
+                <PageHeading>
+                    Projects
+                </PageHeading>}
+            actionButtons={
+                <>
+                    <NewProjectButton />
+                    <MoreButton />
+                </>}>
 
             <Suspense
                 fallback={<CardListSkeleton withIcon itemsCount={5} />}>
                 <ProjectsList />
             </Suspense>
-        </>
+        </PageLayout>
     );
 }
 

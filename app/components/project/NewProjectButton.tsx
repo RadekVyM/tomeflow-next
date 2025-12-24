@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { LuPackagePlus } from "react-icons/lu";
 import useDialog from "../../hooks/useDialog";
@@ -7,10 +7,10 @@ import TextInputDialog from "../TextInputDialog";
 import { useAction } from "next-safe-action/hooks";
 import { createProjectAction } from "@/app/actions/projects";
 import Button from "../input/Button";
-import { isNullOrWhiteSpace } from "@/app/utils/string";
 
 export default function NewProjectButton(props: {
     className?: string,
+    disabled?: boolean,
     size?: "sm" | "default",
 }) {
     const isLarge = useMediaQuery("(width >= 25rem)");
@@ -26,7 +26,8 @@ export default function NewProjectButton(props: {
                 size={props.size}
                 title={isLarge ? undefined : "New project"}
                 className={props.className}
-                onClick={dialogState.show}>
+                onClick={dialogState.show}
+                disabled={props.disabled}>
                 <LuPackagePlus /> {isLarge && "New project"}
             </Button>
 
@@ -36,7 +37,7 @@ export default function NewProjectButton(props: {
                 placeholder="Title"
                 acceptTitle="Create project"
                 onAcceptClick={(title) => action.execute({ title })}
-                disabled={action.isPending} />
+                disabled={props.disabled || action.isPending} />
         </>
     );
 }

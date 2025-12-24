@@ -1,7 +1,6 @@
 import Breadcrumbs from "@/app/components/Breadcrumbs";
 import CardList from "@/app/components/card-list/CardList";
 import PageHeading from "@/app/components/layout/PageHeading";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
 import ProjectDescription from "@/app/(pages)/(scrollable)/projects/[projectId]/components/ProjectDescription";
 import { getProject } from "@/app/services/projects";
 import { cn } from "@/app/utils/tailwind";
@@ -18,9 +17,9 @@ import { getSessionCached } from "@/app/utils/session";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import BreadcrumbsSkeleton from "@/app/components/skeleton/BreadcrumbsSkeleton";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
-import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
-import Skeleton from "@/app/components/skeleton/Skeleton";
 import ParagraphSkeleton from "@/app/components/skeleton/ParagraphSkeleton";
+import PageLayout from "@/app/components/layout/PageLayout";
+import DocumentsBoardsSkeleton from "./components/DocumentsBoardsSkeleton";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
@@ -40,46 +39,42 @@ export default async function Page(props: {
 
     return (
         <ProjectPageContextProvider>
-            <header
-                className="mb-8">
-                <Suspense
-                    fallback={<BreadcrumbsSkeleton loadedItemsCount={1} />}>
-                    <SuspendedBreadcrumbs
-                        projectId={params.projectId} />
-                </Suspense>
-                <div
-                    className="flex justify-between items-start">
+            <PageLayout
+                breadcrumbs={
+                    <Suspense
+                        fallback={<BreadcrumbsSkeleton loadedItemsCount={1} />}>
+                        <SuspendedBreadcrumbs
+                            projectId={params.projectId} />
+                    </Suspense>}
+                pageHeading={
                     <Suspense
                         fallback={<PageHeadingSkeleton className="max-w-60" />}>
                         <SuspendedPageHeading
                             projectId={params.projectId} />
-                    </Suspense>
-                    <div
-                        className="flex gap-2">
-                        <Suspense
-                            fallback={<>
-                                <NewDocumentButton
-                                    projectId={""}
-                                    disabled />
-                                <MoreDropdownButton
-                                    id="project-more"
-                                    disabled />
-                            </>}>
-                            <SuspendedActionButtons
-                                projectId={params.projectId} />
-                        </Suspense>
-                    </div>
-                </div>
-            </header>
+                    </Suspense>}
+                actionButtons={
+                    <Suspense
+                        fallback={<>
+                            <NewDocumentButton
+                                projectId={""}
+                                disabled />
+                            <MoreDropdownButton
+                                id="project-more"
+                                disabled />
+                        </>}>
+                        <SuspendedActionButtons
+                            projectId={params.projectId} />
+                    </Suspense>}>
 
-            <Suspense fallback={<ParagraphSkeleton />}>
-                <SuspendedProjectDescription
-                    projectId={params.projectId} />
-            </Suspense>
-            <Suspense fallback={<DocumentsBoardsSkeleton />}>
-                <DocumentsBoards
-                    projectId={params.projectId} />
-            </Suspense>
+                <Suspense fallback={<ParagraphSkeleton />}>
+                    <SuspendedProjectDescription
+                        projectId={params.projectId} />
+                </Suspense>
+                <Suspense fallback={<DocumentsBoardsSkeleton />}>
+                    <DocumentsBoards
+                        projectId={params.projectId} />
+                </Suspense>
+            </PageLayout>
         </ProjectPageContextProvider>
     );
 }
@@ -206,39 +201,6 @@ function ItemsSection(props: {
             <CardList>
                 {props.children}
             </CardList>
-        </section>
-    );
-}
-
-function DocumentsBoardsSkeleton() {
-    return (
-        <>
-            <ItemsSectionSkeleton
-                className="mt-8"
-                headingClassName="max-w-28"
-                itemsCount={2} />
-            <ItemsSectionSkeleton
-                className="mt-8"
-                headingClassName="max-w-36"
-                itemsCount={3} />
-        </>
-    );
-}
-
-function ItemsSectionSkeleton(props: {
-    className?: string,
-    headingClassName?: string,
-    itemsCount?: number,
-}) {
-    return (
-        <section
-            className={props.className}>
-            <Skeleton
-                className={cn("font-semibold text-3xl mb-4", props.headingClassName)} />
-
-            <CardListSkeleton
-                withIcon
-                itemsCount={props.itemsCount} />
         </section>
     );
 }

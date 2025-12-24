@@ -6,7 +6,7 @@ export const getSessionCached = cache(async () => {
     const session = await auth();
 
     if (!session?.user?.id) {
-        redirect("/");
+        redirect("/auth");
     }
 
     return session as {

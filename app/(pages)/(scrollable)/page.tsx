@@ -2,9 +2,7 @@ import CardList from "@/app/components/card-list/CardList";
 import CardListItem from "@/app/components/card-list/CardListItem";
 import Button from "@/app/components/input/Button";
 import NewProjectButton from "@/app/components/project/NewProjectButton";
-import SignInButton from "@/app/components/SignInButton";
 import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
-import Skeleton from "@/app/components/skeleton/Skeleton";
 import Time from "@/app/components/Time";
 import { getRecentBoards } from "@/app/services/boards";
 import { getRecentDocuments } from "@/app/services/documents";
@@ -14,19 +12,9 @@ import { getSessionCached } from "@/app/utils/session";
 import { cn } from "@/app/utils/tailwind";
 import { Suspense } from "react";
 import { LuFile, LuLayoutDashboard, LuPackage } from "react-icons/lu";
+import ItemsSectionSkeleton from "./components/ItemsSectionSkeleton";
 
 export default async function Page() {
-    const session = await getSessionCached();
-
-    if (!session) {
-        return (
-            <div
-                className="grid w-full h-full flex-1 place-content-center">
-                <SignInButton />
-            </div>
-        );
-    }
-
     return (
         <>
             <Time
@@ -54,29 +42,25 @@ export default async function Page() {
 
             <Suspense
                 fallback={<CardListSkeleton className="mb-8" withIcon itemsCount={3} />}>
-                <ProjectsList
-                    userId={session.user.id} />
+                <ProjectsList />
             </Suspense>
 
             <Suspense
                 fallback={<ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />}>
-                <Boards
-                    userId={session.user.id} />
+                <Boards />
             </Suspense>
 
             <Suspense
                 fallback={<ItemsSectionSkeleton headingClassName="max-w-56" itemsCount={5} />}>
-                <Documents
-                    userId={session.user.id} />
+                <Documents />
             </Suspense>
         </>
     );
 }
 
-async function Boards(props: {
-    userId: string,
-}) {
-    const boards = await getRecentBoards(props.userId);
+async function Boards() {
+    const session = await getSessionCached();
+    const boards = await getRecentBoards(session.user.id);
 
     if (boards.length === 0) {
         return undefined;
@@ -103,10 +87,9 @@ async function Boards(props: {
     );
 }
 
-async function Documents(props: {
-    userId: string,
-}) {
-    const documents = await getRecentDocuments(props.userId);
+async function Documents() {
+    const session = await getSessionCached();
+    const documents = await getRecentDocuments(session.user.id);
 
     if (documents.length === 0) {
         return undefined;
@@ -135,9 +118,9 @@ async function Documents(props: {
 
 async function ProjectsList(props: {
     className?: string,
-    userId: string,
 }) {
-    const projects = await getRecentProjects(props.userId);
+    const session = await getSessionCached();
+    const projects = await getRecentProjects(session.user.id);
 
     if (projects.length === 0) {
         return <span className="mx-auto text-on-surface-muted text-sm my-3">No projects</span>
@@ -154,24 +137,5 @@ async function ProjectsList(props: {
                     lastSeenDate={new Date(lastSeenAt(project))}
                     icon={LuPackage} />)}
         </CardList>
-    );
-}
-
-function ItemsSectionSkeleton(props: {
-    className?: string,
-    headingClassName?: string,
-    itemsCount?: number,
-}) {
-    return (
-        <>
-            <Skeleton
-                className={cn("font-semibold text-2xl mb-4", props.headingClassName)} />
-
-            <CardListSkeleton
-                className="mb-8"
-                withIcon
-                withSubtitle
-                itemsCount={props.itemsCount} />
-        </>
     );
 }

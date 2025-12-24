@@ -9,6 +9,7 @@ import { Suspense } from "react";
 export default async function Header(props: {
     className?: string,
     children?: React.ReactNode,
+    withFallbackUserButton?: boolean,
 }) {
     return (
         <header
@@ -17,19 +18,13 @@ export default async function Header(props: {
                 className="pointer-events-auto">
                 {props.children}
             </div>
-            <Suspense
-                fallback={
-                    <Button
-                        className="p-1 rounded-full pointer-events-auto justify-self-end"
-                        popoverTarget="userinfo-popover">
-                        <div
-                            className="w-9 h-9 rounded-full bg-primary grid place-content-center">
-                            <LuUser
-                                className="text-on-primary w-5 h-5" />
-                        </div>
-                    </Button>}>
-                <SuspendedUserButton />
-            </Suspense>
+            {props.withFallbackUserButton ?
+                <FallbackUserButton /> :
+                <Suspense
+                    fallback={
+                        <FallbackUserButton />}>
+                    <SuspendedUserButton />
+                </Suspense>}
         </header>
     );
 }
@@ -58,5 +53,19 @@ async function SuspendedUserButton() {
             <UserInfoPopover
                 userInfo={session.user} />
         </>
+    );
+}
+
+function FallbackUserButton() {
+    return (
+        <Button
+            className="p-1 rounded-full pointer-events-auto justify-self-end"
+            popoverTarget="userinfo-popover">
+            <div
+                className="w-9 h-9 rounded-full bg-primary grid place-content-center">
+                <LuUser
+                    className="text-on-primary w-5 h-5" />
+            </div>
+        </Button>
     );
 }

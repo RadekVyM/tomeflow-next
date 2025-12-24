@@ -8,8 +8,9 @@ import { cache, Suspense } from "react";
 import { getSessionCached } from "@/app/utils/session";
 import BreadcrumbsSkeleton from "@/app/components/skeleton/BreadcrumbsSkeleton";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
-import ParagraphSkeleton from "@/app/components/skeleton/ParagraphSkeleton";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
+import PageLayout from "@/app/components/layout/PageLayout";
+import DocumentContentSkeleton from "./components/DocumentContentSkeleton";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
@@ -39,47 +40,37 @@ export default async function Page(props: {
     const params = await props.params;
 
     return (
-        <>
-            <header
-                className="mb-8">
+        <PageLayout
+            breadcrumbs={
                 <Suspense
                     fallback={<BreadcrumbsSkeleton loadedItemsCount={2} />}>
                     <SuspendedBreadcrumbs
                         projectId={params.projectId}
                         documentId={params.documentId} />
-                </Suspense>
-                <div
-                    className="flex justify-between items-start">
-                    <Suspense
-                        fallback={<PageHeadingSkeleton className="max-w-60" />}>
-                        <SuspendedPageHeading
-                            documentId={params.documentId} />
-                    </Suspense>
-                    <Suspense
-                        fallback={
-                            <MoreDropdownButton
-                                id="document-more"
-                                disabled />}>
-                        <SuspendedActionButtons
-                            documentId={params.documentId}/>
-                    </Suspense>
-                </div>
-            </header>
+                </Suspense>}
+            pageHeading={
+                <Suspense
+                    fallback={<PageHeadingSkeleton className="max-w-60" />}>
+                    <SuspendedPageHeading
+                        documentId={params.documentId} />
+                </Suspense>}
+            actionButtons={
+                <Suspense
+                    fallback={
+                        <MoreDropdownButton
+                            id="document-more"
+                            disabled />}>
+                    <SuspendedActionButtons
+                        documentId={params.documentId}/>
+                </Suspense>}>
 
             <Suspense
-                fallback={
-                    <article
-                        className="markdown">
-                        <ParagraphSkeleton
-                            className="mb-3"
-                            lastParagraphWidth="w-1/2" />
-                        <ParagraphSkeleton />
-                    </article>}>
+                fallback={<DocumentContentSkeleton />}>
                 <SuspendedDocumentContent
                     projectId={params.projectId}
                     documentId={params.documentId} />
             </Suspense>
-        </>
+        </PageLayout>
     );
 }
 

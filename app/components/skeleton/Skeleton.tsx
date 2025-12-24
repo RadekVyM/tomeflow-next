@@ -7,7 +7,7 @@ export default function Skeleton(props: {
 }) {
     return (
         <div
-            className={cn("skeleton w-full h-[1em]", props.className)}>
+            className={cn("skeleton w-full h-[1em] rounded-sm", props.className)}>
             {props.children}
         </div>
     );

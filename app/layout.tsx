@@ -6,8 +6,8 @@ import "@/app/css/colors.css";
 import "@/app/css/markdown.css";
 import "@/app/css/globals.css";
 import { ConfirmDialogs } from "./components/confirm";
-import Header from "./components/layout/Header";
 import QueryClientProvider from "./components/react-query/QueryClientProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
 const gabarito = Gabarito({
@@ -35,6 +35,7 @@ export default function RootLayout({
                         {children}
                     </div>
                     <Analytics />
+                    <SpeedInsights />
                     <ConfirmDialogs />
                 </body>
             </QueryClientProvider>

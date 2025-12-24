@@ -1,7 +1,8 @@
-"use client"
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import useIsClient from "../hooks/useIsClient";
+import TimeSkeleton from "./skeleton/TimeSkeleton";
 
 export default function Time(props: {
     className?: string,
@@ -11,9 +12,8 @@ export default function Time(props: {
 
     if (!isClient) {
         return (
-            <TimeInternal
-                className={props.className}
-                time={new Date(0)} />
+            <TimeSkeleton
+                className={props.className} />
         );
     }
 
