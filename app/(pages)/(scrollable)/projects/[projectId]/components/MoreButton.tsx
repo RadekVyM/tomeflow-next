@@ -11,6 +11,7 @@ import { useAction } from "next-safe-action/hooks";
 import { useContext } from "react";
 import { LuDownload, LuLayoutDashboard, LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
 import { createBoardAction } from "@/app/actions/boards";
+import { downloadExportedData } from "@/app/services/client/export";
 
 export default function MoreButton(props: {
     projectId: string,
@@ -97,12 +98,12 @@ function NewBoardButton(props: {
     );
 }
 
-function ExportButton(_props: {
+function ExportButton(props: {
     projectId: string,
     projectTitle: string,
 }) {
     async function onExportClick() {
-        // await downloadExportedData(`/api/export/projects/${props.projectId}`, props.projectTitle.replace(" ", "_"));
+        await downloadExportedData(`/api/projects/${props.projectId}/export`, props.projectTitle.replace(" ", "_"));
     }
 
     return (

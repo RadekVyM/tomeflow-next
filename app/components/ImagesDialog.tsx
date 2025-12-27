@@ -184,8 +184,10 @@ function UploadImageButton(props: {
         try {
             const id = crypto.randomUUID();
             const title = selectedFile.name;
+            const splitTitle = selectedFile.name.split(".");
+            const pathname = `${id}.${splitTitle[splitTitle.length - 1]}`;
 
-            const uploadedImage = await upload(selectedFile.name, selectedFile, {
+            const uploadedImage = await upload(pathname, selectedFile, {
                 access: "public",
                 handleUploadUrl: "/api/projects/images/upload",
                 clientPayload: JSON.stringify({

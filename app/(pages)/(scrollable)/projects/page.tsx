@@ -2,7 +2,7 @@ import Breadcrumbs from "@/app/components/Breadcrumbs";
 import PageHeading from "@/app/components/layout/PageHeading";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
 import NewProjectButton from "@/app/components/project/NewProjectButton";
-import ExportButton from "./components/ExportButtont";
+import ExportButton from "./components/ExportButton";
 import ImportButton from "./components/ImportButton";
 import { getAllProjects } from "@/app/services/projects";
 import { auth } from "@/auth";

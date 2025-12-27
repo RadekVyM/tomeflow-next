@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, integer, primaryKey } from "drizzle-orm/sqlite-core";
 import { AdapterAccountType } from "next-auth/adapters";
 
@@ -94,6 +94,8 @@ export const projects = sqliteTable("projects", {
     description: text("description"),
 });
 
+export type ProjectSchema = InferSelectModel<typeof projects>
+
 export const projectDocuments = sqliteTable("project_documents", {
     id: text("id")
         .primaryKey()
@@ -113,6 +115,8 @@ export const projectDocuments = sqliteTable("project_documents", {
     content: text("content").notNull(),
 });
 
+export type ProjectDocumentSchema = InferSelectModel<typeof projectDocuments>
+
 export const projectBoards = sqliteTable("project_boards", {
     id: text("id")
         .primaryKey()
@@ -131,6 +135,8 @@ export const projectBoards = sqliteTable("project_boards", {
     title: text("title").notNull(),
 });
 
+export type ProjectBoardSchema = InferSelectModel<typeof projectBoards>
+
 export const projectBoardSections = sqliteTable("project_board_sections", {
     id: text("id")
         .primaryKey()
@@ -148,6 +154,8 @@ export const projectBoardSections = sqliteTable("project_board_sections", {
     title: text("title").notNull(),
     position: integer("position").notNull(),
 });
+
+export type ProjectBoardSectionSchema = InferSelectModel<typeof projectBoardSections>
 
 export const projectBoardItems = sqliteTable("project_board_items", {
     id: text("id")
@@ -170,6 +178,8 @@ export const projectBoardItems = sqliteTable("project_board_items", {
     description: text("description"),
 });
 
+export type ProjectBoardItemSchema = InferSelectModel<typeof projectBoardItems>
+
 export const projectBoardCheckItems = sqliteTable("project_board_check_items", {
     id: text("id")
         .primaryKey()
@@ -189,6 +199,8 @@ export const projectBoardCheckItems = sqliteTable("project_board_check_items", {
     isDone: integer("is_done", { mode: "boolean" }).notNull().default(false),
 });
 
+export type ProjectBoardCheckItemSchema = InferSelectModel<typeof projectBoardCheckItems>
+
 export const vercelImages = sqliteTable("vercel_images", {
     id: text("id")
         .primaryKey()
@@ -205,6 +217,8 @@ export const vercelImages = sqliteTable("vercel_images", {
     title: text("title").notNull(),
     blobUrl: text("blob_url").notNull(),
 });
+
+export type VercelImageSchema = InferSelectModel<typeof vercelImages>
 
 export const projectDocumentsRelations = relations(projectDocuments, ({ one }) => ({
     project: one(projects, {

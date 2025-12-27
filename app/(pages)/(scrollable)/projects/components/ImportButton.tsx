@@ -1,11 +1,13 @@
-"use client"
+"use client";
 
+import { importProjectsAction } from "@/app/actions/import";
 import { MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
+import { useAction } from "next-safe-action/hooks";
 import { LuUpload } from "react-icons/lu";
 
 export default function ImportButton() {
     // TODO: Handle wrong inputs and other errors
-    // const { mutate: uploadProjects } = useImportProjects();
+    const action = useAction(importProjectsAction);
 
     function onImportClick() {
         const input = document.createElement("input");
@@ -26,6 +28,7 @@ export default function ImportButton() {
                         if (!json.startsWith("[")) {
                             json = `[${json}]`;
                         }
+                        action.execute(JSON.parse(json));
                         // uploadProjects(json);
                     }
 
