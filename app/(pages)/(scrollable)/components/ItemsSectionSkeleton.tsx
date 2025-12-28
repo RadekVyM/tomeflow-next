@@ -8,15 +8,14 @@ export default function ItemsSectionSkeleton(props: {
     itemsCount?: number,
 }) {
     return (
-        <>
+        <section>
             <Skeleton
                 className={cn("font-semibold text-2xl mb-4", props.headingClassName)} />
 
             <CardListSkeleton
-                className="mb-8"
                 withIcon
                 withSubtitle
                 itemsCount={props.itemsCount} />
-        </>
+        </section>
     );
 }

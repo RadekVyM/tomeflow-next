@@ -9,9 +9,10 @@ import { ProjectPageContext } from "@/app/(pages)/(scrollable)/projects/[project
 import useDialog from "@/app/hooks/useDialog";
 import { useAction } from "next-safe-action/hooks";
 import { useContext } from "react";
-import { LuDownload, LuLayoutDashboard, LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
+import { LuDownload, LuImage, LuLayoutDashboard, LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
 import { createBoardAction } from "@/app/actions/boards";
 import { downloadExportedData } from "@/app/services/client/export";
+import ImagesDialog from "@/app/components/images/ImagesDialog";
 
 export default function MoreButton(props: {
     projectId: string,
@@ -35,6 +36,8 @@ export default function MoreButton(props: {
                 onClick={() => setDescriptionEditable(true)}>
                 <LuPencil /> Edit description
             </Button>
+            <ImagesButton
+                projectId={props.projectId} />
             <ExportButton
                 projectId={props.projectId}
                 projectTitle={props.projectTitle} />
@@ -111,6 +114,25 @@ function ExportButton(props: {
             onClick={onExportClick}
             icon={LuDownload}
             title="Export project" />
+    );
+}
+
+function ImagesButton(props: {
+    projectId: string,
+}) {
+    const dialogState = useDialog();
+
+    return (
+        <>
+            <MoreDropdownListButton
+                onClick={dialogState.show}
+                icon={LuImage}
+                title="Images" />
+
+            <ImagesDialog
+                state={dialogState}
+                projectId={props.projectId} />
+        </>
     );
 }
 

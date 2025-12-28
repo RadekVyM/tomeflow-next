@@ -3,7 +3,7 @@
 import useIsDark from "../hooks/useIsDark";
 import { cn } from "../utils/tailwind";
 import { useEffect, useRef, useState } from "react";
-import { LuEye, LuImage, LuPencil, LuSave, LuX } from "react-icons/lu";
+import { LuEye, LuImage, LuPencil, LuSave } from "react-icons/lu";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -11,12 +11,15 @@ import lightStyle from "react-syntax-highlighter/dist/esm/styles/prism/one-light
 import darkStyle from "react-syntax-highlighter/dist/esm/styles/prism/one-dark";
 import rehypeSlug from "rehype-slug";
 import useDialog from "../hooks/useDialog";
-import ImagesDialog from "./ImagesDialog";
-import LocalImage from "./LocalImage";
-import { Dialog } from "./Dialog";
+import UploadImagesDialog from "./images/UploadImagesDialog";
 import { isNullOrWhiteSpace } from "../utils/string";
 import Button from "./input/Button";
 import { DataImage } from "../types/DataImage";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
+import UniversalImage from "./images/UniversalImage";
+import ImagePreviewDialog from "./images/ImagePreviewDialog";
 
 const SAVE_INTERVAL = 5000;
 
@@ -226,7 +229,7 @@ function ImagesButton(props: {
                 <LuImage /> Images
             </Button>
 
-            <ImagesDialog
+            <UploadImagesDialog
                 projectId={props.projectId}
                 state={dialogState}
                 onImageSelected={props.onImageSelected} />
@@ -248,8 +251,8 @@ function MarkdownInternal(props: {
         <article
             className={cn("markdown", props.className)}>
             <Markdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeSlug]}
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeSlug, rehypeKatex]}
                 components={{
                     img(props) {
                         return (
@@ -289,15 +292,12 @@ function MarkdownInternal(props: {
     );
 }
 
-const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 function CustomImage(props: {
     src?: string | Blob,
     alt?: string,
-    title?: string
+    title?: string,
 }) {
     const dialogState = useDialog();
-    const isLocalImage = !!props.src && typeof props.src === "string" && GUID_REGEX.test(props.src);
 
     return (
         <>
@@ -306,38 +306,15 @@ function CustomImage(props: {
                 <button
                     className="mx-auto cursor-pointer hover:opacity-90 transition-opacity"
                     onClick={dialogState.show}>
-                    {props.src && typeof props.src === "string" && isLocalImage ?
-                        <LocalImage
-                            className="rounded-md max-h-[calc(100dvh-10rem)]"
-                            imageId={props.src} /> :
-                        <img
-                            className="rounded-md max-h-[calc(100dvh-10rem)]"
-                            alt={props.alt}
-                            {...props} />}
+                    <UniversalImage
+                        className="rounded-md max-h-[calc(100dvh-10rem)]"
+                        {...props} />
                 </button>
             </span>
 
-            <Dialog
-                ref={dialogState.dialogRef}
+            <ImagePreviewDialog
                 state={dialogState}
-                outerClassName="m-0 p-0"
-                className="relative isolate bg-transparent border-0 w-full h-full grid place-content-center max-h-screen max-w-screen">
-                {props.src && typeof props.src === "string" && isLocalImage ?
-                    <LocalImage
-                        className="max-h-screen max-w-screen"
-                        imageId={props.src} /> :
-                    <img
-                        className="max-h-screen max-w-screen"
-                        {...props} />}
-                
-                <Button
-                    className="absolute top-0 right-0 m-6"
-                    variant="icon-container"
-                    title="Close"
-                    onClick={dialogState.hide}>
-                    <LuX />
-                </Button>
-            </Dialog>
+                {...props} />
         </>
     );
 }

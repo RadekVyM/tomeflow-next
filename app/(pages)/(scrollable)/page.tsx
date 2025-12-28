@@ -21,39 +21,44 @@ export default async function Page() {
                 className="mb-8" />
 
             <div
-                className="flex justify-between items-start mb-4">
-                <h2
-                    className="font-semibold text-2xl">
-                    Recent projects
-                </h2>
+                className="flex flex-col gap-8">
+                <section>
+                    <div
+                        className="flex justify-between items-start mb-4">
+                        <h2
+                            className="font-semibold text-2xl">
+                            Recent projects
+                        </h2>
 
-                <div
-                    className="flex gap-2">
-                    <NewProjectButton
-                        size="sm" />
-                    <Button
-                        href="/projects"
-                        variant="container"
-                        size="sm">
-                        All projects
-                    </Button>
-                </div>
+                        <div
+                            className="flex gap-2">
+                            <NewProjectButton
+                                size="sm" />
+                            <Button
+                                href="/projects"
+                                variant="container"
+                                size="sm">
+                                All projects
+                            </Button>
+                        </div>
+                    </div>
+
+                    <Suspense
+                        fallback={<CardListSkeleton withIcon itemsCount={3} />}>
+                        <ProjectsList />
+                    </Suspense>
+                </section>
+
+                <Suspense
+                    fallback={<ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />}>
+                    <Boards />
+                </Suspense>
+
+                <Suspense
+                    fallback={<ItemsSectionSkeleton headingClassName="max-w-56" itemsCount={5} />}>
+                    <Documents />
+                </Suspense>
             </div>
-
-            <Suspense
-                fallback={<CardListSkeleton className="mb-8" withIcon itemsCount={3} />}>
-                <ProjectsList />
-            </Suspense>
-
-            <Suspense
-                fallback={<ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />}>
-                <Boards />
-            </Suspense>
-
-            <Suspense
-                fallback={<ItemsSectionSkeleton headingClassName="max-w-56" itemsCount={5} />}>
-                <Documents />
-            </Suspense>
         </>
     );
 }
@@ -67,13 +72,12 @@ async function Boards() {
     }
 
     return (
-        <>
+        <section>
             <h2
                 className="font-semibold text-2xl mb-4">
                 Recent boards
             </h2>
-            <CardList
-                className="mb-8">
+            <CardList>
                 {boards.map((board) =>
                     <CardListItem
                         key={board.id}
@@ -83,7 +87,7 @@ async function Boards() {
                         lastSeenDate={new Date(lastSeenAt(board))}
                         icon={LuLayoutDashboard} />)}
             </CardList>
-        </>
+        </section>
     );
 }
 
@@ -96,13 +100,12 @@ async function Documents() {
     }
 
     return (
-        <>
+        <section>
             <h2
                 className="font-semibold text-2xl mb-4">
                 Recent documents
             </h2>
-            <CardList
-                className="mb-8">
+            <CardList>
                 {documents.map((document) =>
                     <CardListItem
                         key={document.id}
@@ -112,7 +115,7 @@ async function Documents() {
                         lastSeenDate={new Date(lastSeenAt(document))}
                         icon={LuFile} />)}
             </CardList>
-        </>
+        </section>
     );
 }
 
@@ -128,7 +131,7 @@ async function ProjectsList(props: {
 
     return (
         <CardList
-            className={cn("mb-8", props.className)}>
+            className={props.className}>
             {projects.map((project) =>
                 <CardListItem
                     key={project.id}

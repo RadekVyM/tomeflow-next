@@ -29,7 +29,6 @@ export default function ImportButton() {
                             json = `[${json}]`;
                         }
                         action.execute(JSON.parse(json));
-                        // uploadProjects(json);
                     }
 
                     document.body.removeChild(input);

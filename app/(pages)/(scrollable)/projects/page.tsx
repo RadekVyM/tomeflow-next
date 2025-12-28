@@ -5,7 +5,6 @@ import NewProjectButton from "@/app/components/project/NewProjectButton";
 import ExportButton from "./components/ExportButton";
 import ImportButton from "./components/ImportButton";
 import { getAllProjects } from "@/app/services/projects";
-import { auth } from "@/auth";
 import CardListItem from "@/app/components/card-list/CardListItem";
 import { lastSeenAt } from "@/app/utils/entities";
 import { LuPackage } from "react-icons/lu";
@@ -13,6 +12,7 @@ import CardList from "@/app/components/card-list/CardList";
 import { Suspense } from "react";
 import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
 import PageLayout from "@/app/components/layout/PageLayout";
+import { getSessionCached } from "@/app/utils/session";
 
 export default async function Page() {
     return (
@@ -57,12 +57,7 @@ function MoreButton(props: {
 async function ProjectsList(props: {
     className?: string,
 }) {
-    const session = await auth();
-
-    if (!session?.user?.id) {
-        return "Not authorized";
-    }
-
+    const session = await getSessionCached();
     const projects = await getAllProjects(session.user.id);
 
     return (

@@ -3,6 +3,7 @@
 import useIsClient from "@/app/hooks/useIsClient";
 import { formatRelativeTime } from "@/app/utils/date";
 import { useEffect, useState } from "react";
+import Skeleton from "../skeleton/Skeleton";
 
 export default function CardListItemTime(props: {
     time: Date,
@@ -18,6 +19,13 @@ export default function CardListItemTime(props: {
 
         return () => clearInterval(interval);
     }, []);
+
+    if (!isClient) {
+        return (
+            <Skeleton
+                className="text-xs max-w-24" />
+        );
+    }
 
     return (
         <small
