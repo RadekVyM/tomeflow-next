@@ -178,7 +178,7 @@ function ImagesContainer(props: {
 }) {
     return (
         <div
-            className={cn("grid items-start grid-cols-[repeat(auto-fill,_minmax(min(calc(var(--spacing)*48),_100%),_1fr))] gap-3", props.className)}>
+            className={cn("grid items-start grid-cols-[repeat(auto-fill,minmax(min(calc(var(--spacing)*48),100%),1fr))] gap-3", props.className)}>
             {props.children}
         </div>
     );

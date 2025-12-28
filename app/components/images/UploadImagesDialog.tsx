@@ -41,6 +41,7 @@ function Content(props: {
         <BaseImagesDialogContent
             state={props.state}
             projectId={props.projectId}
+            selectedImage={selectedImage}
             onImagesChange={resetSelectedImage}
             onImageClick={(image) => setSelectedImage(image)}
             primaryButtonTitle="Select"
