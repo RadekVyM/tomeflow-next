@@ -25,6 +25,7 @@ export default function NewDocumentButton(props: {
             <Button
                 variant={props.nondynamic ? "primary" : "dynamic-primary"}
                 title={isLarge ? undefined : "New document"}
+                size="sm"
                 className={props.className}
                 onClick={dialogState.show}
                 disabled={props.disabled}>

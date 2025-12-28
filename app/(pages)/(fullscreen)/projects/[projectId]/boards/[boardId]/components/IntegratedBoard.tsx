@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import useDialog from "@/app/hooks/useDialog";
 import { isNullOrWhiteSpace } from "@/app/utils/string";
 import Board from "./Board";
@@ -10,6 +10,7 @@ import BoardItemDialog from "./BoardItemDialog";
 import { useAddItem, useAddSection, useBoard, useDeleteSection, useRenameSection, useUpdateItemFromBoard, useUpdateItemPosition, useUpdateSectionPosition } from "./hooks";
 import { ProjectBoard } from "@/app/types/ProjectBoard";
 import BoardSkeleton from "./BoardSkeleton";
+import { BoardPageContext } from "./BoardPageContext";
 
 export default function IntegratedBoard(props: {
     boardId: string,
@@ -50,6 +51,7 @@ function IntegratedBoardInternal(props: {
     const { mutateAsync: updateItemPosition, isPending: isUpdateItemPositionPending } = useUpdateItemPosition(props.board.id);
     const { mutate: updateItem, isPending: isUpdateItemPending } = useUpdateItemFromBoard(props.board.id);
     const { mutateAsync: deleteSection, isPending: isDeleteSectionPending } = useDeleteSection(props.board.id);
+    const { setIsSyncing } = useContext(BoardPageContext);
 
     const isSyncing = isAddSectionPending ||
         isAddItemPending ||
@@ -58,6 +60,8 @@ function IntegratedBoardInternal(props: {
         isUpdateItemPositionPending ||
         isUpdateItemPending ||
         isDeleteSectionPending;
+
+    useEffect(() => setIsSyncing(isSyncing), [isSyncing]);
 
     useEffect(() => {
         if (!itemDialogState.isOpen) {

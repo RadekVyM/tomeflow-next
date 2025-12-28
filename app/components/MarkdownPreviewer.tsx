@@ -307,7 +307,7 @@ function CustomImage(props: {
                     className="mx-auto cursor-pointer hover:opacity-90 transition-opacity"
                     onClick={dialogState.show}>
                     <UniversalImage
-                        className="rounded-md max-h-[calc(100dvh-10rem)]"
+                        className="rounded-lg max-h-[calc(100dvh-10rem)]"
                         {...props} />
                 </button>
             </span>

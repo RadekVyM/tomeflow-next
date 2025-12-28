@@ -9,7 +9,7 @@ import DocumentsBoardsSkeleton from "./components/DocumentsBoardsSkeleton";
 export default function Loading() {
     return (
         <PageLayout
-            breadcrumbs={<BreadcrumbsSkeleton loadedItemsCount={1} />}
+            breadcrumbs={<BreadcrumbsSkeleton loadedItemsCount={0} />}
             pageHeading={<PageHeadingSkeleton className="max-w-60" />}
             actionButtons={
                 <>
@@ -18,6 +18,7 @@ export default function Loading() {
                         disabled />
                     <MoreDropdownButton
                         id="project-more"
+                        size="sm"
                         disabled />
                 </>}>
 

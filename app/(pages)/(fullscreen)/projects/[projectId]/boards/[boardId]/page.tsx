@@ -11,6 +11,10 @@ import BreadcrumbsSkeleton from "@/app/components/skeleton/BreadcrumbsSkeleton";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
 import { notFound } from "next/navigation";
+import { LuCircleCheck, LuFilter } from "react-icons/lu";
+import Button from "@/app/components/input/Button";
+import { BoardPageContextProvider } from "./components/BoardPageContext";
+import SyncingIndicator from "./components/SyncingIndicator";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
@@ -40,55 +44,58 @@ export default async function BoardPage(props: {
     const params = await props.params;
 
     return (
-        <div
-            className="flex flex-col h-dvh max-h-dvh overflow-hidden">
-            <Header
-                className="mb-3">
-                <div
-                    className="grid grid-cols-[calc(100%-var(--spacing)*9)_auto] items-start mt-1.5">
-                    <div
-                        className="flex-1">
+        <BoardPageContextProvider>
+            <div
+                className="flex flex-col h-dvh max-h-dvh overflow-hidden">
+                <Header
+                    className="mb-1 items-end"
+                    leading={
                         <Suspense
-                            fallback={<BreadcrumbsSkeleton loadedItemsCount={2} />}>
+                            fallback={<BreadcrumbsSkeleton loadedItemsCount={1} />}>
                             <SuspendedBreadcrumbs
-                                projectId={params.projectId}
-                                boardId={params.boardId} />
-                        </Suspense>
+                                projectId={params.projectId} />
+                        </Suspense>}>
+                    <div
+                        className="flex justify-between pr-1">
                         <Suspense
-                            fallback={<PageHeadingSkeleton className="max-w-60 mt-3" />}>
+                            fallback={<PageHeadingSkeleton className="max-w-60 mt-1" />}>
                             <SuspendedPageHeading
                                 boardId={params.boardId} />
                         </Suspense>
+
+                        <div
+                            className="flex items-center gap-2">
+                            <SyncingIndicator />
+
+                            <Suspense
+                                fallback={
+                                    <MoreDropdownButton
+                                        id="board-more"
+                                        size="sm"
+                                        disabled />}>
+                                <SuspendedActionButtons
+                                    boardId={params.boardId}/>
+                            </Suspense>
+                        </div>
                     </div>
+                </Header>
 
-                    <Suspense
-                        fallback={
-                            <MoreDropdownButton
-                                id="board-more"
-                                disabled />}>
-                        <SuspendedActionButtons
-                            boardId={params.boardId}/>
-                    </Suspense>
-                </div>
-            </Header>
-
-            <section
-                className="flex-1 overflow-x-auto overflow-y-hidden">
-                <IntegratedBoard
-                    boardId={params.boardId}
-                    projectId={params.projectId} />
-            </section>
-        </div>
+                <section
+                    className="flex-1 overflow-x-auto overflow-y-hidden">
+                    <IntegratedBoard
+                        boardId={params.boardId}
+                        projectId={params.projectId} />
+                </section>
+            </div>
+        </BoardPageContextProvider>
     );
 }
 
 
 async function SuspendedBreadcrumbs(props: {
     projectId: string,
-    boardId: string,
 }) {
     const project = await getProjectCached(props.projectId);
-    const board = await getBoardCached(props.boardId);
 
     return (
         <Breadcrumbs
@@ -96,7 +103,6 @@ async function SuspendedBreadcrumbs(props: {
                 { href: "/", title: "Home" },
                 { href: "/projects", title: "Projects" },
                 { href: `/projects/${props.projectId}`, title: project.title },
-                { href: `/projects/${props.projectId}/boards/${props.boardId}`, title: board.title },
             ]} />
     );
 }

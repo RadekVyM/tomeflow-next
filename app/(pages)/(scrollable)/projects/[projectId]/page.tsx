@@ -44,9 +44,8 @@ export default async function Page(props: {
             <PageLayout
                 breadcrumbs={
                     <Suspense
-                        fallback={<BreadcrumbsSkeleton loadedItemsCount={1} />}>
-                        <SuspendedBreadcrumbs
-                            projectId={params.projectId} />
+                        fallback={<BreadcrumbsSkeleton loadedItemsCount={0} />}>
+                        <SuspendedBreadcrumbs />
                     </Suspense>}
                 pageHeading={
                     <Suspense
@@ -62,6 +61,7 @@ export default async function Page(props: {
                                 disabled />
                             <MoreDropdownButton
                                 id="project-more"
+                                size="sm"
                                 disabled />
                         </>}>
                         <SuspendedActionButtons
@@ -81,17 +81,12 @@ export default async function Page(props: {
     );
 }
 
-async function SuspendedBreadcrumbs(props: {
-    projectId: string,
-}) {
-    const project = await getProjectCached(props.projectId);
-
+async function SuspendedBreadcrumbs() {
     return (
         <Breadcrumbs
             locations={[
                 { href: "/", title: "Home" },
                 { href: "/projects", title: "Projects" },
-                { href: `/projects/${props.projectId}`, title: project.title },
             ]} />
     );
 }

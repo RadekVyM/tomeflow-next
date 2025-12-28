@@ -8,6 +8,7 @@ import Button from "./input/Button";
 
 export function MoreDropdownButton(props: {
     className?: string,
+    size?: "sm" | "default",
     children?: React.ReactNode,
     disabled?: boolean,
     id: string,
@@ -17,6 +18,7 @@ export function MoreDropdownButton(props: {
             className={props.className}
             id="projects-more"
             variant="icon-container"
+            size={props.size}
             title="More"
             icon={LuEllipsisVertical}
             disabled={props.disabled}>

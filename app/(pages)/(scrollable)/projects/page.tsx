@@ -22,7 +22,6 @@ export default async function Page() {
                 <Breadcrumbs
                     locations={[
                         { href: "/", title: "Home" },
-                        { href: "/projects", title: "Projects" },
                     ]} />}
             pageHeading={
                 <PageHeading>
@@ -48,6 +47,7 @@ function MoreButton(props: {
     return (
         <MoreDropdownButton
             id="projects-more"
+            size="sm"
             disabled={props.disabled}>
             <ExportButton />
             <ImportButton />

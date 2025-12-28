@@ -9,7 +9,7 @@ export default function AddSectionButton(props: {
 }) {
     return (
         <Button
-            className="min-w-72 h-full border border-outline-variant rounded-lg place-content-center text-on-surface-muted"
+            className="min-w-72 h-full border border-outline-variant rounded-xl place-content-center text-on-surface-muted"
             onClick={props.onClick}
             disabled={props.disabled}>
             <LuPlus /> New section

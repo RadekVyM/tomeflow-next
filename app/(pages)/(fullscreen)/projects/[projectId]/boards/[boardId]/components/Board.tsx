@@ -5,7 +5,7 @@ import { closestCenter, DndContext, DragOverlay, getFirstCollision, MeasuringStr
 import { arrayMove, defaultAnimateLayoutChanges, horizontalListSortingStrategy, SortableContext, useSortable, verticalListSortingStrategy, type AnimateLayoutChanges } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import { LuEllipsisVertical, LuPlus, LuSquareCheckBig, LuTextCursorInput, LuTrash } from "react-icons/lu";
+import { LuEllipsisVertical, LuSquareCheckBig, LuTextCursorInput, LuTrash } from "react-icons/lu";
 import { createPortal } from "react-dom";
 import DropDownButton from "@/app/components/input/DropdownButton";
 import { cn } from "@/app/utils/tailwind";
@@ -331,7 +331,7 @@ function DroppableContainer(props: {
         <article
             ref={props.isDragOverlay ? undefined : setNodeRef}
             className={cn(
-                "grid grid-rows-[auto_1fr_auto] min-w-72 max-w-72 h-full border border-outline-variant rounded-lg bg-surface-container",
+                "grid grid-rows-[auto_1fr_auto] min-w-72 max-w-72 h-full border border-outline-variant rounded-xl bg-surface-container",
                 isOverContainer && "bg-surface-dim-container",
                 isDragging && "z-10")}
             style={{

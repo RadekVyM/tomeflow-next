@@ -9,19 +9,21 @@ export default function Loading() {
         <div
             className="flex flex-col h-dvh max-h-dvh overflow-hidden">
             <Header
-                className="mb-3"
+                className="mb-1 items-end"
+                leading={
+                    <BreadcrumbsSkeleton loadedItemsCount={1} />}
                 withFallbackUserButton>
                 <div
-                    className="grid grid-cols-[calc(100%-var(--spacing)*9)_auto] items-start mt-1.5">
-                    <div
-                        className="flex-1">
-                        <BreadcrumbsSkeleton loadedItemsCount={2} />
-                        <PageHeadingSkeleton className="max-w-60 mt-3" />
-                    </div>
+                    className="flex justify-between pr-1">
+                    <PageHeadingSkeleton className="max-w-60 mt-1" />
 
-                    <MoreDropdownButton
-                        id="board-more"
-                        disabled />
+                    <div
+                        className="flex items-center gap-4">
+                        <MoreDropdownButton
+                            id="board-more"
+                            size="sm"
+                            disabled />
+                    </div>
                 </div>
             </Header>
 

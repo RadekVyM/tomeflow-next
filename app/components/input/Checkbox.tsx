@@ -21,7 +21,7 @@ export default function Checkbox(props: {
             onClick={props.onClick}>
             <div
                 className={cn(
-                    "border w-5 h-5 rounded-sm grid place-content-center",
+                    "border w-5 h-5 rounded-md grid place-content-center",
                     props.checked ? "bg-primary border-primary" : "bg-surface border-outline")}>
                 {props.checked &&
                     <LuCheck

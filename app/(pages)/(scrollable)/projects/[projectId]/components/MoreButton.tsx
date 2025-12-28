@@ -24,6 +24,7 @@ export default function MoreButton(props: {
     return (
         <MoreDropdownButton
             id="project-more"
+            size="sm"
             disabled={props.disabled}>
             <NewBoardButton
                 projectId={props.projectId} />
