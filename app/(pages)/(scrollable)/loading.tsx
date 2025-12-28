@@ -3,6 +3,7 @@ import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
 import NewProjectButtonSkeleton from "@/app/components/skeleton/NewProjectButtonSkeleton";
 import ItemsSectionSkeleton from "./components/ItemsSectionSkeleton";
 import TimeSkeleton from "@/app/components/skeleton/TimeSkeleton";
+import RecentProjectsHeaderSkeleton from "./components/RecentProjectsHeaderSkeleton";
 
 export default function Loading() {
     return (
@@ -11,30 +12,16 @@ export default function Loading() {
                 className="mb-8" />
 
             <div
-                className="flex justify-between items-start mb-4">
-                <h2
-                    className="font-semibold text-2xl">
-                    Recent projects
-                </h2>
+                className="flex-1 flex flex-col gap-8">
+                <section>
+                    <RecentProjectsHeaderSkeleton />
+                    <CardListSkeleton className="mb-8" withIcon itemsCount={3} />
+                </section>
 
-                <div
-                    className="flex gap-2">
-                    <NewProjectButtonSkeleton
-                        size="sm" />
-                    <Button
-                        variant="container"
-                        size="sm"
-                        disabled>
-                        All projects
-                    </Button>
-                </div>
+                <ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />
+
+                <ItemsSectionSkeleton headingClassName="max-w-56" itemsCount={5} />
             </div>
-
-            <CardListSkeleton className="mb-8" withIcon itemsCount={3} />
-
-            <ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />
-
-            <ItemsSectionSkeleton headingClassName="max-w-56" itemsCount={5} />
         </>
     );
 }

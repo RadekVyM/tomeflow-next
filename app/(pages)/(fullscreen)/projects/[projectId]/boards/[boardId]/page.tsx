@@ -10,13 +10,14 @@ import { cache, Suspense } from "react";
 import BreadcrumbsSkeleton from "@/app/components/skeleton/BreadcrumbsSkeleton";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
+import { notFound } from "next/navigation";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
     const project = await getProject(session.user.id, projectId);
 
     if (!project) {
-        throw new Error("Project not found.");
+        notFound();
     }
 
     return project;
@@ -27,7 +28,7 @@ const getBoardCached = cache(async (boardId: string) => {
     const board = await getBoard(session.user.id, boardId);
 
     if (!board) {
-        throw new Error("Board not found.");
+        notFound();
     }
 
     return board;

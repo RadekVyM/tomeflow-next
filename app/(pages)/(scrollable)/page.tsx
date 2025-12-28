@@ -9,10 +9,11 @@ import { getRecentDocuments } from "@/app/services/documents";
 import { getRecentProjects } from "@/app/services/projects";
 import { lastSeenAt } from "@/app/utils/entities";
 import { getSessionCached } from "@/app/utils/session";
-import { cn } from "@/app/utils/tailwind";
 import { Suspense } from "react";
-import { LuFile, LuLayoutDashboard, LuPackage } from "react-icons/lu";
+import { LuFile, LuLayoutDashboard, LuLayoutGrid, LuPackage } from "react-icons/lu";
 import ItemsSectionSkeleton from "./components/ItemsSectionSkeleton";
+import RecentProjectsHeaderSkeleton from "./components/RecentProjectsHeaderSkeleton";
+import EmptyProjects from "./components/EmptyProjects";
 
 export default async function Page() {
     return (
@@ -21,33 +22,15 @@ export default async function Page() {
                 className="mb-8" />
 
             <div
-                className="flex flex-col gap-8">
-                <section>
-                    <div
-                        className="flex justify-between items-start mb-4">
-                        <h2
-                            className="font-semibold text-2xl">
-                            Recent projects
-                        </h2>
-
-                        <div
-                            className="flex gap-2">
-                            <NewProjectButton
-                                size="sm" />
-                            <Button
-                                href="/projects"
-                                variant="container"
-                                size="sm">
-                                All projects
-                            </Button>
-                        </div>
-                    </div>
-
-                    <Suspense
-                        fallback={<CardListSkeleton withIcon itemsCount={3} />}>
-                        <ProjectsList />
-                    </Suspense>
-                </section>
+                className="flex-1 flex flex-col gap-8">
+                <Suspense
+                    fallback={
+                        <section>
+                            <RecentProjectsHeaderSkeleton />
+                            <CardListSkeleton withIcon itemsCount={3} />
+                        </section>}>
+                    <ProjectsList />
+                </Suspense>
 
                 <Suspense
                     fallback={<ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />}>
@@ -119,6 +102,30 @@ async function Documents() {
     );
 }
 
+function RecentProjectsHeader() {
+    return (
+        <div
+            className="flex justify-between items-start mb-4">
+            <h2
+                className="font-semibold text-2xl">
+                Recent projects
+            </h2>
+
+            <div
+                className="flex gap-2">
+                <NewProjectButton
+                    size="sm" />
+                <Button
+                    href="/projects"
+                    variant="dynamic-container"
+                    size="sm">
+                    <LuLayoutGrid /> <span>All projects</span>
+                </Button>
+            </div>
+        </div>
+    );
+}
+
 async function ProjectsList(props: {
     className?: string,
 }) {
@@ -126,19 +133,24 @@ async function ProjectsList(props: {
     const projects = await getRecentProjects(session.user.id);
 
     if (projects.length === 0) {
-        return <span className="mx-auto text-on-surface-muted text-sm my-3">No projects</span>
+        return (
+            <EmptyProjects />
+        );
     }
 
     return (
-        <CardList
-            className={props.className}>
-            {projects.map((project) =>
-                <CardListItem
-                    key={project.id}
-                    href={`/projects/${project.id}`}
-                    title={project.title}
-                    lastSeenDate={new Date(lastSeenAt(project))}
-                    icon={LuPackage} />)}
-        </CardList>
+        <section>
+            <RecentProjectsHeader />
+            <CardList
+                className={props.className}>
+                {projects.map((project) =>
+                    <CardListItem
+                        key={project.id}
+                        href={`/projects/${project.id}`}
+                        title={project.title}
+                        lastSeenDate={new Date(lastSeenAt(project))}
+                        icon={LuPackage} />)}
+            </CardList>
+        </section>
     );
 }

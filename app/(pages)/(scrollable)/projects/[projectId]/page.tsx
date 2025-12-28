@@ -20,13 +20,15 @@ import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
 import ParagraphSkeleton from "@/app/components/skeleton/ParagraphSkeleton";
 import PageLayout from "@/app/components/layout/PageLayout";
 import DocumentsBoardsSkeleton from "./components/DocumentsBoardsSkeleton";
+import EmptyProject from "./components/EmptyProject";
+import { notFound } from "next/navigation";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
     const project = await getProject(session.user.id, projectId);
 
     if (!project) {
-        throw new Error("Project not found.");
+        notFound();
     }
 
     return project;
@@ -128,11 +130,9 @@ async function SuspendedProjectDescription(props: {
     const project = await getProjectCached(props.projectId);
 
     return (
-        <>
-            <ProjectDescription
-                description={project.description}
-                projectId={props.projectId} />
-        </>
+        <ProjectDescription
+            description={project.description}
+            projectId={props.projectId} />
     );
 }
 
@@ -145,8 +145,11 @@ async function DocumentsBoards(props: {
     const boards = await getAllProjectBoards(session.user.id, props.projectId);
     const hasHeading = !!project.description;
 
-    if (!documents || !boards) {
-        return undefined;
+    if (documents.length === 0 && boards.length === 0 && !hasHeading) {
+        return (
+            <EmptyProject
+                projectId={props.projectId} />
+        );
     }
 
     return (

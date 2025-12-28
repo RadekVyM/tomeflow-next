@@ -11,6 +11,7 @@ import { LuFilePlus } from "react-icons/lu";
 export default function NewDocumentButton(props: {
     className?: string,
     disabled?: boolean,
+    nondynamic?: boolean,
     projectId: string,
 }) {
     const isLarge = useMediaQuery("(width >= 40rem)");
@@ -22,7 +23,7 @@ export default function NewDocumentButton(props: {
     return (
         <>
             <Button
-                variant={"dynamic-primary"}
+                variant={props.nondynamic ? "primary" : "dynamic-primary"}
                 title={isLarge ? undefined : "New document"}
                 className={props.className}
                 onClick={dialogState.show}

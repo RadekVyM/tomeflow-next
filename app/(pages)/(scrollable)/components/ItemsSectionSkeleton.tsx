@@ -8,7 +8,8 @@ export default function ItemsSectionSkeleton(props: {
     itemsCount?: number,
 }) {
     return (
-        <section>
+        <section
+            className={props.className}>
             <Skeleton
                 className={cn("font-semibold text-2xl mb-4", props.headingClassName)} />
 

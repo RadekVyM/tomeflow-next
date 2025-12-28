@@ -11,13 +11,14 @@ import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import PageLayout from "@/app/components/layout/PageLayout";
 import DocumentContentSkeleton from "./components/DocumentContentSkeleton";
+import { notFound } from "next/navigation";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
     const project = await getProject(session.user.id, projectId);
 
     if (!project) {
-        throw new Error("Project not found.");
+        notFound();
     }
 
     return project;
@@ -28,7 +29,7 @@ const getDocumentCached = cache(async (documentId: string) => {
     const document = await getDocument(session.user.id, documentId);
 
     if (!document) {
-        throw new Error("Document not found.");
+        notFound();
     }
 
     return document;

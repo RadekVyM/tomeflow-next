@@ -13,6 +13,7 @@ import { Suspense } from "react";
 import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
 import PageLayout from "@/app/components/layout/PageLayout";
 import { getSessionCached } from "@/app/utils/session";
+import EmptyProjects from "../components/EmptyProjects";
 
 export default async function Page() {
     return (
@@ -59,6 +60,12 @@ async function ProjectsList(props: {
 }) {
     const session = await getSessionCached();
     const projects = await getAllProjects(session.user.id);
+
+    if (projects.length === 0) {
+        return (
+            <EmptyProjects />
+        );
+    }
 
     return (
         <CardList

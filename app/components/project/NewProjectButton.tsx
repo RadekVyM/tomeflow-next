@@ -11,6 +11,7 @@ import Button from "../input/Button";
 export default function NewProjectButton(props: {
     className?: string,
     disabled?: boolean,
+    nondynamic?: boolean,
     size?: "sm" | "default",
 }) {
     const isLarge = useMediaQuery("(width >= 40rem)");
@@ -22,7 +23,7 @@ export default function NewProjectButton(props: {
     return (
         <>
             <Button
-                variant={"dynamic-primary"}
+                variant={props.nondynamic ? "primary" : "dynamic-primary"}
                 size={props.size}
                 title={isLarge ? undefined : "New project"}
                 className={props.className}
