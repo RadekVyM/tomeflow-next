@@ -11,7 +11,7 @@ export default async function Header(props: {
         <header
             className={cn("px-4 py-2 grid grid-cols-[calc(100%-var(--spacing)*12)_auto] pointer-events-none z-10", props.className)}>
             <div
-                className="pointer-events-auto">
+                className={cn(!!props.leading && "pointer-events-auto")}>
                 {props.leading}
             </div>
             <UserButton
