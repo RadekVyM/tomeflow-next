@@ -10,12 +10,12 @@ export default function CardListItemSkeleton(props: {
         <Skeleton
             className={cn("w-full h-full flex flex-col justify-between gap-0 items-start py-3 px-4", props.withIcon && "pb-2", props.className)}>
             <div
-                className="mb-1.5">
+                className="mb-1">
                 <div
                     className="text-lg font-semibold leading-5 h-[1em]" />
                 {props.withSubtitle &&
                     <div
-                        className="text-sm font-semibold mt-1 h-[1em]" />}
+                        className="text-sm font-semibold mt-0.5 h-[1em]" />}
             </div>
             <div
                 className="flex items-center justify-between w-full gap-2">

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Gabarito } from "next/font/google";
 import "@/app/css/animations.css";
 import "@/app/css/button.css";
@@ -19,6 +19,23 @@ const gabarito = Gabarito({
 export const metadata: Metadata = {
     title: "Tomeflow",
     description: "An all-in-one app for note-taking, project management, and task organization, designed to help users streamline their workflow and boost productivity.",
+    openGraph: {
+        title: "Tomeflow",
+        description: "Streamline your workflow and boost productivity.",
+        url: "https://tomeflow.com",
+        siteName: "Tomeflow",
+        locale: "en_US",
+        type: "website",
+    },
+};
+
+export const viewport: Viewport = {
+    themeColor: [
+        { media: "(prefers-color-scheme: dark)", color: "#161921" },
+        { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    ],
+    width: "device-width",
+    initialScale: 1,
 };
 
 export default function RootLayout({

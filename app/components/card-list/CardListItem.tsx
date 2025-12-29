@@ -24,14 +24,14 @@ export default function CardListItem(props: {
                 className={cn("w-full h-full flex flex-col justify-between gap-0 items-start py-3 px-4", Icon && "pb-2", props.innerClassName)}
                 href={props.href}>
                 <div
-                    className="mb-1.5">
+                    className="mb-1">
                     <Title
                         className="text-md font-semibold text-on-surface-container leading-5 line-clamp-2">
                         {props.title}
                     </Title>
                     {props.subtitle &&
                         <span
-                            className="text-sm font-semibold text-on-surface-container-muted line-clamp-1 mt-1">
+                            className="text-sm font-semibold text-on-surface-container-muted line-clamp-1 mt-0.5">
                             {props.subtitle}
                         </span>}
                 </div>
