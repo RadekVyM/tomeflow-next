@@ -192,7 +192,7 @@ function ItemsSection(props: {
         <section
             className={props.className}>
             <h3
-                className={cn("font-semibold text-3xl mb-4", !props.hasHeading && "sr-only")}>
+                className={cn("font-semibold text-2xl mb-4", !props.hasHeading && "sr-only")}>
                 {props.heading}
             </h3>
 

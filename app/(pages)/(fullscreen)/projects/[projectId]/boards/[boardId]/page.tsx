@@ -56,15 +56,15 @@ export default async function BoardPage(props: {
                                 projectId={params.projectId} />
                         </Suspense>}>
                     <div
-                        className="flex justify-between pr-1">
+                        className="flex justify-between items-start pr-1">
                         <Suspense
-                            fallback={<PageHeadingSkeleton className="max-w-60 mt-1" />}>
+                            fallback={<PageHeadingSkeleton className="max-w-60 mt-1 text-3xl" />}>
                             <SuspendedPageHeading
                                 boardId={params.boardId} />
                         </Suspense>
 
                         <div
-                            className="flex items-center gap-2">
+                            className="flex items-center gap-2 mt-2">
                             <SyncingIndicator />
 
                             <Suspense
@@ -113,7 +113,8 @@ async function SuspendedPageHeading(props: {
     const board = await getBoardCached(props.boardId);
 
     return (
-        <PageHeading>
+        <PageHeading
+            className="text-3xl line-clamp-1">
             {board.title}
         </PageHeading>
     );

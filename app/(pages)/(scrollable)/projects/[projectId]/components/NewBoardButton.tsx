@@ -3,6 +3,7 @@
 import { createBoardAction } from "@/app/actions/boards";
 import Button from "@/app/components/input/Button";
 import TextInputDialog from "@/app/components/TextInputDialog";
+import toast from "@/app/components/toast";
 import useDialog from "@/app/hooks/useDialog";
 import { useAction } from "next-safe-action/hooks";
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -13,6 +14,7 @@ export default function NewBoardButton(props: {
     const dialogState = useDialog();
     const action = useAction(createBoardAction, {
         onSuccess: async () => await dialogState.hide(),
+        onError: () => toast("Failed to create a new board"),
     });
 
     return (

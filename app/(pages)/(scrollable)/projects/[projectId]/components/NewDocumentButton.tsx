@@ -3,6 +3,7 @@
 import { createDocumentAction } from "@/app/actions/documents";
 import Button from "@/app/components/input/Button";
 import TextInputDialog from "@/app/components/TextInputDialog";
+import toast from "@/app/components/toast";
 import useDialog from "@/app/hooks/useDialog";
 import useMediaQuery from "@/app/hooks/useMediaQuery";
 import { useAction } from "next-safe-action/hooks";
@@ -18,6 +19,7 @@ export default function NewDocumentButton(props: {
     const dialogState = useDialog();
     const action = useAction(createDocumentAction, {
         onSuccess: async () => await dialogState.hide(),
+        onError: () => toast("Failed to create a new document"),
     });
 
     return (

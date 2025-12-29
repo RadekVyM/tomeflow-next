@@ -6,10 +6,13 @@ import Button from "./input/Button";
 export default function ContentDialog(props: {
     ref: React.RefObject<HTMLDialogElement | null>,
     heading: React.ReactNode,
+    headingContainerAs?: "h2" | "div",
     outerClassName?: string,
     headerClassName?: string,
     onCloseClick?: () => void,
 } & DialogProps) {
+    const Heading = props.headingContainerAs || "h2";
+
     return (
         <Dialog
             ref={props.ref}
@@ -19,7 +22,7 @@ export default function ContentDialog(props: {
             className={cn("px-5 pb-4 thin-scrollbar rounded-2xl bg-surface-container isolate flex flex-col", props.className)}>
             <header
                 className={cn("flex justify-between items-start z-50 bg-inherit pt-4 pb-2", props.headerClassName)}>
-                <h2 className="font-semibold text-xl">{props.heading}</h2>
+                <Heading className="font-semibold text-xl flex-1">{props.heading}</Heading>
                 <Button
                     variant="icon-default"
                     onClick={async () => {

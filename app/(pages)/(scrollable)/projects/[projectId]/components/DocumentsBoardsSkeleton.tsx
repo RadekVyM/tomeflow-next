@@ -26,7 +26,7 @@ function ItemsSectionSkeleton(props: {
         <section
             className={props.className}>
             <Skeleton
-                className={cn("font-semibold text-3xl mb-4", props.headingClassName)} />
+                className={cn("font-semibold text-2xl mb-4", props.headingClassName)} />
 
             <CardListSkeleton
                 withIcon

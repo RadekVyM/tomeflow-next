@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import useDialog from "@/app/hooks/useDialog";
 import { DialogState } from "@/app/types/DialogState";
+import toast from "../toast";
 
 export default function BaseImagesDialogContent(props: {
     state: DialogState,
@@ -120,6 +121,10 @@ function UploadImageButton(props: {
                 dataImage,
             ]);
         }
+        catch (e) {
+            console.error(e);
+            toast("Failed to upload the image");
+        }
         finally {
             await dialogState.hide();
 
@@ -129,7 +134,7 @@ function UploadImageButton(props: {
         }
     }
 
-    // TODO: Dispaly the progress in the UI
+    // TODO: Display the progress in the UI
     useEffect(() => console.log(uploadPercentage), [uploadPercentage]);
 
     return (
@@ -292,6 +297,7 @@ function useDeleteImage(projectId: string, imageId: string) {
             await fetchDelete(`/api/projects/images/${imageId}`);
             await removeDataImageFromCache(imageId);
         },
+        onError: () => toast("Failed to delete the image"),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["images", { projectId }] }),
     });
 }

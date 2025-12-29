@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import useIsClient from "../hooks/useIsClient";
 import TimeSkeleton from "./skeleton/TimeSkeleton";
+import Loop from "../services/client/Loop";
 
 export default function Time(props: {
     className?: string,
@@ -54,40 +55,18 @@ function TimeInternal(props: {
 
 function useTime() {
     const [time, setTime] = useState<Date>(new Date());
-    const loop = useRef<Loop | null>(null);
+    const loopRef = useRef<Loop | null>(null);
 
     useEffect(() => {
-        loop.current = new Loop(() => setTime(new Date()));
-        loop.current.start();
+        loopRef.current = new Loop(() => setTime(new Date()));
+        loopRef.current.start();
 
-        return () => loop.current?.reset();
+        return () => {
+            loopRef.current?.stop();
+            loopRef.current?.dispose();
+            loopRef.current = null;
+        };
     }, []);
 
     return time;
-}
-
-class Loop {
-    #isRunning: boolean = false;
-    #action: () => void;
-
-    constructor(action: () => void) {
-        this.#action = action;
-    }
-
-    start() {
-        this.#isRunning = true;
-        requestAnimationFrame(() => this.#loop());
-    }
-
-    reset() {
-        this.#isRunning = false;
-    }
-
-    #loop() {
-        this.#action();
-
-        if (this.#isRunning) {
-            requestAnimationFrame(() => this.#loop());
-        }
-    }
 }

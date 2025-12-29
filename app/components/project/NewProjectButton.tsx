@@ -7,6 +7,7 @@ import TextInputDialog from "../TextInputDialog";
 import { useAction } from "next-safe-action/hooks";
 import { createProjectAction } from "@/app/actions/projects";
 import Button from "../input/Button";
+import toast from "../toast";
 
 export default function NewProjectButton(props: {
     className?: string,
@@ -18,6 +19,7 @@ export default function NewProjectButton(props: {
     const dialogState = useDialog();
     const action = useAction(createProjectAction, {
         onSuccess: async () => await dialogState.hide(),
+        onError: () => toast("Failed to create a new project"),
     });
 
     return (

@@ -26,7 +26,7 @@ export default function CardListItem(props: {
                 <div
                     className="mb-1.5">
                     <Title
-                        className="text-lg font-semibold text-on-surface-container leading-5 line-clamp-2">
+                        className="text-md font-semibold text-on-surface-container leading-5 line-clamp-2">
                         {props.title}
                     </Title>
                     {props.subtitle &&

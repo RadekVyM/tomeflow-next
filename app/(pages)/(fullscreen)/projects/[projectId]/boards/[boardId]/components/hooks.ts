@@ -1,8 +1,10 @@
 "use client";
 
+import toast from "@/app/components/toast";
 import { fetchDelete, fetchPost, fetchPut } from "@/app/services/client/fetch";
 import { ProjectBoard } from "@/app/types/ProjectBoard";
 import { ProjectBoardItem } from "@/app/types/ProjectBoardItem";
+import { SimpleProjectBoardSection } from "@/app/types/ProjectBoardSection";
 import { isNullOrWhiteSpace } from "@/app/utils/string";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -21,6 +23,21 @@ export function useInvalidateBoard(boardId: string) {
     return async () => await queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
 }
 
+export function useSections(boardId: string) {
+    return useQuery({
+        queryKey: ["board-sections", { boardId }],
+        queryFn: () => fetch(`/api/projects/boards/${boardId}/sections`)
+            .then((res) => res.json())
+            .then((data) => {
+                const sections = data as Array<SimpleProjectBoardSection>;
+
+                sections.sort((a, b) => a.position - b.position);
+
+                return sections;
+            }),
+    });
+}
+
 export function useAddSection(boardId: string) {
     const queryClient = useQueryClient();
 
@@ -36,7 +53,11 @@ export function useAddSection(boardId: string) {
                 ...data,
             });
         },
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
+        onError: () => toast("Failed to add a new section"),
+        onSettled: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+            await queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+        },
     });
 }
 
@@ -52,6 +73,7 @@ export function useUpdateSectionPosition(boardId: string) {
                 `/api/projects/board-sections/${data.sectionId}`,
                 { position: data.position });
         },
+        onError: () => toast("Failed to update the section position"),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
     });
 }
@@ -68,7 +90,11 @@ export function useRenameSection(boardId: string) {
                 `/api/projects/board-sections/${data.sectionId}`,
                 { title: data.title });
         },
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
+        onError: () => toast("Failed to rename the section"),
+        onSettled: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+            await queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+        },
     });
 }
 
@@ -82,7 +108,11 @@ export function useDeleteSection(boardId: string) {
             await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
             await fetchDelete(`/api/projects/board-sections/${data.sectionId}`);
         },
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
+        onError: () => toast("Failed to delete the section"),
+        onSettled: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+            await queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+        },
     });
 }
 
@@ -117,6 +147,7 @@ export function useAddItem(boardId: string) {
                 ...data,
             });
         },
+        onError: () => toast("Failed to add a new item"),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
     });
 }
@@ -139,6 +170,7 @@ export function useUpdateItem(boardId: string, itemId: string) {
                 .then((res) => res.json())
                 .then((data) => data as ProjectBoardItem);
         },
+        onError: () => toast("Failed to update the item"),
         onSuccess: (data) => {
             queryClient.setQueryData(["board-item", { itemId }], data);
             queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, data.id, data));
@@ -161,6 +193,7 @@ export function useUpdateItemFromBoard(boardId: string) {
                 .then((res) => res.json())
                 .then((data) => data as ProjectBoardItem);
         },
+        onError: () => toast("Failed to update the item"),
         onSuccess: (data) => queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, data.id, data)),
     });
 }
@@ -179,7 +212,9 @@ export function useUpdateItemPosition(boardId: string) {
                     position: data.position,
                     sectionId: data.targetSectionId,
                 });
+            await queryClient.invalidateQueries({ queryKey: ["board-item", { itemId: data.itemId }] });
         },
+        onError: () => toast("Failed to update the item position"),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
     });
 }
@@ -198,6 +233,7 @@ export function useDeleteItem(boardId: string, itemId: string) {
 
             await fetchDelete(`/api/projects/board-items/${itemId}`);
         },
+        onError: () => toast("Failed to delete the item"),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
     });
 }
@@ -217,6 +253,7 @@ export function useAddCheckItem(itemId: string) {
                 ...data,
             });
         },
+        onError: () => toast("Failed to add a new item to the checklist"),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
     });
 }
@@ -233,6 +270,7 @@ export function useUpdateCheckItem(itemId: string) {
                 `/api/projects/board-check-items/${data.checkItemId}`,
                 { position: data.position, isDone: data.isDone, title: data.title });
         },
+        onError: () => toast("Failed to update the item"),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
     });
 }
@@ -247,6 +285,7 @@ export function useDeleteCheckItem(itemId: string) {
             await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             await fetchDelete(`/api/projects/board-check-items/${checkItemId}`);
         },
+        onError: () => toast("Failed to delete the item"),
         onSettled: () => queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
     });
 }

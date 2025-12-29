@@ -10,7 +10,7 @@ import Handle from "./Handle";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { cn } from "@/app/utils/tailwind";
 import { createPortal } from "react-dom";
-import { LuEllipsisVertical, LuSave, LuTrash } from "react-icons/lu";
+import { LuEllipsisVertical, LuSave, LuTrash, LuX } from "react-icons/lu";
 import BoardTextArea from "./BoardTextArea";
 import DropDownButton from "@/app/components/input/DropdownButton";
 import { confirm } from "@/app/components/confirm";
@@ -266,7 +266,12 @@ function ItemContent(props: {
                 disabled={props.disabled || props.item.isEdited} />
             {props.item.isEdited ?
                 <form
-                    className="mb-1 flex flex-col gap-1"
+                    className="mb-1 flex flex-col gap-1 -my-px"
+                    onBlur={(e) => {
+                        if (!e.relatedTarget || !e.currentTarget.contains(e.relatedTarget)) {
+                            props.toggleIsEdited?.(false);
+                        }
+                    }}
                     onSubmit={(e) => {
                         e.preventDefault();
 
@@ -275,10 +280,11 @@ function ItemContent(props: {
                         }
                     }}>
                     <BoardTextArea
-                        className="w-full"
+                        className="w-full px-1.5"
                         placeholder="Title"
                         value={editedTitle}
-                        onChange={setEditedTitle} />
+                        onChange={setEditedTitle}
+                        focusOnDisplay />
                     <div
                         className="flex gap-1">
                         <Button
@@ -290,10 +296,11 @@ function ItemContent(props: {
                         </Button>
                         <Button
                             size="sm"
-                            variant="container"
+                            variant="icon-container"
+                            title="Cancel"
                             disabled={props.disabled}
                             onClick={() => props.toggleIsEdited?.(false)}>
-                            Cancel
+                            <LuX />
                         </Button>
                     </div>
                 </form> :

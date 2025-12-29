@@ -29,7 +29,8 @@ export default async function Page() {
                 </PageHeading>}
             actionButtons={
                 <>
-                    <NewProjectButton />
+                    <NewProjectButton
+                        size="sm" />
                     <MoreButton />
                 </>}>
 

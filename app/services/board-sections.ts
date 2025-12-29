@@ -2,7 +2,22 @@ import { db } from "@/db";
 import { projectBoardSections } from "@/db/schema";
 import { and, asc, eq } from "drizzle-orm";
 
+export async function getBoardSectionTitle(userId: string, sectionId: string) {
+    return await db.query.projectBoardSections.findFirst({
+        where: and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.id, sectionId)),
+        columns: {
+            title: true,
+        },
+    });
+}
+
 export async function getBoardSections(userId: string, boardId: string) {
+    return await db.query.projectBoardSections.findMany({
+        where: and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.parentId, boardId)),
+    });
+}
+
+export async function getBoardSectionsWithItems(userId: string, boardId: string) {
     return await db.query.projectBoardSections.findMany({
         where: and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.parentId, boardId)),
         with: {

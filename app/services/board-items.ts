@@ -6,6 +6,11 @@ export async function getBoardItem(userId: string, itemId: string) {
     return await db.query.projectBoardItems.findFirst({
         where: and(eq(projectBoardItems.userId, userId), eq(projectBoardItems.id, itemId)),
         with: {
+            section: {
+                columns: {
+                    title: true,
+                }
+            },
             checkItems: { },
         },
     });

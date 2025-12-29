@@ -13,6 +13,7 @@ import { LuDownload, LuImage, LuLayoutDashboard, LuPencil, LuTextCursorInput, Lu
 import { createBoardAction } from "@/app/actions/boards";
 import { downloadExportedData } from "@/app/services/client/export";
 import ImagesDialog from "@/app/components/images/ImagesDialog";
+import toast from "@/app/components/toast";
 
 export default function MoreButton(props: {
     projectId: string,
@@ -55,6 +56,7 @@ function RenameButton(props: {
     const dialogState = useDialog();
     const action = useAction(renameProjectAction, {
         onSuccess: async () => await dialogState.hide(),
+        onError: () => toast("Failed to rename the project"),
     });
 
     return (
@@ -82,6 +84,7 @@ function NewBoardButton(props: {
     const dialogState = useDialog();
     const action = useAction(createBoardAction, {
         onSuccess: async () => await dialogState.hide(),
+        onError: () => toast("Failed to create a new board"),
     });
 
     return (
@@ -140,7 +143,9 @@ function ImagesButton(props: {
 function DeleteButton(props: {
     projectId: string,
 }) {
-    const action = useAction(deleteProjectAction);
+    const action = useAction(deleteProjectAction, {
+        onError: () => toast("Failed to delete the project"),
+    });
 
     async function onDeleteClick() {
         if (!await confirm("Delete project", undefined, undefined, true)) {

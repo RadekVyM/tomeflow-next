@@ -31,7 +31,7 @@ export default function CardListItemTime(props: {
         <small
             className="text-xs text-on-surface-container-muted"
             key={timeKey}>
-            {isClient && `Seen ${formatRelativeTime(new Date(props.time))}`}
+            {isClient && `${formatRelativeTime(new Date(props.time))}`}
         </small>
     );
 }

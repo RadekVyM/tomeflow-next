@@ -4,6 +4,7 @@ import { deleteDocumentAction, renameDocumentAction } from "@/app/actions/docume
 import { confirm } from "@/app/components/confirm";
 import { MoreDropdownButton, MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import TextInputDialog from "@/app/components/TextInputDialog";
+import toast from "@/app/components/toast";
 import useDialog from "@/app/hooks/useDialog";
 import { useAction } from "next-safe-action/hooks";
 import { LuTextCursorInput, LuTrash } from "react-icons/lu";
@@ -34,6 +35,7 @@ function RenameButton(props: {
     const dialogState = useDialog();
     const action = useAction(renameDocumentAction, {
         onSuccess: async () => await dialogState.hide(),
+        onError: () => toast("Failed to rename the document"),
     });
 
     return (
@@ -58,7 +60,9 @@ function RenameButton(props: {
 function DeleteButton(props: {
     documentId: string,
 }) {
-    const action = useAction(deleteDocumentAction);
+    const action = useAction(deleteDocumentAction, {
+        onError: () => toast("Failed to delete the document"),
+    });
 
     async function onDeleteClick() {
         if (!await confirm("Delete document", undefined, undefined, true)) {

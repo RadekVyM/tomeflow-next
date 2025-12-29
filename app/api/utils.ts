@@ -14,18 +14,24 @@ export function endpoint<TParams = any, TData = undefined>(
 
         const params = (await context.params ?? {}) as TParams;
 
-        if (schema) {
-            const body = await request.text();
-            const result = schema.safeParse(JSON.parse(body));
+        try {
+            if (schema) {
+                const body = await request.text();
+                const result = schema.safeParse(JSON.parse(body));
 
-            if (!result.success) {
-                return NextResponse.json(result.error.message, { status: 400 });
+                if (!result.success) {
+                    return NextResponse.json(result.error.message, { status: 400 });
+                }
+
+                return await handler({ request, params, data: result.data, userId: request.auth.user?.id! });
             }
 
-            return await handler({ request, params, data: result.data, userId: request.auth.user?.id! });
+            return await handler({ request, params, data: undefined as TData, userId: request.auth.user?.id! });
         }
-
-        return await handler({ request, params, data: undefined as TData, userId: request.auth.user?.id! });
+        catch (e) {
+            console.log(e);
+            return NextResponse.json({ message: "Something bad happened on the server side" }, { status: 500 });
+        }
     });
 }
 

@@ -19,7 +19,8 @@ export default function Loading() {
                 </PageHeading>}
             actionButtons={
                 <>
-                    <NewProjectButtonSkeleton />
+                    <NewProjectButtonSkeleton
+                        size="sm" />
                     <MoreDropdownButton
                         id="projects-more"
                         size="sm"

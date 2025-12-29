@@ -7,10 +7,10 @@ export default function LoadingSpinner(props: {
 
     return (
         <div
-            className={cn("grid place-content-center h-full flex-1", props.className)}>
+            className={cn("grid place-content-center h-full flex-1 text-on-surface-muted", props.className)}>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8 text-on-surface-muted"
+                className="w-8 h-8"
                 viewBox="0 0 24 24">
                 <g stroke="currentcolor">
                     <circle cx="12" cy="12" r="9.5" fill="none" strokeLinecap="round" strokeWidth="3">

@@ -1,12 +1,12 @@
 import { endpoint, ok } from "@/app/api/utils";
-import { getBoardSections } from "@/app/services/board-sections";
+import { getBoardSectionsWithItems } from "@/app/services/board-sections";
 import { ProjectBoard } from "@/app/types/ProjectBoard";
 import { lastSeenAt } from "@/app/utils/entities";
 
 export const GET = endpoint<{ boardId: string }>(async ({ params, userId }) => {
     const { boardId } = params;
 
-    const sections = await getBoardSections(userId, boardId);
+    const sections = await getBoardSectionsWithItems(userId, boardId);
 
     const board: ProjectBoard = {
         id: boardId,

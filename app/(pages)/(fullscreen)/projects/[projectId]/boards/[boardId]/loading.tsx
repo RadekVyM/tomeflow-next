@@ -14,11 +14,11 @@ export default function Loading() {
                     <BreadcrumbsSkeleton loadedItemsCount={1} />}
                 withFallbackUserButton>
                 <div
-                    className="flex justify-between pr-1">
-                    <PageHeadingSkeleton className="max-w-60 mt-1" />
+                    className="flex justify-between items-start pr-1">
+                    <PageHeadingSkeleton className="max-w-60 mt-1 text-3xl" />
 
                     <div
-                        className="flex items-center gap-4">
+                        className="flex items-center gap-2 mt-2">
                         <MoreDropdownButton
                             id="board-more"
                             size="sm"

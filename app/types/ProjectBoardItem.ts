@@ -3,6 +3,7 @@ import { SimpleProjectBoardCheckItem } from "./ProjectBoardCheckItem";
 export type ProjectBoardItem = {
     id: string,
     sectionId: string,
+    sectionTitle: string,
     title: string,
     description?: string,
     position: number,

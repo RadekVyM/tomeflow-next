@@ -8,3 +8,11 @@ export type ProjectBoardSection = {
     createdAt: number,
     updatedAt: number,
 }
+
+export type SimpleProjectBoardSection = {
+    id: string,
+    title: string,
+    position: number,
+    createdAt: number,
+    updatedAt: number,
+}

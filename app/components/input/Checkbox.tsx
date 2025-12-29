@@ -21,11 +21,10 @@ export default function Checkbox(props: {
             onClick={props.onClick}>
             <div
                 className={cn(
-                    "border w-5 h-5 rounded-md grid place-content-center",
+                    "border w-5 h-5 rounded-md grid place-content-center transition-all duration-200",
                     props.checked ? "bg-primary border-primary" : "bg-surface border-outline")}>
-                {props.checked &&
-                    <LuCheck
-                        className="text-on-primary" />}
+                <LuCheck
+                    className={cn("text-on-primary transition-all duration-200", !props.checked && "opacity-0")} />
             </div>
         </Button>
     );

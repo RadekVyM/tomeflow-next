@@ -1,15 +1,18 @@
-"use client"
+"use client";
 
 import { signOutAction } from "@/app/actions/auth";
 import { User } from "next-auth";
 import { LuLogOut } from "react-icons/lu";
 import { useAction } from "next-safe-action/hooks";
 import Button from "../input/Button";
+import toast from "../toast";
 
 export default function UserInfoPopover(props: {
     userInfo: User,
 }) {
-    const signOut = useAction(signOutAction);
+    const signOut = useAction(signOutAction, {
+        onError: () => toast("Failed to sign out"),
+    });
 
     return (
         <article

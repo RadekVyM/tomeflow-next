@@ -1,6 +1,7 @@
 import { endpoint, ok } from "@/app/api/utils";
 import { getBoardItemCheckItems } from "@/app/services/board-check-items";
 import { deleteBoardItem, getBoardItem, updateBoardItem } from "@/app/services/board-items";
+import { getBoardSectionsWithItems, getBoardSectionTitle } from "@/app/services/board-sections";
 import { ProjectBoardItem } from "@/app/types/ProjectBoardItem";
 import { lastSeenAt } from "@/app/utils/entities";
 import { NextResponse } from "next/server";
@@ -28,6 +29,7 @@ export const GET = endpoint<{ itemId: string }>(async ({ params, userId }) => {
     const result: ProjectBoardItem = {
         id: item.id,
         sectionId: item.parentId,
+        sectionTitle: item.section.title,
         title: item.title,
         description: item.description || undefined,
         isDone: item.isDone,
@@ -53,10 +55,12 @@ export const PUT = endpoint<{ itemId: string }, PutItem>(async ({ params, userId
 
     const updatedItem = await updateBoardItem(userId, itemId, data);
     const checkItems = await getBoardItemCheckItems(userId, itemId);
+    const section = await getBoardSectionTitle(userId, updatedItem.parentId);
 
     const item: ProjectBoardItem = {
         id: updatedItem.id,
         sectionId: updatedItem.parentId,
+        sectionTitle: section?.title || "undefined",
         title: updatedItem.title,
         description: updatedItem.description || undefined,
         isDone: updatedItem.isDone,

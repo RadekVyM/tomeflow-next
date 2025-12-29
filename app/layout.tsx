@@ -9,6 +9,7 @@ import { ConfirmDialogs } from "./components/confirm";
 import QueryClientProvider from "./components/react-query/QueryClientProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { Toasts } from "./components/toast";
 
 const gabarito = Gabarito({
     variable: "--font-gabarito-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
                     <Analytics />
                     <SpeedInsights />
                     <ConfirmDialogs />
+                    <Toasts />
                 </body>
             </QueryClientProvider>
         </html>

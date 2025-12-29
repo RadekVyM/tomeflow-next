@@ -2,12 +2,15 @@
 
 import { importProjectsAction } from "@/app/actions/import";
 import { MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
+import toast from "@/app/components/toast";
 import { useAction } from "next-safe-action/hooks";
 import { LuUpload } from "react-icons/lu";
 
 export default function ImportButton() {
     // TODO: Handle wrong inputs and other errors
-    const action = useAction(importProjectsAction);
+    const action = useAction(importProjectsAction, {
+        onError: () => toast("Failed to import the projects"),
+    });
 
     function onImportClick() {
         const input = document.createElement("input");
