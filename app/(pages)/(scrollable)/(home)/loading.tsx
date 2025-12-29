@@ -1,9 +1,7 @@
-import Button from "@/app/components/input/Button";
 import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
-import NewProjectButtonSkeleton from "@/app/components/skeleton/NewProjectButtonSkeleton";
-import ItemsSectionSkeleton from "./components/ItemsSectionSkeleton";
+import ItemsSectionSkeleton from "../components/ItemsSectionSkeleton";
 import TimeSkeleton from "@/app/components/skeleton/TimeSkeleton";
-import RecentProjectsHeaderSkeleton from "./components/RecentProjectsHeaderSkeleton";
+import RecentProjectsHeaderSkeleton from "../components/RecentProjectsHeaderSkeleton";
 
 export default function Loading() {
     return (

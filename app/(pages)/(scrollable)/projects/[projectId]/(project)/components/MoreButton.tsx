@@ -5,7 +5,7 @@ import { confirm } from "@/app/components/confirm";
 import Button from "@/app/components/input/Button";
 import { MoreDropdownButton, MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import TextInputDialog from "@/app/components/TextInputDialog";
-import { ProjectPageContext } from "@/app/(pages)/(scrollable)/projects/[projectId]/components/ProjectPageContext";
+import { ProjectPageContext } from "@/app/(pages)/(scrollable)/projects/[projectId]/(project)/components/ProjectPageContext";
 import useDialog from "@/app/hooks/useDialog";
 import { useAction } from "next-safe-action/hooks";
 import { useContext } from "react";

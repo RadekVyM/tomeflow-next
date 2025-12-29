@@ -11,9 +11,9 @@ import { lastSeenAt } from "@/app/utils/entities";
 import { getSessionCached } from "@/app/utils/session";
 import { Suspense } from "react";
 import { LuFile, LuLayoutDashboard, LuLayoutGrid, LuPackage } from "react-icons/lu";
-import ItemsSectionSkeleton from "./components/ItemsSectionSkeleton";
-import RecentProjectsHeaderSkeleton from "./components/RecentProjectsHeaderSkeleton";
-import EmptyProjects from "./components/EmptyProjects";
+import ItemsSectionSkeleton from "../components/ItemsSectionSkeleton";
+import RecentProjectsHeaderSkeleton from "../components/RecentProjectsHeaderSkeleton";
+import EmptyProjects from "../components/EmptyProjects";
 
 export default async function Page() {
     return (

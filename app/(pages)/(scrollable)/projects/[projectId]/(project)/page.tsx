@@ -1,12 +1,12 @@
 import Breadcrumbs from "@/app/components/Breadcrumbs";
 import CardList from "@/app/components/card-list/CardList";
 import PageHeading from "@/app/components/layout/PageHeading";
-import ProjectDescription from "@/app/(pages)/(scrollable)/projects/[projectId]/components/ProjectDescription";
+import ProjectDescription from "@/app/(pages)/(scrollable)/projects/[projectId]/(project)/components/ProjectDescription";
 import { getProject } from "@/app/services/projects";
 import { cn } from "@/app/utils/tailwind";
 import MoreButton from "./components/MoreButton";
 import NewDocumentButton from "./components/NewDocumentButton";
-import { ProjectPageContextProvider } from "@/app/(pages)/(scrollable)/projects/[projectId]/components/ProjectPageContext";
+import { ProjectPageContextProvider } from "@/app/(pages)/(scrollable)/projects/[projectId]/(project)/components/ProjectPageContext";
 import CardListItem from "@/app/components/card-list/CardListItem";
 import { LuFile, LuLayoutDashboard } from "react-icons/lu";
 import { getAllProjectDocuments } from "@/app/services/documents";
