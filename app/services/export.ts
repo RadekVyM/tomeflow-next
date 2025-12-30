@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { ProjectBoardCheckItemSchema, ProjectBoardItemSchema, projectBoards, ProjectBoardSchema, ProjectBoardSectionSchema, projectDocuments, projects } from "@/db/schema";
+import { ProjectBoardCheckItemSchema, ProjectBoardItemSchema, projectBoards, ProjectBoardSchema, ProjectBoardSectionSchema, projectDocuments, projects, vercelImages } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { ExportedProject } from "../types/export/ExportedProject";
 import { ExportedProjectBoard } from "../types/export/ExportedProjectBoard";
@@ -41,6 +41,9 @@ export async function exportProject(userId: string, projectId: string): Promise<
             }
         }
     });
+    const images = await db.query.vercelImages.findMany({
+        where: and(eq(vercelImages.userId, userId), eq(vercelImages.projectId, projectId)),
+    });
 
     const boards = extractBoards(dbBoards);
 
@@ -58,6 +61,12 @@ export async function exportProject(userId: string, projectId: string): Promise<
         boardSections: boards.boardSections.get(project.id) || [],
         boardItems: boards.boardItems.get(project.id) || [],
         boardCheckItems: boards.boardCheckItems.get(project.id) || [],
+        images: images.map((img) => ({
+            id: img.id,
+            projectId: img.projectId,
+            title: img.title,
+            blobUrl: img.blobUrl,
+        })),
     };
 }
 
@@ -87,6 +96,9 @@ export async function exportProjectsByUser(userId: string): Promise<Array<Export
             }
         }
     });
+    const dbImages = await db.query.vercelImages.findMany({
+        where: and(eq(vercelImages.userId, userId)),
+    });
 
     const boards = extractBoards(dbBoards);
 
@@ -104,6 +116,12 @@ export async function exportProjectsByUser(userId: string): Promise<Array<Export
         boardSections: boards.boardSections.get(p.id) || [],
         boardItems: boards.boardItems.get(p.id) || [],
         boardCheckItems: boards.boardCheckItems.get(p.id) || [],
+        images: dbImages.filter((img) => img.projectId === p.id).map((img) => ({
+            id: img.id,
+            projectId: img.projectId,
+            title: img.title,
+            blobUrl: img.blobUrl,
+        })),
     }));
 }
 
