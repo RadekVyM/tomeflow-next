@@ -443,6 +443,12 @@ function optimisticUpdateItemPosition(queryClient: QueryClient, boardId: string,
             position: i,
         }));
 
+        queryClient.setQueryData(["board-item", { itemId }], (old: ProjectBoardItem) => ({
+            ...old,
+            sectionId: targetSection.id,
+            sectionTitle: targetSection.title,
+        }));
+
         return {
             ...old,
             sections,

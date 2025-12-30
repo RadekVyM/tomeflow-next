@@ -120,6 +120,17 @@ function EditableTitle(props: {
         setEditedTitle(props.item.title);
     }, [props.item.title, isEdited]);
 
+    function saveChanges() {
+        if (!isEdited) {
+            return;
+        }
+
+        if (props.item.title !== editedTitle) {
+            props.changeTitle?.(editedTitle);
+        }
+        setIsEdited(false);
+    }
+
     if (!isEdited) {
         return (
             <Button
@@ -132,20 +143,15 @@ function EditableTitle(props: {
 
     return (
         <form
-            className="-my-1 -ml-1 flex flex-col gap-1 w-full"
+            className="-mt-1 -mb-2 -ml-1 w-full"
             onBlur={(e) => {
                 if (!e.relatedTarget || !e.currentTarget.contains(e.relatedTarget)) {
-                    setIsEdited(false);
+                    saveChanges();
                 }
             }}
             onSubmit={(e) => {
                 e.preventDefault();
-
-                if (props.item.title !== editedTitle) {
-                    props.changeTitle?.(editedTitle);
-                }
-
-                setIsEdited(false);
+                saveChanges();
             }}>
             <BoardTextArea
                 className="w-full py-0.5 px-1.5"
@@ -153,23 +159,6 @@ function EditableTitle(props: {
                 value={editedTitle}
                 onChange={setEditedTitle}
                 focusOnDisplay />
-            <div
-                className="flex gap-1">
-                <Button
-                    size="sm"
-                    variant="primary"
-                    type="submit"
-                    disabled={props.item.title === editedTitle}>
-                    <LuSave /> Save
-                </Button>
-                <Button
-                    size="sm"
-                    variant="icon-container"
-                    title="Cancel"
-                    onClick={() => setIsEdited(false)}>
-                    <LuX />
-                </Button>
-            </div>
         </form>
     );
 }

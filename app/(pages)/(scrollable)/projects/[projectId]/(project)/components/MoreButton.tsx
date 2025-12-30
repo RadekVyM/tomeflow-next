@@ -9,11 +9,12 @@ import { ProjectPageContext } from "@/app/(pages)/(scrollable)/projects/[project
 import useDialog from "@/app/hooks/useDialog";
 import { useAction } from "next-safe-action/hooks";
 import { useContext } from "react";
-import { LuDownload, LuImage, LuLayoutDashboard, LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
+import { LuCircleCheck, LuDownload, LuImage, LuLayoutDashboard, LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
 import { createBoardAction } from "@/app/actions/boards";
 import { downloadExportedData } from "@/app/services/client/export";
 import ImagesDialog from "@/app/components/images/ImagesDialog";
 import toast from "@/app/components/toast";
+import LoadingIcon from "@/app/components/LoadingIcon";
 
 export default function MoreButton(props: {
     projectId: string,
@@ -110,7 +111,16 @@ function ExportButton(props: {
     projectTitle: string,
 }) {
     async function onExportClick() {
-        await downloadExportedData(`/api/projects/${props.projectId}/export`, props.projectTitle.replace(" ", "_"));
+        const closeToast = toast("Exporting project...", "permanent", LoadingIcon);
+
+        try {
+            await downloadExportedData(`/api/projects/${props.projectId}/export`, props.projectTitle.replace(" ", "_"));
+            closeToast?.("Exported projects successfully", LuCircleCheck);
+        }
+        catch (e) {
+            console.error(e);
+            closeToast?.("Failed exporting projects");
+        }
     }
 
     return (

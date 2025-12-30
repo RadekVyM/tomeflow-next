@@ -1,15 +1,23 @@
 "use client";
 
 import { importProjectsAction } from "@/app/actions/import";
+import LoadingIcon from "@/app/components/LoadingIcon";
 import { MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import toast from "@/app/components/toast";
 import { useAction } from "next-safe-action/hooks";
-import { LuUpload } from "react-icons/lu";
+import { useRef } from "react";
+import { IconType } from "react-icons";
+import { LuCircleCheck, LuUpload } from "react-icons/lu";
 
 export default function ImportButton() {
-    // TODO: Handle wrong inputs and other errors
+    // TODO: Handle invalid inputs
+    const closeToastRef = useRef<(title: string, icon?: IconType) => boolean>(null);
     const action = useAction(importProjectsAction, {
-        onError: () => toast("Failed to import the projects"),
+        onSuccess: () => {
+            closeToastRef.current?.("Imported projects successfully", LuCircleCheck);
+            closeToastRef.current = null;
+        },
+        onError: () => errorToast(),
     });
 
     function onImportClick() {
@@ -22,19 +30,36 @@ export default function ImportButton() {
             const file = input?.files?.[0];
 
             if (file) {
+                closeToastRef.current = toast("Importing projects...", "permanent", LoadingIcon) || null;
+
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const data = e.target?.result?.toString();
+                    try {
+                        const data = e.target?.result?.toString();
 
-                    if (data) {
+                        if (!data) {
+                            throw new Error("Data could not be loaded from the file");
+                        }
+
                         let json = data.trim();
                         if (!json.startsWith("[")) {
                             json = `[${json}]`;
                         }
-                        action.execute(JSON.parse(json));
-                    }
+                        const parsedData = JSON.parse(json);
 
-                    document.body.removeChild(input);
+                        if (!parsedData) {
+                            throw new Error("Data could not be parsed");
+                        }
+
+                        action.execute(parsedData);
+                    }
+                    catch (e) {
+                        console.error(e);
+                        errorToast();
+                    }
+                    finally {
+                        document.body.removeChild(input);
+                    }
                 };
                 reader.readAsText(file);
             }
@@ -45,6 +70,11 @@ export default function ImportButton() {
 
         document.body.appendChild(input);
         input.click();
+    }
+
+    function errorToast() {
+        closeToastRef.current?.("Failed importing projects");
+        closeToastRef.current = null;
     }
 
     return (

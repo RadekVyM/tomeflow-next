@@ -254,6 +254,18 @@ function ItemContent(props: {
         setEditedTitle(props.item.title);
     }, [props.item.title, props.item.isEdited]);
 
+    function saveChanges() {
+        if (!props.item.isEdited) {
+            return;
+        }
+
+        if (!props.disabled && props.item.title !== editedTitle) {
+            props.changeTitle?.(editedTitle);
+        }
+
+        props.toggleIsEdited?.(false);
+    }
+
     return (
         <li
             ref={props.ref}
@@ -266,18 +278,15 @@ function ItemContent(props: {
                 disabled={props.disabled || props.item.isEdited} />
             {props.item.isEdited ?
                 <form
-                    className="mb-1 flex flex-col gap-1 -my-px"
+                    className="-mt-px -mb-2"
                     onBlur={(e) => {
                         if (!e.relatedTarget || !e.currentTarget.contains(e.relatedTarget)) {
-                            props.toggleIsEdited?.(false);
+                            saveChanges();
                         }
                     }}
                     onSubmit={(e) => {
                         e.preventDefault();
-
-                        if (!props.disabled && props.item.title !== editedTitle) {
-                            props.changeTitle?.(editedTitle);
-                        }
+                        saveChanges();
                     }}>
                     <BoardTextArea
                         className="w-full px-1.5"
@@ -285,24 +294,6 @@ function ItemContent(props: {
                         value={editedTitle}
                         onChange={setEditedTitle}
                         focusOnDisplay />
-                    <div
-                        className="flex gap-1">
-                        <Button
-                            size="sm"
-                            variant="primary"
-                            type="submit"
-                            disabled={props.disabled || props.item.title === editedTitle}>
-                            <LuSave /> Save
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="icon-container"
-                            title="Cancel"
-                            disabled={props.disabled}
-                            onClick={() => props.toggleIsEdited?.(false)}>
-                            <LuX />
-                        </Button>
-                    </div>
                 </form> :
                 <Button
                     className="py-0.5 px-1.5 w-full block wrap-anywhere max-w-full text-start"
