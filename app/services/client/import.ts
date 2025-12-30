@@ -63,11 +63,16 @@ async function uploadImages(
 ) {
     console.log("uploading images");
 
+    console.log(projectIdsMapping, projectIdsMapping.entries());
+    console.log(imageIdsMapping, imageIdsMapping.entries());
+
     for await (const image of getImages(zip)) {
         const id = imageIdsMapping.get(image.id);
         const project = projects.find((p) => p.images?.find((img) => img.id === image.id));
         const projectId = project ? projectIdsMapping.get(project.id) : undefined;
         const vercelImage = project ? project.images?.find((img) => img.id === image.id) : undefined;
+
+        console.log(image.id, id, project, projectId, vercelImage);
 
         if (!id || !project || !projectId || !vercelImage) {
             continue;
