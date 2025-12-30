@@ -63,8 +63,9 @@ async function uploadImages(
 ) {
     console.log("uploading images");
 
-    console.log(projectIdsMapping, projectIdsMapping.entries());
-    console.log(imageIdsMapping, imageIdsMapping.entries());
+    console.log(projects)
+    console.log("projectIdsMapping", [...projectIdsMapping.entries()]);
+    console.log("imageIdsMapping", [...imageIdsMapping.entries()]);
 
     for await (const image of getImages(zip)) {
         const id = imageIdsMapping.get(image.id);
@@ -78,9 +79,9 @@ async function uploadImages(
             continue;
         }
 
-        const pathname = `${id}.${image.blob.type.split("/")[1]}`;
+        const pathname = `${id}.${image.extension}`;
 
-        console.log("uploading:", pathname);
+        console.log("uploading:", image.blob.type, pathname);
 
         const uploadedImage = await upload(pathname, image.blob, {
             access: "public",
@@ -114,7 +115,16 @@ async function* getImages(zip: JSZip) {
     }
 
     for (const [_, file] of Object.entries(files)) {
-        const id = file.name.split(".")[0];
+        if (!file.name.startsWith("images/") || file.name == "images/") {
+            continue;
+        }
+
+        const splitFilePath = file.name.split("/");
+        const splitFileName = splitFilePath[splitFilePath.length - 1].split(".");
+
+        if (splitFileName.length !== 2) {
+            continue;
+        }
 
         console.log("found in zip:", file.name);
 
@@ -122,7 +132,7 @@ async function* getImages(zip: JSZip) {
 
         console.log("extracted blob from zip:", file.name);
 
-        yield { id, blob };
+        yield { id: splitFileName[0], extension: splitFileName[1], blob };
     }
 }
 
