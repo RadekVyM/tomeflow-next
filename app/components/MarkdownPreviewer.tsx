@@ -11,7 +11,7 @@ import lightStyle from "react-syntax-highlighter/dist/esm/styles/prism/one-light
 import darkStyle from "react-syntax-highlighter/dist/esm/styles/prism/one-dark";
 import rehypeSlug from "rehype-slug";
 import useDialog from "../hooks/useDialog";
-import UploadImagesDialog from "./images/UploadImagesDialog";
+import SelectImageDialog from "./images/SelectImageDialog";
 import { isNullOrWhiteSpace } from "../utils/string";
 import Button from "./input/Button";
 import { DataImage } from "../types/DataImage";
@@ -229,7 +229,7 @@ function ImagesButton(props: {
                 <LuImage /> Images
             </Button>
 
-            <UploadImagesDialog
+            <SelectImageDialog
                 projectId={props.projectId}
                 state={dialogState}
                 onImageSelected={props.onImageSelected} />

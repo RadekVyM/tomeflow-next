@@ -2,6 +2,7 @@
 
 import { VercelImage } from "@/app/types/VercelImage";
 import { DataImage } from "../../types/DataImage";
+import { fetchPost } from "./fetch";
 // TODO: Delete unused images
 
 export async function filterNonCachedIds(imageIds: Array<string>) {
@@ -15,6 +16,21 @@ export async function filterNonCachedIds(imageIds: Array<string>) {
     }
 
     return [...imageIdsSet];
+}
+
+export async function ensureCachedImages(imageIds: Array<string>, onFetchedImage?: (dataImage: DataImage) => void) {
+    const imageIdsToFetch = await filterNonCachedIds(imageIds);
+
+    if (imageIdsToFetch.length > 0) {
+        const dtos = await fetchPost(`/api/projects/images`, { imageIds: imageIdsToFetch })
+            .then((res) => res.json())
+            .then((data) => (data || []) as Array<VercelImage>);
+
+        for (const dto of dtos) {
+            const dataImage = await cacheDataImage(dto);
+            onFetchedImage?.(dataImage);
+        }
+    }
 }
 
 export async function getCachedImages(imageIds: Array<string>) {

@@ -6,10 +6,9 @@ import LocalImage from "./LocalImage";
 import { cn } from "@/app/utils/tailwind";
 import { DataImage, SimpleDataImage } from "@/app/types/DataImage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchDelete, fetchPost } from "@/app/services/client/fetch";
-import { cacheDataImage, filterNonCachedIds, getCachedImages, removeDataImageFromCache } from "@/app/services/client/images";
+import { fetchDelete } from "@/app/services/client/fetch";
+import { cacheDataImage, ensureCachedImages, getCachedImages, removeDataImageFromCache } from "@/app/services/client/images";
 import { confirm } from "../confirm";
-import { VercelImage } from "@/app/types/VercelImage";
 import Skeleton from "../skeleton/Skeleton";
 import { FileSelection, LargeFileSelection } from "../input/FileSelection";
 import ContentDialog from "../ContentDialog";
@@ -268,19 +267,9 @@ function useImages(projectId: string) {
                 .then((data) => (data || []) as Array<SimpleDataImage>);
 
             const imageIds = simpleDtos.map((s) => s.id);
-            const imageIdsToFetch = await filterNonCachedIds(imageIds);
-
-            if (imageIdsToFetch.length > 0) {
-                const dtos = await fetchPost(`/api/projects/images`, { imageIds: imageIdsToFetch })
-                    .then((res) => res.json())
-                    .then((data) => (data || []) as Array<VercelImage>);
-
-                for (const dto of dtos) {
-                    const dataImage = await cacheDataImage(dto);
-                    queryClient.setQueryData(["image", { imageId: dto.id }], dataImage);
-                }
-            }
-
+            await ensureCachedImages(imageIds, (dataImage) => {
+                queryClient.setQueryData(["image", { imageId: dataImage.id }], dataImage);
+            });
             return await getCachedImages(imageIds);
         },
     });

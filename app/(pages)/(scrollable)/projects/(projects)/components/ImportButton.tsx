@@ -4,10 +4,13 @@ import { importProjectsAction } from "@/app/actions/import";
 import LoadingIcon from "@/app/components/LoadingIcon";
 import { MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import toast from "@/app/components/toast";
+import { importProjectsFromZip } from "@/app/services/client/import";
 import { useAction } from "next-safe-action/hooks";
 import { useRef } from "react";
 import { IconType } from "react-icons";
 import { LuCircleCheck, LuUpload } from "react-icons/lu";
+
+// TODO: The upload state should be managed globally
 
 export default function ImportButton() {
     // TODO: Handle invalid inputs
@@ -15,7 +18,7 @@ export default function ImportButton() {
     const action = useAction(importProjectsAction, {
         onSuccess: () => {
             closeToastRef.current?.("Imported projects successfully", LuCircleCheck);
-            closeToastRef.current = null;
+            closeToastRef.current = toast("Importing images...", "permanent", LoadingIcon) || null;
         },
         onError: () => errorToast(),
     });
@@ -23,47 +26,32 @@ export default function ImportButton() {
     function onImportClick() {
         const input = document.createElement("input");
         input.type = "file";
-        input.accept = ".json";
+        input.accept = ".zip";
         input.style.display = "none";
 
-        input.addEventListener("change", () => {
+        input.addEventListener("change", async () => {
             const file = input?.files?.[0];
 
-            if (file) {
-                closeToastRef.current = toast("Importing projects...", "permanent", LoadingIcon) || null;
+            closeToastRef.current = toast("Importing projects...", "permanent", LoadingIcon) || null;
 
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const data = e.target?.result?.toString();
+            try {
+                if (!file) {
+                    throw new Error("No file found");
+                }
 
-                        if (!data) {
-                            throw new Error("Data could not be loaded from the file");
-                        }
+                await importProjectsFromZip(file, async (projects) => {
+                    const result = await action.executeAsync(projects);
+                    return result.data;
+                });
 
-                        let json = data.trim();
-                        if (!json.startsWith("[")) {
-                            json = `[${json}]`;
-                        }
-                        const parsedData = JSON.parse(json);
-
-                        if (!parsedData) {
-                            throw new Error("Data could not be parsed");
-                        }
-
-                        action.execute(parsedData);
-                    }
-                    catch (e) {
-                        console.error(e);
-                        errorToast();
-                    }
-                    finally {
-                        document.body.removeChild(input);
-                    }
-                };
-                reader.readAsText(file);
+                closeToastRef.current?.("Imported images successfully", LuCircleCheck);
+                closeToastRef.current = null;
             }
-            else {
+            catch (e) {
+                console.error(e);
+                errorToast();
+            }
+            finally {
                 document.body.removeChild(input);
             }
         });

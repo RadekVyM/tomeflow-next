@@ -28,6 +28,7 @@
     "clsx": "^2.1.1",
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
+    "jszip": "^3.10.1",
     "next": "^16.1.0",
     "next-auth": "^5.0.0-beta.30",
     "next-safe-action": "^8.0.11",

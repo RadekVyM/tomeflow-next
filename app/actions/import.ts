@@ -11,8 +11,10 @@ const importProjectsSchema = z.array(ExportedProjectSchema);
 export const importProjectsAction = authActionClient
     .inputSchema(importProjectsSchema)
     .action(async ({ parsedInput, ctx }) => {
-        await importProjects(ctx.session.user?.id!, parsedInput);
+        const projectIdsMapping = await importProjects(ctx.session.user?.id!, parsedInput);
 
         revalidatePath("/");
         revalidatePath("/projects");
+
+        return projectIdsMapping;
     });

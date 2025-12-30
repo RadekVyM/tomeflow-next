@@ -6,7 +6,7 @@ import BaseImagesDialog from "./BaseImagesDialog";
 import BaseImagesDialogContent from "./BaseImagesDialogContent";
 import { useEffect, useState } from "react";
 
-export default function UploadImagesDialog(props: {
+export default function SelectImageDialog(props: {
     state: DialogState,
     projectId: string,
     onImageSelected?: (image: DataImage) => void,

@@ -46,6 +46,7 @@ type InsertProjectBoardCheckItem = {
 }
 
 export async function importProjects(userId: string, projects: Array<ExportedProject>) {
+    const projectIdsMapping = new Array<{ old: string, new: string }>();
     const projectsToInsert = new Array<InsertProject>();
     const documentsToInsert = new Array<InsertProjectDocument>();
     const boardsToInsert = new Array<InsertProjectBoard>();
@@ -58,6 +59,8 @@ export async function importProjects(userId: string, projects: Array<ExportedPro
         const boardIdsMapping = new Map<string, string>();
         const sectionIdsMapping = new Map<string, string>();
         const itemIdsMapping = new Map<string, string>();
+
+        projectIdsMapping.push({ old: project.id, new: projectId });
 
         projectsToInsert.push({
             id: projectId,
@@ -146,6 +149,8 @@ export async function importProjects(userId: string, projects: Array<ExportedPro
             await insertBoardCheckItems(userId, checkItemsToInsert);
         }
     });
+
+    return projectIdsMapping;
 }
 
 async function insertProjects(userId: string, newProjects: Array<InsertProject>) {
