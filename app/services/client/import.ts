@@ -7,7 +7,7 @@ import { isNullOrWhiteSpace } from "@/app/utils/string";
 
 const ExportedProjectsSchema = z.array(ExportedProjectSchema);
 
-export async function importProjectsFromZip(file: File, uploadProjects: (projects: Array<ExportedProject>) => Promise<Array<{ new: string, old: string }> | undefined>): Promise<void> {
+export async function importProjectsFromZip(file: File, uploadProjects: (projects: Array<ExportedProject>) => Promise<Array<{ new: string, old: string }> | undefined>) {
     const newZip = new JSZip();
     const zip = await newZip.loadAsync(file);
 
@@ -21,16 +21,51 @@ export async function importProjectsFromZip(file: File, uploadProjects: (project
     });
     const projectIdsMapping = await uploadProjects(projectsToUpload);
 
-    if (projectIdsMapping === undefined) {
-        console.log("did not get projectIdsMapping back");
-        return;
-    }
-
-    await uploadImages(
-        zip,
+    return {
         projects,
-        new Map(projectIdsMapping.map((value) => [value.old, value.new])),
-        imageIdsMapping);
+        imageIdsMapping,
+        projectIdsMapping: projectIdsMapping ? new Map(projectIdsMapping.map((value) => [value.old, value.new])) : undefined,
+    };
+}
+
+export async function uploadImages(
+    file: File,
+    projects: Array<ExportedProject>,
+    projectIdsMapping: Map<string, string>,
+    imageIdsMapping: Map<string, string>,
+) {
+    const newZip = new JSZip();
+    const zip = await newZip.loadAsync(file);
+
+    for await (const image of getImages(zip)) {
+        const id = imageIdsMapping.get(image.id);
+        const project = projects.find((p) => p.images?.find((img) => img.id === image.id));
+        const projectId = project ? projectIdsMapping.get(project.id) : undefined;
+        const vercelImage = project ? project.images?.find((img) => img.id === image.id) : undefined;
+
+        if (!id || !project || !projectId || !vercelImage) {
+            continue;
+        }
+
+        const pathname = `${id}.${image.extension}`;
+
+        const uploadedImage = await upload(pathname, image.blob, {
+            access: "public",
+            handleUploadUrl: "/api/projects/images/upload",
+            clientPayload: JSON.stringify({
+                id: id,
+                projectId: projectId,
+                title: vercelImage.title,
+            }),
+        });
+
+        await cacheDataImage({
+            id: id,
+            projectId: projectId,
+            title: vercelImage.title,
+            vercelUrl: uploadedImage.url,
+        }, image.blob);
+    }
 }
 
 async function getProjects(zip: JSZip): Promise<Array<ExportedProject>> {
@@ -55,62 +90,10 @@ async function getProjects(zip: JSZip): Promise<Array<ExportedProject>> {
     return result.data;
 }
 
-async function uploadImages(
-    zip: JSZip,
-    projects: Array<ExportedProject>,
-    projectIdsMapping: Map<string, string>,
-    imageIdsMapping: Map<string, string>,
-) {
-    console.log("uploading images");
-
-    console.log(projects)
-    console.log("projectIdsMapping", [...projectIdsMapping.entries()]);
-    console.log("imageIdsMapping", [...imageIdsMapping.entries()]);
-
-    for await (const image of getImages(zip)) {
-        const id = imageIdsMapping.get(image.id);
-        const project = projects.find((p) => p.images?.find((img) => img.id === image.id));
-        const projectId = project ? projectIdsMapping.get(project.id) : undefined;
-        const vercelImage = project ? project.images?.find((img) => img.id === image.id) : undefined;
-
-        console.log(image.id, id, project, projectId, vercelImage);
-
-        if (!id || !project || !projectId || !vercelImage) {
-            continue;
-        }
-
-        const pathname = `${id}.${image.extension}`;
-
-        console.log("uploading:", image.blob.type, pathname);
-
-        const uploadedImage = await upload(pathname, image.blob, {
-            access: "public",
-            handleUploadUrl: "/api/projects/images/upload",
-            clientPayload: JSON.stringify({
-                id: id,
-                projectId: projectId,
-                title: vercelImage.title,
-            }),
-        });
-
-        console.log("uploaded:", pathname);
-
-        await cacheDataImage({
-            id: id,
-            projectId: projectId,
-            title: vercelImage.title,
-            vercelUrl: uploadedImage.url,
-        }, image.blob);
-
-        console.log("cached:", pathname);
-    }
-}
-
 async function* getImages(zip: JSZip) {
     const files = zip.folder("images")?.files;
 
     if (!files) {
-        console.log("files folder not found")
         return;
     }
 
@@ -126,11 +109,7 @@ async function* getImages(zip: JSZip) {
             continue;
         }
 
-        console.log("found in zip:", file.name);
-
         const blob = await file.async("blob");
-
-        console.log("extracted blob from zip:", file.name);
 
         yield { id: splitFileName[0], extension: splitFileName[1], blob };
     }

@@ -4,7 +4,8 @@ import { importProjectsAction } from "@/app/actions/import";
 import LoadingIcon from "@/app/components/LoadingIcon";
 import { MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import toast from "@/app/components/toast";
-import { importProjectsFromZip } from "@/app/services/client/import";
+import { importProjectsFromZip, uploadImages } from "@/app/services/client/import";
+import { ExportedProject } from "@/app/types/export/ExportedProject";
 import { useAction } from "next-safe-action/hooks";
 import { useRef } from "react";
 import { IconType } from "react-icons";
@@ -16,10 +17,7 @@ export default function ImportButton() {
     // TODO: Handle invalid inputs
     const closeToastRef = useRef<(title: string, icon?: IconType) => boolean>(null);
     const action = useAction(importProjectsAction, {
-        onSuccess: () => {
-            closeToastRef.current?.("Imported projects successfully", LuCircleCheck);
-            closeToastRef.current = toast("Importing images...", "permanent", LoadingIcon) || null;
-        },
+        onSuccess: () => closeToastRef.current?.("Imported projects successfully", LuCircleCheck),
         onError: () => errorToast(),
     });
 
@@ -35,21 +33,33 @@ export default function ImportButton() {
             closeToastRef.current = toast("Importing projects...", "permanent", LoadingIcon) || null;
 
             try {
-                if (!file) {
-                    throw new Error("No file found");
+                let result: {
+                    projects: Array<ExportedProject>,
+                    projectIdsMapping: Map<string, string> | undefined,
+                    imageIdsMapping: Map<string, string>,
+                };
+
+                try {
+                    if (!file) {
+                        throw new Error("No file found");
+                    }
+
+                    result = await importProjectsFromZip(file, async (projects) => {
+                        const result = await action.executeAsync(projects);
+                        return result.data;
+                    });
+                }
+                catch (e) {
+                    console.error(e);
+                    errorToast();
+                    return;
                 }
 
-                await importProjectsFromZip(file, async (projects) => {
-                    const result = await action.executeAsync(projects);
-                    return result.data;
-                });
+                if (result.projectIdsMapping === undefined) {
+                    throw new Error("Projects upload failed");
+                }
 
-                closeToastRef.current?.("Imported images successfully", LuCircleCheck);
-                closeToastRef.current = null;
-            }
-            catch (e) {
-                console.error(e);
-                errorToast();
+                await importImages(file, result.projects, result.projectIdsMapping, result.imageIdsMapping);
             }
             finally {
                 document.body.removeChild(input);
@@ -71,4 +81,22 @@ export default function ImportButton() {
             icon={LuUpload}
             title="Import projects" />
     );
+}
+
+async function importImages(
+    file: File,
+    projects: Array<ExportedProject>,
+    projectIdsMapping: Map<string, string>,
+    imageIdsMapping: Map<string, string>,
+) {
+    const closeToast = toast("Importing images...", "permanent", LoadingIcon) || null;
+
+    try {
+        await uploadImages(file, projects, projectIdsMapping, imageIdsMapping);
+        closeToast?.("Imported images successfully", LuCircleCheck);
+    }
+    catch (e) {
+        console.error(e);
+        closeToast?.("Failed importing images");
+    }
 }
