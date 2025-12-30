@@ -25,9 +25,6 @@ async function fetchBlob(apiUrl: string) {
     const imageIds = projects.flatMap((project) => project.images?.map((image) => image.id) || []);
     const images = await getImages(imageIds);
 
-    console.log("imageIds:", JSON.stringify(imageIds));
-    console.log("images:", JSON.stringify(images.map((img) => img.title)));
-
     const exportedProjects: Array<ExportedProject> = projects.map((project) => ({
         ...project,
         images: project.images?.map((image) => ({
@@ -47,8 +44,7 @@ async function createBlob(exportedProjects: Array<ExportedProject>, images: Arra
 
     for (const image of images) {
         const blob = await base64ToBlob(image.dataUrl);
-        console.log(image.title, "added to archive");
-        zip.file(`images/${image.id}.${blob.type.split("/", 1)}`, blob);
+        zip.file(`images/${image.id}.${blob.type.split("/")[1]}`, blob);
     }
 
     return await zip.generateAsync({ type: "blob" });

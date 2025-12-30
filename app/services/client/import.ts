@@ -22,15 +22,15 @@ export async function importProjectsFromZip(file: File, uploadProjects: (project
     const projectIdsMapping = await uploadProjects(projectsToUpload);
 
     if (projectIdsMapping === undefined) {
+        console.log("did not get projectIdsMapping back");
         return;
     }
 
-    const images = await getImages(zip);
     await uploadImages(
+        zip,
         projects,
         new Map(projectIdsMapping.map((value) => [value.old, value.new])),
-        imageIdsMapping,
-        images);
+        imageIdsMapping);
 }
 
 async function getProjects(zip: JSZip): Promise<Array<ExportedProject>> {
@@ -55,32 +55,15 @@ async function getProjects(zip: JSZip): Promise<Array<ExportedProject>> {
     return result.data;
 }
 
-async function getImages(zip: JSZip) {
-    const files = zip.folder("images")?.files;
-
-    if (!files) {
-        return [];
-    }
-
-    const images = new Array<{ id: string, blob: Blob }>();
-
-    for (const [_, file] of Object.entries(files)) {
-        const id = file.name.split(".")[0];
-        const blob = await file.async("blob");
-
-        images.push({ id, blob });
-    }
-
-    return images;
-}
-
 async function uploadImages(
+    zip: JSZip,
     projects: Array<ExportedProject>,
     projectIdsMapping: Map<string, string>,
     imageIdsMapping: Map<string, string>,
-    images: Array<{ id: string, blob: Blob }>,
 ) {
-    for (const image of images) {
+    console.log("uploading images");
+
+    for await (const image of getImages(zip)) {
         const id = imageIdsMapping.get(image.id);
         const project = projects.find((p) => p.images?.find((img) => img.id === image.id));
         const projectId = project ? projectIdsMapping.get(project.id) : undefined;
@@ -92,6 +75,8 @@ async function uploadImages(
 
         const pathname = `${id}.${image.blob.type.split("/")[1]}`;
 
+        console.log("uploading:", pathname);
+
         const uploadedImage = await upload(pathname, image.blob, {
             access: "public",
             handleUploadUrl: "/api/projects/images/upload",
@@ -102,12 +87,37 @@ async function uploadImages(
             }),
         });
 
+        console.log("uploaded:", pathname);
+
         await cacheDataImage({
             id: id,
             projectId: projectId,
             title: vercelImage.title,
             vercelUrl: uploadedImage.url,
-        });
+        }, image.blob);
+
+        console.log("cached:", pathname);
+    }
+}
+
+async function* getImages(zip: JSZip) {
+    const files = zip.folder("images")?.files;
+
+    if (!files) {
+        console.log("files folder not found")
+        return;
+    }
+
+    for (const [_, file] of Object.entries(files)) {
+        const id = file.name.split(".")[0];
+
+        console.log("found in zip:", file.name);
+
+        const blob = await file.async("blob");
+
+        console.log("extracted blob from zip:", file.name);
+
+        yield { id, blob };
     }
 }
 

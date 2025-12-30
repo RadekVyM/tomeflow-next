@@ -77,10 +77,10 @@ export async function removeDataImageFromCache(imageId: string) {
     catch {}
 }
 
-export async function cacheDataImage(image: VercelImage): Promise<DataImage> {
+export async function cacheDataImage(image: VercelImage, blob?: Blob): Promise<DataImage> {
     const images = await getImagesDirectory();
 
-    const file = await fetchImageBlob(image.vercelUrl);
+    const file = blob || await fetchImageBlob(image.vercelUrl);
     const reader = new FileReader();
     const dataUrl = await new Promise<string>((resolve, reject) => {
         reader.onload = () => resolve(reader.result as string);
