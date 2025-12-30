@@ -22,7 +22,11 @@ async function fetchBlob(apiUrl: string) {
         .then((response) => response.text());
 
     const projects = JSON.parse(exportedDocument) as Array<ExportedProject>;
-    const images = await getImages(projects.flatMap((project) => project.images?.map((image) => image.id) || []));
+    const imageIds = projects.flatMap((project) => project.images?.map((image) => image.id) || []);
+    const images = await getImages(imageIds);
+
+    console.log("imageIds:", JSON.stringify(imageIds));
+    console.log("images:", JSON.stringify(images.map((img) => img.title)));
 
     const exportedProjects: Array<ExportedProject> = projects.map((project) => ({
         ...project,
@@ -38,13 +42,13 @@ async function fetchBlob(apiUrl: string) {
 
 async function createBlob(exportedProjects: Array<ExportedProject>, images: Array<DataImage>) {
     const zip = new JSZip();
-    const imagesZip = zip.folder("images");
 
     zip.file("projects.json", JSON.stringify(exportedProjects));
-    
+
     for (const image of images) {
         const blob = await base64ToBlob(image.dataUrl);
-        imagesZip?.file(`${image.id}.${blob.type.split("/", 1)}`, blob, {  });
+        console.log(image.title, "added to archive");
+        zip.file(`images/${image.id}.${blob.type.split("/", 1)}`, blob);
     }
 
     return await zip.generateAsync({ type: "blob" });
