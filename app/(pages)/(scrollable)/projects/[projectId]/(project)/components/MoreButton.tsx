@@ -15,6 +15,7 @@ import { downloadExportedData } from "@/app/services/client/export";
 import ImagesDialog from "@/app/components/images/ImagesDialog";
 import toast from "@/app/components/toast";
 import LoadingIcon from "@/app/components/LoadingIcon";
+import { useRouter } from "next/navigation";
 
 export default function MoreButton(props: {
     projectId: string,
@@ -153,6 +154,7 @@ function ImagesButton(props: {
 function DeleteButton(props: {
     projectId: string,
 }) {
+    const router = useRouter();
     const action = useAction(deleteProjectAction, {
         onError: () => toast("Failed to delete the project"),
     });
@@ -162,7 +164,15 @@ function DeleteButton(props: {
             return;
         }
 
-        action.execute({ id: props.projectId });
+        const result = await action.executeAsync({ id: props.projectId });
+
+        // I need to do the redirect on the client to be able to show the following toast
+        router.push("/projects");
+
+        // For some reason, the onSuccess callback of useAction() is never called here
+        if (!result.serverError && !result.validationErrors) {
+            toast("Deleted the project successfully", "default", LuCircleCheck);
+        }
     }
 
     return (

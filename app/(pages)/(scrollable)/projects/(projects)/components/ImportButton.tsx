@@ -6,21 +6,9 @@ import { MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import toast from "@/app/components/toast";
 import { importProjectsFromZip, uploadImages } from "@/app/services/client/import";
 import { ExportedProject } from "@/app/types/export/ExportedProject";
-import { useAction } from "next-safe-action/hooks";
-import { useRef } from "react";
-import { IconType } from "react-icons";
 import { LuCircleCheck, LuUpload } from "react-icons/lu";
 
-// TODO: The upload state should be managed globally
-
 export default function ImportButton() {
-    // TODO: Handle invalid inputs
-    const closeToastRef = useRef<(title: string, icon?: IconType) => boolean>(null);
-    const action = useAction(importProjectsAction, {
-        onSuccess: () => closeToastRef.current?.("Imported projects successfully", LuCircleCheck),
-        onError: () => errorToast(),
-    });
-
     function onImportClick() {
         const input = document.createElement("input");
         input.type = "file";
@@ -30,33 +18,16 @@ export default function ImportButton() {
         input.addEventListener("change", async () => {
             const file = input?.files?.[0];
 
-            closeToastRef.current = toast("Importing projects...", "permanent", LoadingIcon) || null;
-
             try {
-                let result: {
-                    projects: Array<ExportedProject>,
-                    projectIdsMapping: Map<string, string> | undefined,
-                    imageIdsMapping: Map<string, string>,
-                };
-
-                try {
-                    if (!file) {
-                        throw new Error("No file found");
-                    }
-
-                    result = await importProjectsFromZip(file, async (projects) => {
-                        const result = await action.executeAsync(projects);
-                        return result.data;
-                    });
+                if (!file) {
+                    toast("Found no file to import");
+                    throw new Error("No file found");
                 }
-                catch (e) {
-                    console.error(e);
-                    errorToast();
+
+                const result = await importProjects(file);
+
+                if (!result || !result.hasImages) {
                     return;
-                }
-
-                if (result.projectIdsMapping === undefined) {
-                    throw new Error("Projects upload failed");
                 }
 
                 await importImages(file, result.projects, result.projectIdsMapping, result.imageIdsMapping);
@@ -70,17 +41,45 @@ export default function ImportButton() {
         input.click();
     }
 
-    function errorToast() {
-        closeToastRef.current?.("Failed importing projects");
-        closeToastRef.current = null;
-    }
-
     return (
         <MoreDropdownListButton
             onClick={onImportClick}
             icon={LuUpload}
             title="Import projects" />
     );
+}
+
+async function importProjects(file: File) {
+    const closeToast = toast("Importing projects...", "permanent", LoadingIcon) || null;
+
+    try {
+        if (!file) {
+            throw new Error("No file found");
+        }
+
+        const result = await importProjectsFromZip(file, async (projects) => {
+            const result = await importProjectsAction(projects);
+
+            if (result.serverError || result.validationErrors) {
+                throw new Error("Projects upload failed");
+            }
+
+            return result.data;
+        });
+
+        if (!result) {
+            throw new Error("Projects upload failed");
+        }
+
+        closeToast?.("Imported projects successfully", LuCircleCheck);
+
+        return result;
+    }
+    catch (e) {
+        console.error(e);
+        closeToast?.("Failed importing projects");
+        return;
+    }
 }
 
 async function importImages(

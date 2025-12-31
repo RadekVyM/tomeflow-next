@@ -67,5 +67,4 @@ export const deleteProjectAction = authActionClient
 
         revalidatePath("/");
         revalidatePath("/projects");
-        redirect(`/projects`);
     });

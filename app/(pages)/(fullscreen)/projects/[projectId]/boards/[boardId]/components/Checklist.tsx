@@ -275,7 +275,7 @@ function ItemContent(props: {
                 className="mt-0.5"
                 checked={props.item.isDone}
                 onClick={() => props.toggleIsDone?.(!props.item.isDone)}
-                disabled={props.disabled || props.item.isEdited} />
+                disabled={props.disabled} />
             {props.item.isEdited ?
                 <form
                     className="-mt-px -mb-2"
@@ -324,7 +324,7 @@ function ItemContent(props: {
             <Handle
                 className="mt-0.5"
                 size="sm"
-                disabled={props.disabled || props.item.isEdited}
+                disabled={props.disabled}
                 setActivatorNodeRef={props.setActivatorNodeRef}
                 listeners={props.listeners}
                 isDragging={props.isDragOverlay} />

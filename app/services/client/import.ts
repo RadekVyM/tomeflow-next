@@ -21,10 +21,17 @@ export async function importProjectsFromZip(file: File, uploadProjects: (project
     });
     const projectIdsMapping = await uploadProjects(projectsToUpload);
 
+    if (!projectIdsMapping) {
+        return undefined;
+    }
+
+    const hasImages = projects.reduce((prev, current) => prev + (current.images?.length || 0), 0) > 0;
+
     return {
         projects,
         imageIdsMapping,
-        projectIdsMapping: projectIdsMapping ? new Map(projectIdsMapping.map((value) => [value.old, value.new])) : undefined,
+        projectIdsMapping: new Map(projectIdsMapping.map((value) => [value.old, value.new])),
+        hasImages,
     };
 }
 
