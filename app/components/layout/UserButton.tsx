@@ -4,26 +4,32 @@ import Button from "../input/Button";
 import { LuUser } from "react-icons/lu";
 import Image from "next/image";
 import UserInfoPopover from "./UserInfoPopover";
+import { cn } from "@/app/utils/tailwind";
 
 export default function UserButton(props: {
     withFallback?: boolean,
+    className?: string,
 }) {
     return props.withFallback ?
         <FallbackUserButton /> :
         <Suspense
             fallback={
-                <FallbackUserButton />}>
-            <SuspendedUserButton />
+                <FallbackUserButton
+                    className={props.className} />}>
+            <SuspendedUserButton
+                className={props.className} />
         </Suspense>;
 }
 
-async function SuspendedUserButton() {
+async function SuspendedUserButton(props: {
+    className?: string,
+}) {
     const session = await getSessionCached();
 
     return (
         <>
             <Button
-                className="p-1 rounded-full pointer-events-auto justify-self-end"
+                className={cn("p-1 rounded-full", props.className)}
                 popoverTarget="userinfo-popover">
                 {session.user.image ?
                     <Image
@@ -44,10 +50,12 @@ async function SuspendedUserButton() {
     );
 }
 
-function FallbackUserButton() {
+function FallbackUserButton(props: {
+    className?: string,
+}) {
     return (
         <Button
-            className="p-1 rounded-full pointer-events-auto justify-self-end"
+            className={cn("p-1 rounded-full", props.className)}
             popoverTarget="userinfo-popover">
             <div
                 className="w-9 h-9 rounded-full bg-primary grid place-content-center">

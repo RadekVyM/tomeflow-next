@@ -29,14 +29,14 @@ export default function LocalImage(props: {
 function useDataImage(imageId: string) {
     return useQuery({
         queryKey: ["image", { imageId }],
-        queryFn: async () => {
+        queryFn: async ({ signal }) => {
             const cachedImage = await tryGetCachedDataImage(imageId);
 
             if (cachedImage) {
                 return cachedImage;
             }
 
-            const image = await fetch(`/api/projects/images/${imageId}`)
+            const image = await fetch(`/api/projects/images/${imageId}`, { signal })
                 .then((res) => res.json())
                 .then((data) => data as VercelImage);
 

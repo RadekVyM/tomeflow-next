@@ -220,6 +220,15 @@ export const vercelImages = sqliteTable("vercel_images", {
 
 export type VercelImageSchema = InferSelectModel<typeof vercelImages>
 
+export const searchIndex = sqliteTable("search_index", {
+    title: text("title"),
+    type: text("type"),
+    targetId: text("target_id"),
+    projectId: text("project_id"),
+    userId: text("user_id"),
+    hierarchy: text("hierarchy"),
+});
+
 export const projectDocumentsRelations = relations(projectDocuments, ({ one }) => ({
     project: one(projects, {
         fields: [projectDocuments.projectId],

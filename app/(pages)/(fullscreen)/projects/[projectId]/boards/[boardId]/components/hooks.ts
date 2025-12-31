@@ -11,7 +11,7 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/re
 export function useBoard(boardId: string) {
     return useQuery({
         queryKey: ["board", { boardId }],
-        queryFn: () => fetch(`/api/projects/boards/${boardId}`)
+        queryFn: ({ signal }) => fetch(`/api/projects/boards/${boardId}`, { signal })
             .then((res) => res.json())
             .then((data) => data as ProjectBoard),
     });
@@ -26,7 +26,7 @@ export function useInvalidateBoard(boardId: string) {
 export function useSections(boardId: string) {
     return useQuery({
         queryKey: ["board-sections", { boardId }],
-        queryFn: () => fetch(`/api/projects/boards/${boardId}/sections`)
+        queryFn: ({ signal }) => fetch(`/api/projects/boards/${boardId}/sections`, { signal })
             .then((res) => res.json())
             .then((data) => {
                 const sections = data as Array<SimpleProjectBoardSection>;
@@ -121,7 +121,7 @@ export function useBoardItem(boardId: string, itemId: string) {
 
     return useQuery({
         queryKey: ["board-item", { itemId }],
-        queryFn: () => fetch(`/api/projects/board-items/${itemId}`)
+        queryFn: ({ signal }) => fetch(`/api/projects/board-items/${itemId}`, { signal })
             .then((res) => res.json())
             .then((data) => {
                 const item = data as ProjectBoardItem;

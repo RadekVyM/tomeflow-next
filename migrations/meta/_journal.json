@@ -15,6 +15,13 @@
       "when": 1766424133675,
       "tag": "0001_thin_iceman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1767182965059,
+      "tag": "0002_free_silver_centurion",
+      "breakpoints": true
     }
   ]
 }

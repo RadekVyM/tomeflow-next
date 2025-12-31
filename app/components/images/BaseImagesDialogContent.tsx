@@ -260,9 +260,9 @@ function useImages(projectId: string) {
 
     return useQuery({
         queryKey: ["images", { projectId }],
-        queryFn: async () => {
+        queryFn: async ({ signal }) => {
             // await (await navigator.storage.getDirectory()).removeEntry("projects", { recursive: true });
-            const simpleDtos = await fetch(`/api/projects/${projectId}/images`)
+            const simpleDtos = await fetch(`/api/projects/${projectId}/images`, { signal })
                 .then((res) => res.json())
                 .then((data) => (data || []) as Array<SimpleDataImage>);
 
