@@ -45,7 +45,7 @@ export default function Board(props: {
     onItemSubmit: (position: number, sectionId: string, title: string) => void,
     onRemoveSectionClick: (sectionId: string) => void,
     onRenameSectionClick: (sectionId: string, title: string) => void,
-    onItemClick: (sectionId: string, itemId: string) => void,
+    onItemClick: (itemId: string) => void,
     onToggleItemClick: (itemId: string, isDone: boolean) => void,
 }) {
     const [sections, setSections] = useState<Array<Section>>([]);
@@ -261,7 +261,7 @@ export default function Board(props: {
                                         key={item.id}
                                         id={item.id}
                                         item={item}
-                                        onClick={() => props.onItemClick(section.id, item.id)}
+                                        onClick={() => props.onItemClick(item.id)}
                                         onCheckboxClick={() => props.onToggleItemClick(item.id, !item.isDone)} />)}
                                 {section.items.length === 0 &&
                                     <NoItems />}

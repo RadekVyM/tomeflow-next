@@ -11,6 +11,8 @@ import { useAddItem, useAddSection, useBoard, useDeleteSection, useRenameSection
 import { ProjectBoard } from "@/app/types/ProjectBoard";
 import BoardSkeleton from "./BoardSkeleton";
 import { BoardPageContext } from "./BoardPageContext";
+import { useSearchParams } from "next/navigation";
+import useIsClient from "@/app/hooks/useIsClient";
 
 export default function IntegratedBoard(props: {
     boardId: string,
@@ -41,9 +43,8 @@ function IntegratedBoardInternal(props: {
     const sectionIdRef = useRef<string>("");
     const addSectionDialogState = useDialog();
     const renameSectionDialogState = useDialog();
-    const itemDialogState = useDialog();
     const [editedSectionTitle, setEditedSectionTitle] = useState<string>("");
-    const [selectedItem, setSelectedItem] = useState({ id: "", sectionId: "" });
+    const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
     const { mutate: addSection, isPending: isAddSectionPending } = useAddSection(props.board.id);
     const { mutate: addItem, isPending: isAddItemPending } = useAddItem(props.board.id);
     const { mutateAsync: updateSectionPosition, isPending: isUpdateSectionPositionPending } = useUpdateSectionPosition(props.board.id);
@@ -62,12 +63,6 @@ function IntegratedBoardInternal(props: {
         isDeleteSectionPending;
 
     useEffect(() => setIsSyncing(isSyncing), [isSyncing]);
-
-    useEffect(() => {
-        if (!itemDialogState.isOpen) {
-            setSelectedItem({ id: "", sectionId: "" });
-        }
-    }, [itemDialogState.isOpen]);
 
     async function moveSection(sectionId: string, position: number) {
         await updateSectionPosition({
@@ -108,6 +103,10 @@ function IntegratedBoardInternal(props: {
         await renameSectionDialogState.hide();
     }
 
+    async function showDialog(itemId: string) {
+        setSelectedItemId(itemId);
+    }
+
     return (
         <>
             <Board
@@ -137,10 +136,7 @@ function IntegratedBoardInternal(props: {
 
                     deleteSection({ sectionId });
                 }}
-                onItemClick={async (sectionId, itemId) => {
-                    setSelectedItem({ id: itemId, sectionId });
-                    await itemDialogState.show();
-                }}
+                onItemClick={showDialog}
                 onToggleItemClick={(itemId, isDone) => updateItem({ itemId, isDone })} />
 
             <TextInputDialog
@@ -158,12 +154,56 @@ function IntegratedBoardInternal(props: {
                 initialValue={editedSectionTitle}
                 onAcceptClick={onRenameSectionClick} />
 
-            {selectedItem.id !== "" && selectedItem.sectionId !== "" &&
-                <BoardItemDialog
-                    state={itemDialogState}
-                    projectId={props.projectId}
-                    boardId={props.board.id}
-                    itemId={selectedItem.id} />}
+            <ItemDialog
+                projectId={props.projectId}
+                boardId={props.board.id}
+                selectedItemId={selectedItemId}
+                setSelectedItemId={setSelectedItemId} />
         </>
+    );
+}
+
+function ItemDialog(props: {
+    projectId: string,
+    boardId: string,
+    selectedItemId: string | null,
+    setSelectedItemId: (value: string | null) => void,
+}) {
+    const isClient = useIsClient();
+    const itemDialogState = useDialog();
+    const searchParams = useSearchParams();
+    const searchItemId = searchParams.get("itemId");
+
+    useEffect(() => {
+        if (isClient && searchItemId) {
+            props.setSelectedItemId(searchItemId);
+        }
+    }, [isClient, searchItemId]);
+
+    useEffect(() => {
+        if (props.selectedItemId) {
+            itemDialogState.show();
+        }
+    }, [props.selectedItemId]);
+
+    useEffect(() => {
+        if (!itemDialogState.isOpen) {
+            props.setSelectedItemId(null);
+
+            const newUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    }, [itemDialogState.isOpen]);
+
+    if (!isClient || !props.selectedItemId) {
+        return undefined;
+    }
+
+    return (
+        <BoardItemDialog
+            state={itemDialogState}
+            projectId={props.projectId}
+            boardId={props.boardId}
+            itemId={props.selectedItemId} />
     );
 }

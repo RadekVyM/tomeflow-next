@@ -11,8 +11,6 @@ import BreadcrumbsSkeleton from "@/app/components/skeleton/BreadcrumbsSkeleton";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
 import { notFound } from "next/navigation";
-import { LuCircleCheck, LuFilter } from "react-icons/lu";
-import Button from "@/app/components/input/Button";
 import { BoardPageContextProvider } from "./components/BoardPageContext";
 import SyncingIndicator from "./components/SyncingIndicator";
 
