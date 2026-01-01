@@ -4,7 +4,7 @@ import BreadcrumbsSkeleton from "@/app/components/skeleton/BreadcrumbsSkeleton";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import NewDocumentButton from "./components/NewDocumentButton";
 import ParagraphSkeleton from "@/app/components/skeleton/ParagraphSkeleton";
-import DocumentsBoardsSkeleton from "./components/DocumentsBoardsSkeleton";
+import ContentSkeleton from "./components/DocumentsBoardsSkeleton";
 
 export default function Loading() {
     return (
@@ -23,7 +23,7 @@ export default function Loading() {
                 </>}>
 
             <ParagraphSkeleton />
-            <DocumentsBoardsSkeleton />
+            <ContentSkeleton />
         </PageLayout>
     );
 }

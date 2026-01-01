@@ -1,18 +1,18 @@
 import { db } from "@/db";
 import { projectBoards } from "@/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 
 export async function getAllProjectBoards(userId: string, projectId: string) {
     return await db.query.projectBoards.findMany({
         where: and(eq(projectBoards.userId, userId), eq(projectBoards.projectId, projectId)),
-        orderBy: [desc(projectBoards.lastRequestedAt)],
+        orderBy: [desc(sql`MAX(${projectBoards.lastRequestedAt}, ${projectBoards.updatedAt})`)],
     });
 }
 
 export async function getRecentBoards(userId: string) {
     return await db.query.projectBoards.findMany({
         where: eq(projectBoards.userId, userId),
-        orderBy: [desc(projectBoards.lastRequestedAt)],
+        orderBy: [desc(sql`MAX(${projectBoards.lastRequestedAt}, ${projectBoards.updatedAt})`)],
         limit: 6,
         with: {
             project: {

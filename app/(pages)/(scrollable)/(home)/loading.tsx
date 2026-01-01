@@ -16,9 +16,7 @@ export default function Loading() {
                     <CardListSkeleton className="mb-8" withIcon itemsCount={3} />
                 </section>
 
-                <ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />
-
-                <ItemsSectionSkeleton headingClassName="max-w-56" itemsCount={5} />
+                <ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={5} />
             </div>
         </>
     );

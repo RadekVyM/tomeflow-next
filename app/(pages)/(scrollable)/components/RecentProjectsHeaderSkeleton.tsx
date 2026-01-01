@@ -3,7 +3,7 @@ import Skeleton from "@/app/components/skeleton/Skeleton";
 export default function RecentProjectsHeaderSkeleton() {
     return (
         <div
-            className="flex justify-between items-start mb-4">
+            className="flex justify-between items-start mb-5">
             <Skeleton
                 className="font-semibold text-2xl max-w-48" />
 

@@ -1,5 +1,4 @@
 import Breadcrumbs from "@/app/components/Breadcrumbs";
-import CardList from "@/app/components/card-list/CardList";
 import PageHeading from "@/app/components/layout/PageHeading";
 import ProjectDescription from "@/app/(pages)/(scrollable)/projects/[projectId]/(project)/components/ProjectDescription";
 import { getProject } from "@/app/services/projects";
@@ -7,10 +6,7 @@ import { cn } from "@/app/utils/tailwind";
 import MoreButton from "./components/MoreButton";
 import NewDocumentButton from "./components/NewDocumentButton";
 import { ProjectPageContextProvider } from "@/app/(pages)/(scrollable)/projects/[projectId]/(project)/components/ProjectPageContext";
-import CardListItem from "@/app/components/card-list/CardListItem";
-import { LuFile, LuLayoutDashboard } from "react-icons/lu";
 import { getAllProjectDocuments } from "@/app/services/documents";
-import { lastSeenAt } from "@/app/utils/entities";
 import { getAllProjectBoards } from "@/app/services/boards";
 import { cache, Suspense } from "react";
 import { getSessionCached } from "@/app/utils/session";
@@ -22,6 +18,7 @@ import PageLayout from "@/app/components/layout/PageLayout";
 import DocumentsBoardsSkeleton from "./components/DocumentsBoardsSkeleton";
 import EmptyProject from "./components/EmptyProject";
 import { notFound } from "next/navigation";
+import DocumentBoardsList from "./components/DocumentBoardsList";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
@@ -148,57 +145,16 @@ async function DocumentsBoards(props: {
     }
 
     return (
-        <>
-            {boards.length > 0 && 
-                <ItemsSection
-                    className={cn((hasHeading) && "mt-8")}
-                    heading="Boards"
-                    hasHeading={hasHeading || documents.length > 0}>
-                    {boards.map((board) =>
-                        <CardListItem
-                            key={board.id}
-                            href={`/projects/${props.projectId}/boards/${board.id}`}
-                            title={board.title}
-                            titleAs="h4"
-                            lastSeenDate={new Date(lastSeenAt(board))}
-                            icon={LuLayoutDashboard} />)}
-                </ItemsSection>}
-
-            {documents.length > 0 &&
-                <ItemsSection
-                    className={cn((hasHeading || boards.length > 0) && "mt-8")}
-                    heading="Documents"
-                    hasHeading={hasHeading || boards.length > 0}>
-                    {documents.map((document) =>
-                        <CardListItem
-                            key={document.id}
-                            href={`/projects/${props.projectId}/documents/${document.id}`}
-                            title={document.title}
-                            titleAs="h4"
-                            lastSeenDate={new Date(lastSeenAt(document))}
-                            icon={LuFile} />)}
-                </ItemsSection>}
-        </>
-    );
-}
-
-function ItemsSection(props: {
-    className?: string,
-    heading: string,
-    hasHeading: boolean,
-    children?: React.ReactNode,
-}) {
-    return (
-        <section
-            className={props.className}>
+        <section>
             <h3
-                className={cn("font-semibold text-2xl mb-4", !props.hasHeading && "sr-only")}>
-                {props.heading}
+                className={cn("font-semibold text-2xl mb-4", !hasHeading && "sr-only", hasHeading && "mt-8")}>
+                Content
             </h3>
 
-            <CardList>
-                {props.children}
-            </CardList>
+            <DocumentBoardsList
+                projectId={props.projectId}
+                boards={boards}
+                documents={documents} />
         </section>
     );
 }

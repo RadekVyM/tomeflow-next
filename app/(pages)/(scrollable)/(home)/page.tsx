@@ -14,6 +14,7 @@ import { LuFile, LuLayoutDashboard, LuLayoutGrid, LuPackage } from "react-icons/
 import ItemsSectionSkeleton from "../components/ItemsSectionSkeleton";
 import RecentProjectsHeaderSkeleton from "../components/RecentProjectsHeaderSkeleton";
 import EmptyProjects from "../components/EmptyProjects";
+import { cn } from "@/app/utils/tailwind";
 
 export default async function Page() {
     return (
@@ -33,52 +34,20 @@ export default async function Page() {
                 </Suspense>
 
                 <Suspense
-                    fallback={<ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={2} />}>
-                    <Boards />
-                </Suspense>
-
-                <Suspense
-                    fallback={<ItemsSectionSkeleton headingClassName="max-w-56" itemsCount={5} />}>
-                    <Documents />
+                    fallback={<ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={5} />}>
+                    <RecentContent />
                 </Suspense>
             </div>
         </>
     );
 }
 
-async function Boards() {
-    const session = await getSessionCached();
-    const boards = await getRecentBoards(session.user.id);
-
-    if (boards.length === 0) {
-        return undefined;
-    }
-
-    return (
-        <section>
-            <h2
-                className="font-semibold text-2xl mb-4">
-                Recent boards
-            </h2>
-            <CardList>
-                {boards.map((board) =>
-                    <CardListItem
-                        key={board.id}
-                        href={`/projects/${board.projectId}/boards/${board.id}`}
-                        title={board.title}
-                        subtitle={board.project.title}
-                        lastSeenDate={new Date(lastSeenAt(board))}
-                        icon={LuLayoutDashboard} />)}
-            </CardList>
-        </section>
-    );
-}
-
-async function Documents() {
+async function RecentContent() {
     const session = await getSessionCached();
     const documents = await getRecentDocuments(session.user.id);
+    const boards = await getRecentBoards(session.user.id);
 
-    if (documents.length === 0) {
+    if (documents.length === 0 && boards.length === 0) {
         return undefined;
     }
 
@@ -86,18 +55,31 @@ async function Documents() {
         <section>
             <h2
                 className="font-semibold text-2xl mb-4">
-                Recent documents
+                Recent content
             </h2>
-            <CardList>
-                {documents.map((document) =>
-                    <CardListItem
-                        key={document.id}
-                        href={`/projects/${document.projectId}/documents/${document.id}`}
-                        title={document.title}
-                        subtitle={document.project.title}
-                        lastSeenDate={new Date(lastSeenAt(document))}
-                        icon={LuFile} />)}
-            </CardList>
+            {boards.length > 0 &&
+                <CardList>
+                    {boards.map((board) =>
+                        <CardListItem
+                            key={board.id}
+                            href={`/projects/${board.projectId}/boards/${board.id}`}
+                            title={board.title}
+                            subtitle={board.project.title}
+                            lastSeenDate={new Date(lastSeenAt(board))}
+                            icon={LuLayoutDashboard} />)}
+                </CardList>}
+            {documents.length > 0 &&
+                <CardList
+                    className={cn(boards.length > 0 && "mt-6")}>
+                    {documents.map((document) =>
+                        <CardListItem
+                            key={document.id}
+                            href={`/projects/${document.projectId}/documents/${document.id}`}
+                            title={document.title}
+                            subtitle={document.project.title}
+                            lastSeenDate={new Date(lastSeenAt(document))}
+                            icon={LuFile} />)}
+                </CardList>}
         </section>
     );
 }

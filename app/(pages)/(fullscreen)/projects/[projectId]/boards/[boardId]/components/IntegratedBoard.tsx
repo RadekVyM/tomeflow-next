@@ -169,6 +169,7 @@ function ItemDialog(props: {
     selectedItemId: string | null,
     setSelectedItemId: (value: string | null) => void,
 }) {
+    const initialRenderRef = useRef(true);
     const isClient = useIsClient();
     const itemDialogState = useDialog();
     const searchParams = useSearchParams();
@@ -187,6 +188,10 @@ function ItemDialog(props: {
     }, [props.selectedItemId]);
 
     useEffect(() => {
+        if (initialRenderRef.current) {
+            return;
+        }
+
         if (!itemDialogState.isOpen) {
             props.setSelectedItemId(null);
 
@@ -194,6 +199,10 @@ function ItemDialog(props: {
             window.history.replaceState({}, document.title, newUrl);
         }
     }, [itemDialogState.isOpen]);
+
+    useEffect(() => {
+        initialRenderRef.current = false;
+    }, []);
 
     if (!isClient || !props.selectedItemId) {
         return undefined;

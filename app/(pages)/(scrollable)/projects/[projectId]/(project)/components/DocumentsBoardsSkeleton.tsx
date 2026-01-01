@@ -4,16 +4,17 @@ import { cn } from "@/app/utils/tailwind";
 
 export default function DocumentsBoardsSkeleton() {
     return (
-        <>
-            <ItemsSectionSkeleton
-                className="mt-8"
-                headingClassName="max-w-28"
-                itemsCount={2} />
-            <ItemsSectionSkeleton
-                className="mt-8"
-                headingClassName="max-w-36"
-                itemsCount={3} />
-        </>
+        <section>
+            <Skeleton
+                className="font-semibold text-2xl mb-5 mt-9 max-w-32" />
+
+            <Skeleton
+                className="border border-transparent rounded-lg w-full mb-6 h-9 box-content" />
+
+            <CardListSkeleton
+                withIcon
+                itemsCount={5} />
+        </section>
     );
 }
 

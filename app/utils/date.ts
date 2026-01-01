@@ -8,7 +8,7 @@ export function formatRelativeTime(pastDate: Date, locales?: Intl.LocalesArgumen
     const months = Math.round(days / 30);
     const years = Math.round(days / 365);
 
-    const rtf = new Intl.RelativeTimeFormat(locales || "en", { numeric: "auto" });
+    const rtf = new Intl.RelativeTimeFormat(locales || "en", { numeric: "auto", style: "narrow" });
 
     if (seconds < 60) {
         return rtf.format(-seconds, "second");

@@ -99,7 +99,7 @@ function Content(props: {
             <input
                 ref={inputRef}
                 className="py-1 px-2 bg-surface-container border border-outline rounded-lg w-full"
-                placeholder="Find..."
+                placeholder="Find anything..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} />
 

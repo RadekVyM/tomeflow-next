@@ -28,6 +28,7 @@ export default function SearchButton(props: {
             <Button
                 className={props.className}
                 variant="icon-container"
+                title="Find..."
                 onClick={dialogState.show}>
                 <LuSearch />
             </Button>
