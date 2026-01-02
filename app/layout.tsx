@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Gabarito } from "next/font/google";
+import { Gabarito, Google_Sans_Code, Roboto } from "next/font/google";
 import "@/app/css/animations.css";
 import "@/app/css/button.css";
 import "@/app/css/colors.css";
@@ -10,10 +10,24 @@ import QueryClientProvider from "./components/react-query/QueryClientProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { Toasts } from "./components/toast";
+import { cn } from "./utils/tailwind";
 
 const gabarito = Gabarito({
     variable: "--font-gabarito-sans",
     subsets: ["latin"],
+});
+
+const robotoItalic = Roboto({
+    variable: "--font-roboto-italic",
+    subsets: ["latin"],
+    style: ["italic"],
+});
+
+const googleSansCode = Google_Sans_Code({
+    variable: "--font-google-sans-code",
+    subsets: ["latin"],
+    style: ["normal", "italic"],
+    fallback: ["Consolas", "Bitstream Vera Sans Mono", "Courier New", "Courier", "monospace"],
 });
 
 export const metadata: Metadata = {
@@ -45,7 +59,7 @@ export default function RootLayout({
 }>) {
     return (
         <html
-            lang="en" className={gabarito.variable}>
+            lang="en" className={cn(gabarito.variable, googleSansCode.variable, robotoItalic.variable)}>
             <QueryClientProvider>
                 <body className="antialiased font-sans">
                     <div

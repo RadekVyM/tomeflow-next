@@ -4,11 +4,14 @@ import "./Skeleton.css";
 export default function Skeleton(props: {
     className?: string,
     children?: React.ReactNode,
+    as?: "div" | "span",
 }) {
+    const Element = props.as || "div";
+
     return (
-        <div
+        <Element
             className={cn("skeleton w-full h-[1em] rounded-sm", props.className)}>
             {props.children}
-        </div>
+        </Element>
     );
 }

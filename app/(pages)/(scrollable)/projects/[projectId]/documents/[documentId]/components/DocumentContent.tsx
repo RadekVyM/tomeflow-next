@@ -1,7 +1,7 @@
 "use client";
 
 import { updateDocumentContentAction } from "@/app/actions/documents";
-import MarkdownPreviewer from "@/app/components/MarkdownPreviewer";
+import MarkdownPreviewer from "@/app/components/markdown/MarkdownPreviewer";
 import toast from "@/app/components/toast";
 import { isNullOrWhiteSpace } from "@/app/utils/string";
 import { useAction } from "next-safe-action/hooks";

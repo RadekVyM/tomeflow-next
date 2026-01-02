@@ -116,9 +116,10 @@ function Content(props: {
                                 key={item.id}
                                 className="py-1">
                                 <Button
+                                    type="button"
                                     className="w-full px-1.5 py-1.5 gap-2.5"
                                     variant={isFocused && selectedResult?.id === item.id ? "primary" : "default"}
-                                    onClick={async () => {
+                                    onClick={() => {
                                         props.state.hide();
                                         router.push(item.url);
                                     }}>

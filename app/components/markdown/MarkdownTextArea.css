@@ -1,0 +1,38 @@
+@reference "../../css/globals.css";
+
+.markdown-textarea {
+    textarea::selection {
+        @apply bg-secondary text-on-secondary font-black;
+    }
+
+    .token.title { @apply text-primary font-semibold; }
+    .token.bold { @apply font-black; }
+    .token.italic { @apply italic; }
+    .token.code-snippet { @apply bg-primary-lite text-on-surface rounded-sm; }
+    .token.code-language { @apply text-primary font-semibold; }
+    .token.code-block {
+        .token.punctuation {
+            @apply text-on-surface-container-muted font-normal;
+        }
+        .token.keyword {
+            @apply text-indigo-400 font-semibold;
+        }
+        .token.function {
+            @apply text-indigo-800 dark:text-indigo-300;
+        }
+        .token.string {
+            @apply text-emerald-500;
+        }
+        .token.number {
+            @apply text-emerald-500;
+        }
+        .token.operator {
+            @apply font-semibold text-orange-400;
+        }
+    }
+    .token.url { @apply text-primary underline; }
+    .token.list {  }
+    .token.blockquote { @apply text-on-surface-container-muted font-black; }
+    .token.hr { @apply text-outline font-black; }
+    .token.punctuation { @apply text-on-surface-container-muted font-black; }
+}

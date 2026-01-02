@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import MarkdownPreviewer from "@/app/components/MarkdownPreviewer";
+import MarkdownPreviewer from "@/app/components/markdown/MarkdownPreviewer";
 import { ProjectPageContext } from "@/app/(pages)/(scrollable)/projects/[projectId]/(project)/components/ProjectPageContext";
 import { updateProjectDescriptionAction } from "@/app/actions/projects";
 import { useAction } from "next-safe-action/hooks";

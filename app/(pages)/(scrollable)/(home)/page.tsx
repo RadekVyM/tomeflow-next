@@ -9,12 +9,13 @@ import { getRecentDocuments } from "@/app/services/documents";
 import { getRecentProjects } from "@/app/services/projects";
 import { lastSeenAt } from "@/app/utils/entities";
 import { getSessionCached } from "@/app/utils/session";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { LuFile, LuLayoutDashboard, LuLayoutGrid, LuPackage } from "react-icons/lu";
-import ItemsSectionSkeleton from "../components/ItemsSectionSkeleton";
+import RecentContentSkeleton from "../components/RecentContent";
 import RecentProjectsHeaderSkeleton from "../components/RecentProjectsHeaderSkeleton";
 import EmptyProjects from "../components/EmptyProjects";
 import { cn } from "@/app/utils/tailwind";
+import ContentItemListHeading from "@/app/components/layout/ContentItemListHeading";
 
 export default async function Page() {
     return (
@@ -34,7 +35,7 @@ export default async function Page() {
                 </Suspense>
 
                 <Suspense
-                    fallback={<ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={5} />}>
+                    fallback={<RecentContentSkeleton headingClassName="max-w-48" itemsCount={5} />}>
                     <RecentContent />
                 </Suspense>
             </div>
@@ -58,28 +59,38 @@ async function RecentContent() {
                 Recent content
             </h2>
             {boards.length > 0 &&
-                <CardList>
-                    {boards.map((board) =>
-                        <CardListItem
-                            key={board.id}
-                            href={`/projects/${board.projectId}/boards/${board.id}`}
-                            title={board.title}
-                            subtitle={board.project.title}
-                            lastSeenDate={new Date(lastSeenAt(board))}
-                            icon={LuLayoutDashboard} />)}
-                </CardList>}
+                <>
+                    <ContentItemListHeading>
+                        Boards
+                    </ContentItemListHeading>
+                    <CardList>
+                        {boards.map((board) =>
+                            <CardListItem
+                                key={board.id}
+                                href={`/projects/${board.projectId}/boards/${board.id}`}
+                                title={board.title}
+                                subtitle={board.project.title}
+                                lastSeenDate={new Date(lastSeenAt(board))}
+                                icon={LuLayoutDashboard} />)}
+                    </CardList>
+                </>}
             {documents.length > 0 &&
-                <CardList
-                    className={cn(boards.length > 0 && "mt-6")}>
-                    {documents.map((document) =>
-                        <CardListItem
-                            key={document.id}
-                            href={`/projects/${document.projectId}/documents/${document.id}`}
-                            title={document.title}
-                            subtitle={document.project.title}
-                            lastSeenDate={new Date(lastSeenAt(document))}
-                            icon={LuFile} />)}
-                </CardList>}
+                <>
+                    <ContentItemListHeading
+                        className={cn(boards.length > 0 && "mt-4")}>
+                        Documents
+                    </ContentItemListHeading>
+                    <CardList>
+                        {documents.map((document) =>
+                            <CardListItem
+                                key={document.id}
+                                href={`/projects/${document.projectId}/documents/${document.id}`}
+                                title={document.title}
+                                subtitle={document.project.title}
+                                lastSeenDate={new Date(lastSeenAt(document))}
+                                icon={LuFile} />)}
+                    </CardList>
+                </>}
         </section>
     );
 }

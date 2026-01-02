@@ -2,7 +2,7 @@ import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
 import Skeleton from "@/app/components/skeleton/Skeleton";
 import { cn } from "@/app/utils/tailwind";
 
-export default function ItemsSectionSkeleton(props: {
+export default function RecentContentSkeleton(props: {
     className?: string,
     headingClassName?: string,
     itemsCount?: number,
@@ -12,6 +12,9 @@ export default function ItemsSectionSkeleton(props: {
             className={props.className}>
             <Skeleton
                 className={cn("font-semibold text-2xl mb-5 mt-1", props.headingClassName)} />
+
+            <Skeleton
+                className="text-sm font-semibold mb-3 max-w-16" />
 
             <CardListSkeleton
                 withIcon

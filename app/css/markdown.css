@@ -30,7 +30,7 @@
         @apply text-primary hover:underline;
     }
 
-    p:not(blockquote > *), ul:not(li > *), ol:not(li > *), pre, blockquote, table {
+    p:not(blockquote > *), ul:not(li > *), ol:not(li > *), pre, .pre, blockquote, table {
         @apply mb-2.5;
     }
 
@@ -63,32 +63,42 @@
         @apply mt-1;
     }
 
-    code:not(pre *) {
+    code:not(pre *, .pre *) {
         font-size: 0.9rem;
-        @apply font-mono bg-primary-lite text-on-surface px-1.5 py-0.5 rounded-sm;
+        @apply bg-primary-lite font-mono text-on-surface px-1.5 py-0.5 rounded-sm;
     }
 
-    /* TODO: I need italic font */
     em {
-        @apply italic font-sans;
+        font-family: var(--font-roboto-italic, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif);
+        @apply italic;
     }
 
-    pre {
+    .pre {
+        tab-size: 2;
+        font-size: 15px;
+        @apply whitespace-pre font-mono block;
+    }
+
+    pre, .pre {
         @apply bg-surface-container border border-outline rounded-lg overflow-hidden;
+
+        * {
+            font-size: 13px;
+            font-family: var(--font-google-sans-code) !important;
+        }
     }
 
-    pre, pre div, pre code, pre span {
+    pre, pre div, pre code, pre span, .pre, .pre div, .pre code, .pre span {
         hyphens: initial;
         overflow-x: initial;
         text-overflow: initial;
-        font-size: 0.9rem;
     }
 
     pre div, pre div code, pre div code span {
         background: var(--surface-container) !important;
     }
 
-    pre:has(code.plain-code) {
+    pre:has(code.plain-code), .pre:has(code.plain-code) {
         @apply bg-surface-container border border-outline rounded-lg px-3 py-1 overflow-auto;
     }
 

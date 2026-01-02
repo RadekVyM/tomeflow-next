@@ -2,6 +2,7 @@
 
 import CardList from "@/app/components/card-list/CardList";
 import CardListItem from "@/app/components/card-list/CardListItem";
+import ContentItemListHeading from "@/app/components/layout/ContentItemListHeading";
 import useDebouncedValue from "@/app/hooks/useDebouncedValue";
 import { lastSeenAt } from "@/app/utils/entities";
 import { removeAccents } from "@/app/utils/string";
@@ -31,35 +32,47 @@ export default function DocumentBoardsList(props: {
     return (
         <>
             <input
-                className="py-1.5 px-2.5 bg-surface-container border border-outline-variant hover:border-outline rounded-lg w-full mb-6"
+                className="py-1.5 px-2.5 bg-surface-container border border-outline-variant hover:border-outline rounded-lg w-full mb-4"
                 placeholder="Find anything..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} />
 
-            {filteredBoards.length > 0 && 
-                <CardList>
-                    {filteredBoards.map((board) =>
-                        <CardListItem
-                            key={board.id}
-                            href={`/projects/${props.projectId}/boards/${board.id}`}
-                            title={board.title}
-                            titleAs="h4"
-                            lastSeenDate={new Date(lastSeenAt(board))}
-                            icon={LuLayoutDashboard} />)}
-                </CardList>}
+            {filteredBoards.length > 0 &&
+                <>
+                    <ContentItemListHeading
+                        as="h4">
+                        Boards
+                    </ContentItemListHeading>
+                    <CardList>
+                        {filteredBoards.map((board) =>
+                            <CardListItem
+                                key={board.id}
+                                href={`/projects/${props.projectId}/boards/${board.id}`}
+                                title={board.title}
+                                titleAs="h4"
+                                lastSeenDate={new Date(lastSeenAt(board))}
+                                icon={LuLayoutDashboard} />)}
+                    </CardList>
+                </>}
 
             {filteredDocuments.length > 0 &&
-                <CardList
-                    className={cn(filteredBoards.length > 0 && "mt-6")}>
-                    {filteredDocuments.map((document) =>
-                        <CardListItem
-                            key={document.id}
-                            href={`/projects/${props.projectId}/documents/${document.id}`}
-                            title={document.title}
-                            titleAs="h4"
-                            lastSeenDate={new Date(lastSeenAt(document))}
-                            icon={LuFile} />)}
-                </CardList>}
+                <>
+                    <ContentItemListHeading
+                        className={cn(filteredBoards.length > 0 && "mt-4")}
+                        as="h4">
+                        Documents
+                    </ContentItemListHeading>
+                    <CardList>
+                        {filteredDocuments.map((document) =>
+                            <CardListItem
+                                key={document.id}
+                                href={`/projects/${props.projectId}/documents/${document.id}`}
+                                title={document.title}
+                                titleAs="h4"
+                                lastSeenDate={new Date(lastSeenAt(document))}
+                                icon={LuFile} />)}
+                    </CardList>
+                </>}
 
             {filteredBoards.length === 0 && filteredDocuments.length === 0 &&
                 <div

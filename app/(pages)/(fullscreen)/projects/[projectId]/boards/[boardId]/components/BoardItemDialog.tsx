@@ -4,7 +4,7 @@ import { LuPencil, LuSave, LuTrash, LuX } from "react-icons/lu";
 import type { DialogState } from "@/app/types/DialogState";
 import { confirm } from "@/app/components/confirm";
 import ContentDialog from "@/app/components/ContentDialog";
-import MarkdownPreviewer from "@/app/components/MarkdownPreviewer";
+import MarkdownPreviewer from "@/app/components/markdown/MarkdownPreviewer";
 import { useEffect, useState } from "react";
 import { cn } from "@/app/utils/tailwind";
 import useMediaQuery from "@/app/hooks/useMediaQuery";

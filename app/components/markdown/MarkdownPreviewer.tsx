@@ -1,7 +1,7 @@
 "use client";
 
-import useIsDark from "../hooks/useIsDark";
-import { cn } from "../utils/tailwind";
+import useIsDark from "../../hooks/useIsDark";
+import { cn } from "../../utils/tailwind";
 import { useEffect, useRef, useState } from "react";
 import { LuEye, LuImage, LuPencil, LuSave } from "react-icons/lu";
 import Markdown from "react-markdown";
@@ -10,16 +10,18 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import lightStyle from "react-syntax-highlighter/dist/esm/styles/prism/one-light";
 import darkStyle from "react-syntax-highlighter/dist/esm/styles/prism/one-dark";
 import rehypeSlug from "rehype-slug";
-import useDialog from "../hooks/useDialog";
-import SelectImageDialog from "./images/SelectImageDialog";
-import { isNullOrWhiteSpace } from "../utils/string";
-import Button from "./input/Button";
-import { DataImage } from "../types/DataImage";
+import useDialog from "../../hooks/useDialog";
+import SelectImageDialog from "../images/SelectImageDialog";
+import { isNullOrWhiteSpace } from "../../utils/string";
+import Button from "../input/Button";
+import { DataImage } from "../../types/DataImage";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
-import UniversalImage from "./images/UniversalImage";
-import ImagePreviewDialog from "./images/ImagePreviewDialog";
+import UniversalImage from "../images/UniversalImage";
+import ImagePreviewDialog from "../images/ImagePreviewDialog";
+import MarkdownTextArea from "./MarkdownTextArea";
+import useIsClient from "@/app/hooks/useIsClient";
 
 const SAVE_INTERVAL = 5000;
 
@@ -108,43 +110,16 @@ export default function MarkdownPreviewer(props: {
             className={cn("flex flex-col", props.className)}>
             {(!props.editable || isPreview) ? 
                 <MarkdownInternal
-                    text={text} /> :
-                <textarea
+                    text={text}
+                    onReplaceClick={() => {
+                        props.setEditable(true);
+                        setIsPreview(false);
+                    }} /> :
+                <MarkdownTextArea
                     ref={textAreaRef}
-                    className="font-mono bg-surface-container border border-outline rounded-lg py-1 px-2 w-full resize-none field-sizing-content min-h-0"
-                    value={text}
-                    onChange={(e) => {
-                        setTextChanged(true);
-                        setText(e.target.value);
-                    }}
-                    style={{ height: "auto" }}
-                    onKeyDown={(e) => {
-                        if (e.key !== "Tab") {
-                            return;
-                        }
-
-                        e.preventDefault();
-
-                        const start = e.currentTarget.selectionStart;
-                        const end = e.currentTarget.selectionEnd;
-
-                        setText((value) => {
-                            const before = value.substring(0, start);
-                            const after = value.substring(end, value.length);
-
-                            return before + "\t" + after;
-                        });
-                        setTextChanged(true);
-
-                        setTimeout(() => {
-                            if (!textAreaRef.current) {
-                                return;
-                            }
-
-                            textAreaRef.current.selectionStart = textAreaRef.current.selectionEnd = start + 1;
-                        }, 20);
-                    }}>
-                </textarea>}
+                    text={text}
+                    setText={setText}
+                    setTextChanged={setTextChanged} />}
             {!(!props.editable && props.editButtonHidden) &&
                 <div
                     className={cn("flex flex-col sticky bottom-2 self-center items-center", props.actionsWrapperClassName)}>
@@ -197,6 +172,7 @@ function ActionButtons(props: {
         <>
             <Button
                 onClick={() => props.setIsPreview((old) => !old)}
+                size="sm"
                 variant={props.isPreview ? "primary" : "container"}>
                 <LuEye /> Preview
             </Button>
@@ -206,6 +182,7 @@ function ActionButtons(props: {
                 onImageSelected={props.onImageSelected} />
             <Button
                 onClick={props.onSaveClick}
+                size="sm"
                 variant="primary">
                 <LuSave /> Save
             </Button>
@@ -225,6 +202,7 @@ function ImagesButton(props: {
             <Button
                 onClick={dialogState.show}
                 variant="container"
+                size="sm"
                 disabled={props.disabled}>
                 <LuImage /> Images
             </Button>
@@ -240,8 +218,22 @@ function ImagesButton(props: {
 function MarkdownInternal(props: {
     className?: string,
     text: string,
+    onReplaceClick: () => void,
 }) {
     const isDark = useIsDark();
+    const isClient = useIsClient();
+    const [highlightSyntax, setHighlightSyntax] = useState(false);
+
+    useEffect(() => {
+        if (isClient) {
+            const timeout = setTimeout(() => setHighlightSyntax(true), 10);
+            return () => clearTimeout(timeout);
+        }
+    }, [isClient]);
+
+    function onReplaceClick() {
+        props.onReplaceClick();
+    }
 
     if (isNullOrWhiteSpace(props.text)) {
         return undefined;
@@ -257,14 +249,26 @@ function MarkdownInternal(props: {
                     img(props) {
                         return (
                             <CustomImage
+                                onReplaceClick={onReplaceClick}
                                 {...props} />
+                        );
+                    },
+                    pre: (props) => {
+                        if (!highlightSyntax) {
+                            return (
+                                <div className="pre">{props.children}</div>
+                            );
+                        }
+
+                        return (
+                            <pre>{props.children}</pre>
                         );
                     },
                     code(props) {
                         const { children, className, node, ...rest } = props;
                         const match = /language-(\w+)/.exec(className || "");
 
-                        return match ? (
+                        return highlightSyntax && match ? (
                             <SyntaxHighlighter
                                 PreTag="div"
                                 children={String(children).replace(/\n$/, "")}
@@ -296,6 +300,7 @@ function CustomImage(props: {
     src?: string | Blob,
     alt?: string,
     title?: string,
+    onReplaceClick?: () => void,
 }) {
     const dialogState = useDialog();
 
@@ -303,13 +308,12 @@ function CustomImage(props: {
         <>
             <span
                 className="block text-center">
-                <button
-                    className="mx-auto cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={dialogState.show}>
-                    <UniversalImage
-                        className="rounded-lg max-h-[calc(100dvh-10rem)]"
-                        {...props} />
-                </button>
+                <UniversalImage
+                    className="rounded-lg max-h-[calc(100dvh-10rem)]"
+                    buttonClassName="mx-auto cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={dialogState.show}
+                    withStates
+                    {...props} />
             </span>
 
             <ImagePreviewDialog

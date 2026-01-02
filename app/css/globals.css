@@ -42,11 +42,12 @@
   --color-backdrop: var(--backdrop);
 
   --font-sans: var(--font-gabarito-sans);
-  --font-mono: Consolas, "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+  --font-mono: var(--font-google-sans-code);
 }
 
 :root {
   --font-sans: var(--font-gabarito-sans);
+  --font-mono: var(--font-google-sans-code);
 }
 
 html {

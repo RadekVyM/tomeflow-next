@@ -1,5 +1,5 @@
 import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
-import ItemsSectionSkeleton from "../components/ItemsSectionSkeleton";
+import RecentContentSkeleton from "../components/RecentContent";
 import TimeSkeleton from "@/app/components/skeleton/TimeSkeleton";
 import RecentProjectsHeaderSkeleton from "../components/RecentProjectsHeaderSkeleton";
 
@@ -16,7 +16,7 @@ export default function Loading() {
                     <CardListSkeleton className="mb-8" withIcon itemsCount={3} />
                 </section>
 
-                <ItemsSectionSkeleton headingClassName="max-w-48" itemsCount={5} />
+                <RecentContentSkeleton headingClassName="max-w-48" itemsCount={5} />
             </div>
         </>
     );
