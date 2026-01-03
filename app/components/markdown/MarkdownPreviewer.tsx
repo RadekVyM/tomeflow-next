@@ -3,7 +3,6 @@
 import useIsDark from "../../hooks/useIsDark";
 import { cn } from "../../utils/tailwind";
 import { useEffect, useRef, useState } from "react";
-import { LuEye, LuImage, LuPencil, LuSave } from "react-icons/lu";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -11,9 +10,7 @@ import lightStyle from "react-syntax-highlighter/dist/esm/styles/prism/one-light
 import darkStyle from "react-syntax-highlighter/dist/esm/styles/prism/one-dark";
 import rehypeSlug from "rehype-slug";
 import useDialog from "../../hooks/useDialog";
-import SelectImageDialog from "../images/SelectImageDialog";
 import { isNullOrWhiteSpace } from "../../utils/string";
-import Button from "../input/Button";
 import { DataImage } from "../../types/DataImage";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
@@ -22,6 +19,7 @@ import UniversalImage from "../images/UniversalImage";
 import ImagePreviewDialog from "../images/ImagePreviewDialog";
 import MarkdownTextArea from "./MarkdownTextArea";
 import useIsClient from "@/app/hooks/useIsClient";
+import ActionButtons from "./ActionButtons";
 
 const SAVE_INTERVAL = 5000;
 
@@ -38,11 +36,19 @@ export default function MarkdownPreviewer(props: {
     onSave: (text: string) => void,
 }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const textLoadedRef = useRef(false);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const intervalSaveRef = useRef<() => void | null>(null);
-    const [text, setText] = useState(props.text || "");
+    const [text, setText] = useState("");
     const [isPreview, setIsPreview] = useState(false);
     const [textChanged, setTextChanged] = useState(false);
+
+    useEffect(() => {
+        if (!textLoadedRef.current && typeof props.text === "string") {
+            setText(props.text);
+            textLoadedRef.current = true;
+        }
+    }, [props.text]);
 
     useEffect(() => setIsPreview(false), [props.editable]);
     useEffect(() => textAreaRef.current?.focus(), [props.editable, isPreview]);
@@ -122,18 +128,21 @@ export default function MarkdownPreviewer(props: {
                     setTextChanged={setTextChanged} />}
             {!(!props.editable && props.editButtonHidden) &&
                 <div
-                    className={cn("flex flex-col sticky bottom-2 self-center items-center", props.actionsWrapperClassName)}>
+                    className={cn("flex flex-col sticky -bottom-px pb-2 items-center pointer-events-none", props.actionsWrapperClassName)}>
                     {props.editable &&
                         <div
-                            className="text-xs text-on-surface-container bg-primary-lite px-1.5 border border-outline-variant rounded-lg -mb-1 mt-2">
+                            className="text-xs text-on-surface-container bg-primary-lite px-1.5 border border-outline-variant rounded-lg -mb-1 mt-2 pointer-events-auto">
                             {props.isSavePending ?
                                 "Saving changes..." :
                                 textChanged ? "Unsaved changes" : "All changes saved"}
                         </div>}
                     <div
-                        className="flex gap-2 mt-3">
+                        className="flex flex-wrap justify-center items-center gap-2 mt-3 pointer-events-auto">
                         <ActionButtons
                             text={text}
+                            setText={setText}
+                            setTextChanged={setTextChanged}
+                            textAreaRef={textAreaRef}
                             editable={props.editable}
                             setEditable={props.setEditable}
                             isPreview={isPreview}
@@ -144,74 +153,6 @@ export default function MarkdownPreviewer(props: {
                     </div>
                 </div>}
         </div>
-    );
-}
-
-function ActionButtons(props: {
-    text: string,
-    projectId: string,
-    editable: boolean,
-    isPreview: boolean,
-    setIsPreview: React.Dispatch<React.SetStateAction<boolean>>,
-    setEditable: React.Dispatch<React.SetStateAction<boolean>>,
-    onSaveClick: () => void,
-    onImageSelected: (image: DataImage) => void,
-}) {
-    if (!props.editable) {
-        return (
-            <Button
-                key="toggle"
-                onClick={() => props.setEditable(true)}
-                variant="container">
-                <LuPencil /> Edit
-            </Button>
-        );
-    }
-
-    return (
-        <>
-            <Button
-                onClick={() => props.setIsPreview((old) => !old)}
-                size="sm"
-                variant={props.isPreview ? "primary" : "container"}>
-                <LuEye /> Preview
-            </Button>
-            <ImagesButton
-                projectId={props.projectId}
-                disabled={props.isPreview}
-                onImageSelected={props.onImageSelected} />
-            <Button
-                onClick={props.onSaveClick}
-                size="sm"
-                variant="primary">
-                <LuSave /> Save
-            </Button>
-        </>
-    );
-}
-
-function ImagesButton(props: {
-    projectId: string,
-    disabled?: boolean,
-    onImageSelected: (image: DataImage) => void,
-}) {
-    const dialogState = useDialog();
-
-    return (
-        <>
-            <Button
-                onClick={dialogState.show}
-                variant="container"
-                size="sm"
-                disabled={props.disabled}>
-                <LuImage /> Images
-            </Button>
-
-            <SelectImageDialog
-                projectId={props.projectId}
-                state={dialogState}
-                onImageSelected={props.onImageSelected} />
-        </>
     );
 }
 

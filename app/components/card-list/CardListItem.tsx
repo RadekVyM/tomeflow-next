@@ -41,9 +41,9 @@ export default function CardListItem(props: {
                         time={props.lastSeenDate} />
                     {Icon &&
                         <div
-                            className="bg-primary-lite p-1.5 rounded-lg -mr-1">
+                            className="bg-primary-lite p-1.25 rounded-lg -mr-1">
                             <Icon
-                                className="text-primary w-3.5 h-3.5" />
+                                className="text-primary dark:text-primary-dim w-4 h-4" />
                         </div>}
                 </div>
             </Button>

@@ -23,11 +23,11 @@
     }
 
     strong, b, th {
-        @apply font-semibold;
+        @apply font-extrabold;
     }
 
     a {
-        @apply text-primary hover:underline;
+        @apply text-primary dark:text-primary-dim hover:underline;
     }
 
     p:not(blockquote > *), ul:not(li > *), ol:not(li > *), pre, .pre, blockquote, table {
@@ -65,7 +65,7 @@
 
     code:not(pre *, .pre *) {
         font-size: 0.9rem;
-        @apply bg-primary-lite font-mono text-on-surface px-1.5 py-0.5 rounded-sm;
+        @apply bg-primary-lite border border-outline font-mono text-on-surface px-1.5 py-px rounded-sm;
     }
 
     em {
@@ -107,7 +107,7 @@
     }
 
     blockquote {
-        @apply text-primary bg-primary-lite rounded-lg px-4 py-2 text-lg;
+        @apply text-primary dark:text-primary-dim bg-primary-lite rounded-lg px-4 py-2 text-lg;
     }
 
     table {
@@ -132,7 +132,7 @@
     }
 
     input[type="checkbox"]:disabled {
-        @apply accent-primary text-primary bg-primary opacity-100;
+        @apply accent-primary text-primary dark:text-primary-dim bg-primary opacity-100;
     }
 
     :first-child {

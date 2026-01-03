@@ -11,7 +11,7 @@ export default function NewProjectButtonSkeleton(props: {
             size={props.size}
             className={props.className}
             disabled>
-            <LuPackagePlus />
+            <LuPackagePlus /> <span>New project</span>
         </Button>
     );
 }

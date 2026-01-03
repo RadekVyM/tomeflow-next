@@ -70,7 +70,9 @@ body {
   box-sizing: border-box;
   touch-action: pan-x pan-y;
 
-  @apply bg-surface;
+  outline-color: var(--primary);
+
+  @apply bg-surface text-on-surface;
 }
 
 #root {

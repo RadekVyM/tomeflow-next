@@ -23,9 +23,9 @@ export default function CardListItemSkeleton(props: {
                     className="text-xs h-[1em]" />
                 {props.withIcon &&
                     <div
-                        className="p-1.5 -mr-1">
+                        className="p-1.25 -mr-1">
                         <div
-                            className="w-3.5 h-3.5" />
+                            className="w-4 h-4" />
                     </div>}
             </div>
         </Skeleton>

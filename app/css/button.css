@@ -2,7 +2,7 @@
 
 @layer components {
   .btn {
-    @apply flex items-center gap-2 rounded-lg w-fit transition-colors disabled:opacity-50 disabled:pointer-events-none cursor-pointer select-none;
+    @apply flex items-center gap-2 rounded-lg w-fit transition-colors disabled:pointer-events-none cursor-pointer select-none;
   }
 
   .btn-icon {
@@ -14,23 +14,23 @@
   }
 
   .btn-default {
-    @apply bg-transparent text-on-surface hover:bg-surface-dim hover:text-on-surface-dim border border-transparent;
+    @apply bg-transparent text-on-surface hover:bg-surface-dim hover:text-on-surface-dim border border-transparent disabled:text-on-surface-muted;
   }
 
   .btn-container {
-    @apply bg-surface-container text-on-surface-container hover:bg-surface-dim-container hover:text-on-surface-dim-container border border-outline-variant;
+    @apply bg-surface-container text-on-surface-container hover:bg-surface-dim-container hover:text-on-surface-dim-container border border-outline-variant disabled:text-on-surface-container-muted;
   }
 
   .btn-primary {
-    @apply bg-primary text-on-primary hover:bg-primary-dim hover:text-on-primary-dim border border-primary hover:border-primary-dim;
+    @apply bg-primary text-on-primary hover:bg-primary-dim hover:text-on-primary-dim border border-primary hover:border-primary-dim disabled:bg-primary-dim disabled:border-primary-dim disabled:text-on-primary;
   }
 
   .btn-secondary {
-    @apply bg-secondary text-on-secondary hover:bg-secondary-dim hover:text-on-secondary-dim border border-secondary hover:border-secondary-dim;
+    @apply bg-secondary text-on-secondary hover:bg-secondary-dim hover:text-on-secondary-dim border border-secondary hover:border-secondary-dim disabled:text-on-surface-muted;
   }
 
   .btn-destructive {
-    @apply bg-danger text-on-danger hover:bg-danger-dim hover:text-on-danger-dim border border-danger;
+    @apply bg-danger text-on-danger hover:bg-danger-dim hover:text-on-danger-dim border border-danger disabled:bg-danger-dim disabled:text-on-surface-muted;
   }
 
   .btn-sm {

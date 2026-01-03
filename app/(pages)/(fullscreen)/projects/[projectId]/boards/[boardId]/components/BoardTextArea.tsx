@@ -25,7 +25,7 @@ export default function BoardTextArea(props: {
     return (
         <textarea
             ref={textareaRef}
-            className={cn("py-1 px-2 resize-none field-sizing-content min-h-0 bg-surface-container border border-outline rounded-lg wrap-break-word thin-scrollbar", props.className)}
+            className={cn("py-1 px-2 resize-none field-sizing-content min-h-0 bg-surface-container border border-outline-variant hover:border-outline outline-primary rounded-lg wrap-break-word thin-scrollbar", props.className)}
             placeholder={props.placeholder}
             value={props.value}
             disabled={props.disabled}

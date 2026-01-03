@@ -66,7 +66,7 @@ export default function BoardItemDialog(props: {
                 </div>
 
                 <div
-                    className="px-5 pb-4 pt-2 overflow-y-auto max-h-full thin-scrollbar">
+                    className="px-5 pb-0 pt-2 overflow-y-auto max-h-full thin-scrollbar">
                     <Description
                         projectId={props.projectId}
                         boardId={props.boardId}
@@ -263,6 +263,7 @@ function Description(props: {
             className={cn(
                 props.className,
                 (props.descriptionEditable || !isNullOrWhiteSpace(props.item.description)) && "my-2")}
+            actionsWrapperClassName="bg-linear-to-t from-surface-container to-surface-container/0 from-10%"
             isSavePending={isPending}
             editorType="editor-first"
             projectId={props.projectId}
@@ -285,6 +286,7 @@ function ChecklistSection(props: {
                 Checklist
             </h3>
             <Checklist
+                className="mb-4"
                 {...props} />
         </>
     );

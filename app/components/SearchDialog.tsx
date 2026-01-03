@@ -98,7 +98,7 @@ function Content(props: {
             className="w-full">
             <input
                 ref={inputRef}
-                className="py-1 px-2 bg-surface-container border border-outline rounded-lg w-full"
+                className="py-1 px-2 bg-surface-container border border-outline rounded-lg w-full outline-primary"
                 placeholder="Find anything..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} />
@@ -150,7 +150,7 @@ function ResultContent(props: {
             <div
                 className="bg-primary-lite p-1.5 rounded-lg">
                 <Icon
-                    className="text-primary w-3.5 h-3.5" />
+                    className="text-primary dark:text-primary-dim w-3.5 h-3.5" />
             </div>
 
             <div

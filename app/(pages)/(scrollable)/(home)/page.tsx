@@ -9,7 +9,7 @@ import { getRecentDocuments } from "@/app/services/documents";
 import { getRecentProjects } from "@/app/services/projects";
 import { lastSeenAt } from "@/app/utils/entities";
 import { getSessionCached } from "@/app/utils/session";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { LuFile, LuLayoutDashboard, LuLayoutGrid, LuPackage } from "react-icons/lu";
 import RecentContentSkeleton from "../components/RecentContent";
 import RecentProjectsHeaderSkeleton from "../components/RecentProjectsHeaderSkeleton";

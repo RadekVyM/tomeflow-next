@@ -21,6 +21,7 @@ export default function DocumentContent(props: {
     return (
         <MarkdownPreviewer
             className={props.className}
+            actionsWrapperClassName="bg-linear-to-t from-surface to-surface/0 from-10%"
             text={props.content}
             isSavePending={action.isPending}
             editable={editable}

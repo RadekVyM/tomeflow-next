@@ -42,7 +42,7 @@ export default function TextInputDialog(props: {
                 }}>
                 <input
                     ref={inputRef}
-                    className="bg-surface border border-outline rounded-lg py-1 px-2"
+                    className="bg-surface border border-outline outline-primary rounded-lg py-1 px-2"
                     disabled={props.disabled}
                     placeholder={props.placeholder}
                     type="text"

@@ -19,7 +19,7 @@ export default function ContentDialog(props: {
             state={props.state}
             onEscape={props.onCloseClick}
             outerClassName={props.outerClassName}
-            className={cn("px-5 pb-4 thin-scrollbar rounded-2xl bg-surface-container isolate flex flex-col", props.className)}>
+            className={cn("px-5 pb-4 thin-scrollbar rounded-2xl bg-surface-container text-on-surface-container isolate flex flex-col", props.className)}>
             <header
                 className={cn("flex justify-between items-start z-50 bg-inherit pt-4 pb-2", props.headerClassName)}>
                 <Heading className="font-semibold text-xl flex-1">{props.heading}</Heading>

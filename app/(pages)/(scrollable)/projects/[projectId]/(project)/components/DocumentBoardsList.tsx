@@ -32,7 +32,7 @@ export default function DocumentBoardsList(props: {
     return (
         <>
             <input
-                className="py-1.5 px-2.5 bg-surface-container border border-outline-variant hover:border-outline rounded-lg w-full mb-4"
+                className="py-1.5 px-2.5 bg-surface-container border border-outline-variant outline-primary hover:border-outline rounded-lg w-full mb-4"
                 placeholder="Find anything..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} />

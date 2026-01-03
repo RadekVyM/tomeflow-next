@@ -23,9 +23,9 @@ export default function SyncingIndicator(props: {
 
     return (
         <div
-            className={cn("text-xs text-primary flex items-center mr-2 transition-all duration-500 ease-in-out", !isVisible && "opacity-0 translate-y-0.5", props.className)}>
+            className={cn("text-xs text-primary dark:text-primary-dim flex items-center mr-2 transition-all duration-500 ease-in-out", !isVisible && "opacity-0 translate-y-0.5", props.className)}>
             <LoadingIcon
-                className="w-2.5 h-2.5 mr-1 text-primary" />
+                className="w-2.5 h-2.5 mr-1" />
             <span className="mt-px">Syncing</span>
         </div>
     );

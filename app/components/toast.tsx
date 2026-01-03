@@ -283,7 +283,7 @@ function Toast(props: {
                 setTimeout(() => loopRef.current?.start(), 10);
             }}>
             <Icon
-                className="text-primary w-5 h-5" />
+                className="text-primary dark:text-primary-dim w-5 h-5" />
             <h2
                 className="font-semibold text-sm">
                 {props.toast.title}

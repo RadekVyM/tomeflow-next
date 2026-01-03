@@ -432,9 +432,9 @@ function ItemContent(props: {
                     <div
                         className="flex items-center gap-1.5 mt-1">
                         <LuSquareCheckBig
-                            className="text-primary" />
+                            className="text-primary dark:text-primary-dim" />
                         <span
-                            className="text-sm text-primary mt-0.5">
+                            className="text-sm text-primary dark:text-primary-dim mt-0.5">
                             {props.item.doneCheckItemsCount}/{props.item.checkItemsCount}
                         </span>
                     </div>}

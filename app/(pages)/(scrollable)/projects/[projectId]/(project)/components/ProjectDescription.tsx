@@ -25,6 +25,7 @@ export default function ProjectDescription(props: {
             setEditable={setDescriptionEditable}
             text={props.description || undefined}
             className={props.className}
+            actionsWrapperClassName="bg-linear-to-t from-surface to-surface/0 from-10%"
             editorType="editor-first"
             onSave={(text) => {
                 setDescription(text);
