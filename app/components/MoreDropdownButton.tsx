@@ -16,7 +16,7 @@ export function MoreDropdownButton(props: {
     return (
         <DropDownButton
             className={props.className}
-            id="projects-more"
+            id={props.id}
             variant="icon-container"
             size={props.size}
             title="More"

@@ -40,7 +40,7 @@
     --on-secondary-dim: #000;
 
     --surface: #f8fafc;
-    --on-surface: #000;
+    --on-surface: #1a1a1a;
     --on-surface-muted: #6b7280;
 
     --surface-dim: #e5e7eb;
@@ -48,7 +48,7 @@
     --on-surface-dim-muted: #6b7280;
 
     --surface-container: #ffffff;
-    --on-surface-container: #000;
+    --on-surface-container: #1a1a1a;
     --on-surface-container-muted: #6b7280;
 
     --surface-dim-container: #eaeef4;

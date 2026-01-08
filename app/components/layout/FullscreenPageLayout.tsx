@@ -1,24 +1,24 @@
 import PageHeader from "./PageHeader";
-import ScrollableMain from "./ScrollableMain";
 
-export default function ScrollablePageLayout(props: {
-    breadcrumbs?: React.ReactNode,
-    pageHeading?: React.ReactNode,
+export default function FullscreenPageLayout(props: {
+    breadcrumbs: React.ReactNode,
+    pageHeading: React.ReactNode,
     actionButtons?: React.ReactNode,
     smActionButtons?: React.ReactNode,
     children?: React.ReactNode,
 }) {
     return (
-        <>
+        <div className="h-dvh max-h-dvh overflow-hidden flex flex-col">
             <PageHeader
+                fullscreen
                 breadcrumbs={props.breadcrumbs}
                 pageHeading={props.pageHeading}
                 actionButtons={props.actionButtons}
                 smActionButtons={props.smActionButtons} />
 
-            <ScrollableMain>
+            <main className="flex-1 overflow-hidden flex flex-col">
                 {props.children}
-            </ScrollableMain>
-        </>
+            </main>
+        </div>
     );
 }

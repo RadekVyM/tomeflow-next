@@ -16,7 +16,7 @@ export default function UserInfoPopover(props: {
 
     return (
         <article
-            className="pointer-events-auto slide-down-popover-transition open:fixed inset-[unset] right-4 top-15 bg-surface-container rounded-xl border border-outline-variant px-4 py-3 w-full max-w-[min(calc(100vw-(var(--spacing)*8)),20rem)]"
+            className="pointer-events-auto slide-down-popover-transition open:fixed inset-[unset] sm:left-2 right-3 sm:right-auto top-13 sm:top-14 bg-surface-container rounded-xl border border-outline-variant px-4 py-3 w-full max-w-[min(calc(100vw-(var(--spacing)*8)),16rem)]"
             id="userinfo-popover"
             popover="auto">
             <div

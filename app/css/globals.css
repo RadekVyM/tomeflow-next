@@ -125,12 +125,10 @@ dialog > article {
 .scrollable-header {
   animation: add-border auto linear;
   animation-timeline: scroll(root);
-  animation-range: 3px 5px;
+  animation-range: 4px 15px;
   animation-fill-mode: both;
 
-  @media (width < 1100px) {
-    @apply bg-surface border-b border-transparent;
-  }
+  @apply bg-surface border-b border-transparent;
 }
 
 @keyframes add-border {

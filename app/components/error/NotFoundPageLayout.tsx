@@ -1,10 +1,10 @@
 import Breadcrumbs from "@/app/components/Breadcrumbs";
 import PageHeading from "@/app/components/layout/PageHeading";
-import PageLayout from "@/app/components/layout/PageLayout";
+import ScrollablePageLayout from "@/app/components/layout/ScrollablePageLayout";
 
 export default function NotFoundPageLayout() {
     return (
-        <PageLayout
+        <ScrollablePageLayout
             breadcrumbs={
                 <Breadcrumbs
                     locations={[
@@ -25,6 +25,6 @@ export default function NotFoundPageLayout() {
                 className="text-on-surface-muted mb-8">
                 The page you are looking for doesn't seem to exist...
             </p>
-        </PageLayout>
+        </ScrollablePageLayout>
     );
 }

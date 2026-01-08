@@ -11,7 +11,7 @@ export default function Breadcrumbs(props: {
 }) {
     return (
         <HorizontalScroller
-            className={cn("mb-2 -mx-2", props.className)}
+            className={cn("-mx-2", props.className)}
             scrollerClassName="items-center"
             as="nav">
             {props.locations.map((location, index) =>

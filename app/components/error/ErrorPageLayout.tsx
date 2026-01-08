@@ -2,7 +2,7 @@
 
 import Breadcrumbs from "@/app/components/Breadcrumbs";
 import PageHeading from "@/app/components/layout/PageHeading";
-import PageLayout from "@/app/components/layout/PageLayout";
+import ScrollablePageLayout from "@/app/components/layout/ScrollablePageLayout";
 import ErrorPageContent from "./ErrorPageContent";
 
 export default function ErrorPageLayout(props: {
@@ -10,7 +10,7 @@ export default function ErrorPageLayout(props: {
     reset: () => void,
 }) {
     return (
-        <PageLayout
+        <ScrollablePageLayout
             breadcrumbs={
                 <Breadcrumbs
                     locations={[
@@ -24,6 +24,6 @@ export default function ErrorPageLayout(props: {
 
             <ErrorPageContent
                 {...props} />
-        </PageLayout>
+        </ScrollablePageLayout>
     );
 }
