@@ -9,7 +9,7 @@ export default function ScrollablePageLayout(props: {
     children?: React.ReactNode,
 }) {
     return (
-        <>
+        <div className="sm:col-start-2">
             <PageHeader
                 breadcrumbs={props.breadcrumbs}
                 pageHeading={props.pageHeading}
@@ -19,6 +19,6 @@ export default function ScrollablePageLayout(props: {
             <ScrollableMain>
                 {props.children}
             </ScrollableMain>
-        </>
+        </div>
     );
 }

@@ -9,10 +9,8 @@ export default function Layout(props: {
         <div
             className="grid sm:grid-cols-[calc(15*var(--spacing))_1fr]">
             <SideBar />
-            <div
-                className="sm:col-start-2 overflow-hidden">
-                {props.children}
-            </div>
+
+            {props.children}
         </div>
     );
 }
