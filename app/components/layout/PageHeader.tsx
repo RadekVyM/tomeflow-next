@@ -1,5 +1,4 @@
 import { cn } from "@/app/utils/tailwind";
-import UserButton from "./UserButton";
 
 export default function PageHeader(props: {
     className?: string,

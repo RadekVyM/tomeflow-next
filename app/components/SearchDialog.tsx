@@ -191,8 +191,13 @@ function useSearch(searchQuery: string) {
     return useQuery({
         queryKey: ["search", { searchQuery }],
         queryFn: ({ signal }) => fetch(`/api/search?query=${searchQuery}`, { signal })
-            .then((res) => res.json())
-            .then((data) => data as Array<SearchResult>),
+            .then(async (res) => {
+                if (!res.ok) {
+                    throw new Error(res.statusText);
+                }
+
+                return await res.json() as Array<SearchResult>;
+            }),
     });
 }
 

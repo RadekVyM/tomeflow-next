@@ -19,6 +19,7 @@ import DocumentsBoardsSkeleton from "./components/DocumentsBoardsSkeleton";
 import EmptyProject from "./components/EmptyProject";
 import { notFound } from "next/navigation";
 import DocumentBoardsList from "./components/DocumentBoardsList";
+import ContentHeader from "./components/ContentHeader";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
@@ -166,10 +167,8 @@ async function DocumentsBoards(props: {
 
     return (
         <section>
-            <h3
-                className={cn("font-semibold text-2xl mb-4", !hasHeading && "sr-only", hasHeading && "mt-8")}>
-                Content
-            </h3>
+            <ContentHeader
+                hasHeading={hasHeading} />
 
             <DocumentBoardsList
                 projectId={props.projectId}

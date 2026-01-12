@@ -62,10 +62,8 @@ export default function RootLayout({
             lang="en" className={cn(gabarito.variable, googleSansCode.variable, robotoItalic.variable)}>
             <QueryClientProvider>
                 <body className="antialiased font-sans">
-                    <div
-                        className="flex flex-col min-h-dvh">
-                        {children}
-                    </div>
+                    {children}
+
                     <Analytics />
                     <SpeedInsights />
                     <ConfirmDialogs />

@@ -1,5 +1,4 @@
 import Breadcrumbs from "@/app/components/Breadcrumbs";
-import Header from "@/app/components/layout/Header";
 import PageHeading from "@/app/components/layout/PageHeading";
 import { getBoard } from "@/app/services/boards";
 import { getProject } from "@/app/services/projects";

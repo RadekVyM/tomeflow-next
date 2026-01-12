@@ -12,8 +12,13 @@ export function useBoard(boardId: string) {
     return useQuery({
         queryKey: ["board", { boardId }],
         queryFn: ({ signal }) => fetch(`/api/projects/boards/${boardId}`, { signal })
-            .then((res) => res.json())
-            .then((data) => data as ProjectBoard),
+            .then(async (res) => {
+                if (!res.ok) {
+                    throw new Error(res.statusText);
+                }
+
+                return await res.json() as ProjectBoard;
+            }),
     });
 }
 
@@ -27,9 +32,12 @@ export function useSections(boardId: string) {
     return useQuery({
         queryKey: ["board-sections", { boardId }],
         queryFn: ({ signal }) => fetch(`/api/projects/boards/${boardId}/sections`, { signal })
-            .then((res) => res.json())
-            .then((data) => {
-                const sections = data as Array<SimpleProjectBoardSection>;
+            .then(async (res) => {
+                if (!res.ok) {
+                    throw new Error(res.statusText);
+                }
+
+                const sections = await res.json() as Array<SimpleProjectBoardSection>;
 
                 sections.sort((a, b) => a.position - b.position);
 
@@ -122,10 +130,13 @@ export function useBoardItem(boardId: string, itemId: string) {
     return useQuery({
         queryKey: ["board-item", { itemId }],
         queryFn: ({ signal }) => fetch(`/api/projects/board-items/${itemId}`, { signal })
-            .then((res) => res.json())
-            .then((data) => {
-                const item = data as ProjectBoardItem;
-                queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, data.id, item));
+            .then(async (res) => {
+                if (!res.ok) {
+                    throw new Error(res.statusText);
+                }
+
+                const item = await res.json() as ProjectBoardItem;
+                queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, item.id, item));
                 return item;
             }),
         enabled: !isNullOrWhiteSpace(boardId) && !isNullOrWhiteSpace(itemId),
@@ -167,8 +178,13 @@ export function useUpdateItem(boardId: string, itemId: string) {
 
             await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             return await fetchPut(`/api/projects/board-items/${itemId}`, data)
-                .then((res) => res.json())
-                .then((data) => data as ProjectBoardItem);
+                .then(async (res) => {
+                    if (!res.ok) {
+                        throw new Error(res.statusText);
+                    }
+
+                    return await res.json() as ProjectBoardItem;
+                });
         },
         onError: () => toast("Failed to update the item"),
         onSuccess: (data) => {
@@ -190,8 +206,13 @@ export function useUpdateItemFromBoard(boardId: string) {
                 {
                     isDone: data.isDone,
                 })
-                .then((res) => res.json())
-                .then((data) => data as ProjectBoardItem);
+                .then(async (res) => {
+                    if (!res.ok) {
+                        throw new Error(res.statusText);
+                    }
+
+                    return await res.json() as ProjectBoardItem;
+                });
         },
         onError: () => toast("Failed to update the item"),
         onSuccess: (data) => queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, data.id, data)),

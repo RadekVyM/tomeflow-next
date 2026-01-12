@@ -82,8 +82,13 @@ function useDataImage(imageId: string) {
             }
 
             const image = await fetch(`/api/projects/images/${imageId}`, { signal })
-                .then((res) => res.json())
-                .then((data) => data as VercelImage);
+                .then(async (res) => {
+                    if (!res.ok) {
+                        throw new Error(res.statusText);
+                    }
+
+                    return await res.json() as VercelImage;
+                });
 
             return await cacheVercelImage(image);
         },

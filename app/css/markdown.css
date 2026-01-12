@@ -1,11 +1,11 @@
 @reference "./globals.css";
 
 .markdown {
+    @apply text-on-surface max-w-full;
+
     * {
         hyphens: auto;
         overflow-wrap: break-word;
-
-        @apply text-on-surface;
     }
 
     :where(h1, h2, h3, h4, h5, h6) {
@@ -32,8 +32,8 @@
         @apply text-primary dark:text-primary-dim hover:underline;
     }
 
-    p:not(blockquote > *), ul:not(li > *), ol:not(li > *), pre, .pre, blockquote, table {
-        @apply mb-2.5;
+    p:not(blockquote > *), ul:not(li > *), ol:not(li > *), pre, .pre, blockquote, div:has(table) {
+        @apply mb-4;
     }
 
     li > p:only-child,
@@ -112,25 +112,28 @@
         @apply text-primary dark:text-primary-dim bg-primary-lite rounded-lg px-4 py-2 text-lg;
     }
 
+    div:has(table) {
+        @apply overflow-clip overflow-x-auto relative max-w-full rounded-lg border border-outline;
+    }
+
     table {
         thead {
-            @apply border-b border-outline;
+            @apply border-b border-outline bg-surface-light-dim-container;
+        }
+
+        tbody {
+            @apply divide-y divide-outline-variant;
         }
 
         td, th {
-            @apply px-2 py-1;
+            @apply px-3 py-2 text-left font-medium;
         }
 
         tr:not(thead > *) {
-            @apply odd:bg-surface-light-dim-container;
+            @apply odd:bg-surface-container;
         }
 
-        &::after {
-            content: "";
-            @apply absolute inset-0 bg-transparent rounded-lg border border-outline pointer-events-none;
-        }
-
-        @apply bg-surface-container rounded-lg border-collapse relative;
+        @apply bg-surface-container border-collapse relative w-full;
     }
 
     input[type="checkbox"]:disabled {

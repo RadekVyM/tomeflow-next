@@ -65,5 +65,6 @@ export const deleteDocumentAction = authActionClient
 
         revalidatePath("/");
         revalidatePath(`/projects/${document.projectId}`);
-        redirect(`/projects/${document.projectId}`);
+
+        return { redirectUrl: `/projects/${document.projectId}` };
     });

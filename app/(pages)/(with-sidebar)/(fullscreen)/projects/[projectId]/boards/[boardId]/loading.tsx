@@ -1,4 +1,3 @@
-import Header from "@/app/components/layout/Header";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
 import BreadcrumbsSkeleton from "@/app/components/skeleton/BreadcrumbsSkeleton";
 import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";

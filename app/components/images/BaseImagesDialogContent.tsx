@@ -263,8 +263,13 @@ function useImages(projectId: string) {
         queryFn: async ({ signal }) => {
             // await (await navigator.storage.getDirectory()).removeEntry("projects", { recursive: true });
             const simpleDtos = await fetch(`/api/projects/${projectId}/images`, { signal })
-                .then((res) => res.json())
-                .then((data) => (data || []) as Array<SimpleDataImage>);
+                .then(async (res) => {
+                    if (!res.ok) {
+                        throw new Error(res.statusText);
+                    }
+
+                    return (await res.json() || []) as Array<SimpleDataImage>;
+                });
 
             const imageIds = simpleDtos.map((s) => s.id);
             await ensureCachedImages(imageIds, (dataImage) => {

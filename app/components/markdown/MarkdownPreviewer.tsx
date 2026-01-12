@@ -229,6 +229,14 @@ function MarkdownInternal(props: {
                                 {children}
                             </code>
                         );
+                    },
+                    table({ className, node, ...props }) {
+                        return (
+                            <div
+                                className={className}>
+                                <table {...props} />
+                            </div>
+                        );
                     }
                 }}>
                 {props.text}

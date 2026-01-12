@@ -7,7 +7,8 @@ import TextInputDialog from "@/app/components/TextInputDialog";
 import toast from "@/app/components/toast";
 import useDialog from "@/app/hooks/useDialog";
 import { useAction } from "next-safe-action/hooks";
-import { LuTextCursorInput, LuTrash } from "react-icons/lu";
+import { useRouter } from "next/navigation";
+import { LuCircleCheck, LuTextCursorInput, LuTrash } from "react-icons/lu";
 
 export default function MoreButton(props: {
     id: string,
@@ -61,6 +62,7 @@ function RenameButton(props: {
 function DeleteButton(props: {
     boardId: string,
 }) {
+    const router = useRouter();
     const action = useAction(deleteBoardAction, {
         onError: () => toast("Failed to delete the board"),
     });
@@ -70,7 +72,15 @@ function DeleteButton(props: {
             return;
         }
 
-        action.execute({ id: props.boardId });
+        const result = await action.executeAsync({ id: props.boardId });
+
+        // I need to do the redirect on the client to be able to show the following toast
+        router.push(result.data?.redirectUrl ? result.data?.redirectUrl : "/projects");
+
+        // For some reason, the onSuccess callback of useAction() is never called here
+        if (!result.serverError && !result.validationErrors) {
+            toast("Deleted the board successfully", "default", LuCircleCheck);
+        }
     }
 
     return (

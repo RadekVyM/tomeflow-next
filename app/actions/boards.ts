@@ -47,5 +47,6 @@ export const deleteBoardAction = authActionClient
 
         revalidatePath("/");
         revalidatePath(`/projects/${board.projectId}`);
-        redirect(`/projects/${board.projectId}`);
+
+        return { redirectUrl: `/projects/${board.projectId}` };
     });
