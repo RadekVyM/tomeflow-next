@@ -258,7 +258,7 @@ function CustomImage(props: {
             <span
                 className="block text-center">
                 <UniversalImage
-                    className="rounded-lg max-h-[calc(100dvh-10rem)]"
+                    className="rounded-xl max-h-[calc(100dvh-10rem)]"
                     buttonClassName="mx-auto cursor-pointer hover:opacity-90 transition-opacity"
                     onClick={dialogState.show}
                     withStates

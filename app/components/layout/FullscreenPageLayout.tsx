@@ -8,7 +8,7 @@ export default function FullscreenPageLayout(props: {
     children?: React.ReactNode,
 }) {
     return (
-        <div className="sm:col-start-2 h-dvh min-h-dvh max-h-dvh overflow-hidden flex flex-col">
+        <div className="fullscreen sm:col-start-2 h-dvh min-h-dvh max-h-dvh overflow-hidden flex flex-col">
             <PageHeader
                 fullscreen
                 breadcrumbs={props.breadcrumbs}

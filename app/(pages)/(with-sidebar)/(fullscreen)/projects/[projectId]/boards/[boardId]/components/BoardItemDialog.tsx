@@ -1,6 +1,6 @@
 "use client";
 
-import { LuPencil, LuSave, LuTrash, LuX } from "react-icons/lu";
+import { TbPencil, TbTrash } from "react-icons/tb";
 import type { DialogState } from "@/app/types/DialogState";
 import { confirm } from "@/app/components/confirm";
 import ContentDialog from "@/app/components/ContentDialog";
@@ -219,7 +219,7 @@ function Actions(props: {
                 title={isLarge ? undefined : descriptionButtonTitle}
                 onClick={() => props.setDescriptionEditable(true)}
                 disabled={props.descriptionEditable || !props.item}>
-                <LuPencil /> <span>{descriptionButtonTitle}</span>
+                <TbPencil /> <span>{descriptionButtonTitle}</span>
             </Button>
             <Button
                 size="sm"
@@ -236,7 +236,7 @@ function Actions(props: {
                     await props.dialogState.hide();
                 }}
                 disabled={!props.item}>
-                <LuTrash />
+                <TbTrash />
             </Button>
         </div>
     );

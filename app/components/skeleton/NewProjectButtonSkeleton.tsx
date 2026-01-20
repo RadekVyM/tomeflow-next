@@ -1,5 +1,5 @@
 import Button from "@/app/components/input/Button";
-import { LuPackagePlus } from "react-icons/lu";
+import { TbPlus } from "react-icons/tb";
 
 export default function NewProjectButtonSkeleton(props: {
     className?: string,
@@ -11,7 +11,7 @@ export default function NewProjectButtonSkeleton(props: {
             size={props.size}
             className={props.className}
             disabled>
-            <LuPackagePlus /> <span>New project</span>
+            <TbPlus /> <span>New project</span>
         </Button>
     );
 }

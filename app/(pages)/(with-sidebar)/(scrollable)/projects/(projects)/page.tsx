@@ -7,13 +7,13 @@ import ImportButton from "./components/ImportButton";
 import { getAllProjects } from "@/app/services/projects";
 import CardListItem from "@/app/components/card-list/CardListItem";
 import { lastSeenAt } from "@/app/utils/entities";
-import { LuPackage } from "react-icons/lu";
 import CardList from "@/app/components/card-list/CardList";
 import { Suspense } from "react";
 import CardListSkeleton from "@/app/components/skeleton/CardListSkeleton";
 import ScrollablePageLayout from "@/app/components/layout/ScrollablePageLayout";
 import { getSessionCached } from "@/app/utils/session";
 import EmptyProjects from "../../components/EmptyProjects";
+import { TbPackage } from "react-icons/tb";
 
 export default async function Page() {
     return (
@@ -47,8 +47,7 @@ function ActionButtons(props: {
 
     return (
         <>
-            <NewProjectButton
-                size="sm" />
+            <NewProjectButton />
             <MoreButton
                 id={id} />
         </>
@@ -62,7 +61,6 @@ function MoreButton(props: {
     return (
         <MoreDropdownButton
             id={props.id}
-            size="sm"
             disabled={props.disabled}>
             <ExportButton />
             <ImportButton />
@@ -91,7 +89,7 @@ async function ProjectsList(props: {
                     href={`/projects/${project.id}`}
                     title={project.title}
                     lastSeenDate={new Date(lastSeenAt(project))}
-                    icon={LuPackage} />)}
+                    icon={TbPackage} />)}
         </CardList>
     );
 }

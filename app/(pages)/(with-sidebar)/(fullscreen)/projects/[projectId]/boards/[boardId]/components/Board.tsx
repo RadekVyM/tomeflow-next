@@ -5,7 +5,7 @@ import { closestCenter, DndContext, DragOverlay, getFirstCollision, MeasuringStr
 import { arrayMove, defaultAnimateLayoutChanges, horizontalListSortingStrategy, SortableContext, useSortable, verticalListSortingStrategy, type AnimateLayoutChanges } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import { LuEllipsisVertical, LuSquareCheckBig, LuTextCursorInput, LuTrash } from "react-icons/lu";
+import { TbDotsVertical, TbSquareRoundedCheck, TbForms, TbTrash } from "react-icons/tb";
 import { createPortal } from "react-dom";
 import DropDownButton from "@/app/components/input/DropdownButton";
 import { cn } from "@/app/utils/tailwind";
@@ -331,7 +331,7 @@ function DroppableContainer(props: {
         <article
             ref={props.isDragOverlay ? undefined : setNodeRef}
             className={cn(
-                "grid grid-rows-[auto_1fr_auto] min-w-72 max-w-72 h-full border border-outline-variant rounded-xl bg-surface-container",
+                "grid grid-rows-[auto_1fr_auto] min-w-72 max-w-72 h-full border border-outline-variant rounded-2xl bg-surface-container",
                 isOverContainer && "bg-surface-dim-container",
                 isDragging && "z-10")}
             style={{
@@ -353,7 +353,7 @@ function DroppableContainer(props: {
                         variant="icon-default"
                         title="Actions"
                         size="sm"
-                        icon={LuEllipsisVertical}
+                        icon={TbDotsVertical}
                         disabled={props.isDragOverlay || props.disabled}>
                         {!props.isDragOverlay &&
                             <ul
@@ -364,7 +364,7 @@ function DroppableContainer(props: {
                                         className="w-full"
                                         onClick={props.onRenameSectionClick}
                                         disabled={props.disabled}>
-                                        <LuTextCursorInput /> Rename section
+                                        <TbForms /> Rename section
                                     </Button>
                                 </li>
                                 <li>
@@ -373,7 +373,7 @@ function DroppableContainer(props: {
                                         className="w-full text-danger"
                                         onClick={props.onRemoveSectionClick}
                                         disabled={props.disabled}>
-                                        <LuTrash /> Remove section
+                                        <TbTrash /> Remove section
                                     </Button>
                                 </li>
                             </ul>}
@@ -431,7 +431,7 @@ function ItemContent(props: {
                 {props.item.checkItemsCount !== 0 &&
                     <div
                         className="flex items-center gap-1.5 mt-1">
-                        <LuSquareCheckBig
+                        <TbSquareRoundedCheck
                             className="text-primary dark:text-primary-dim" />
                         <span
                             className="text-sm text-primary dark:text-primary-dim mt-0.5">

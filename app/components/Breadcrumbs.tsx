@@ -1,4 +1,4 @@
-import { LuChevronRight } from "react-icons/lu";
+import { TbChevronRight } from "react-icons/tb";
 import { cn } from "../utils/tailwind";
 import HorizontalScroller from "./HorizontalScroller";
 import { Fragment } from "react/jsx-runtime";
@@ -28,7 +28,7 @@ export default function Breadcrumbs(props: {
                             className="text-sm max-w-15 mx-2" />}
 
                     {index !== props.locations.length - 1 &&
-                        <LuChevronRight
+                        <TbChevronRight
                             className="text-on-surface-muted w-3 h-3 shrink-0" />}
                 </Fragment>)}
         </HorizontalScroller>

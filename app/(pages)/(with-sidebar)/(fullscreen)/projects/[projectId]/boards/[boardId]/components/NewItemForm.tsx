@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { cn } from "@/app/utils/tailwind";
 import { isNullOrWhiteSpace } from "@/app/utils/string";
-import { LuPlus } from "react-icons/lu";
+import { TbPlus } from "react-icons/tb";
 import BoardTextArea from "./BoardTextArea";
 import Button from "@/app/components/input/Button";
 
@@ -20,7 +20,7 @@ export default function NewItemForm(props: {
     return (
         <form
             ref={formRef}
-            className={cn("flex gap-2 overflow-hidden max-h-32", props.className)}
+            className={cn("flex gap-1.5 overflow-hidden max-h-32", props.className)}
             onSubmit={(e) => {
                 e.preventDefault();
 
@@ -42,8 +42,8 @@ export default function NewItemForm(props: {
                 type="submit"
                 variant="icon-primary"
                 title={props.submitTitle}
-                className="self-end">
-                <LuPlus />
+                className="self-end min-w-[calc(var(--spacing)*8+2px)]">
+                <TbPlus />
             </Button>
         </form>
     );

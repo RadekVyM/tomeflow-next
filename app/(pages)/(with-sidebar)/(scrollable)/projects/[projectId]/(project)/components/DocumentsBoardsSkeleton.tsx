@@ -8,7 +8,7 @@ export default function DocumentsBoardsSkeleton() {
                 className="font-semibold text-2xl mb-5 mt-9 max-w-32" />
 
             <Skeleton
-                className="border border-transparent rounded-lg w-full mb-5 h-9 box-content" />
+                className="border border-transparent rounded-xl w-full mb-5 h-9 box-content" />
 
             <Skeleton
                 className="text-sm font-semibold mb-3 max-w-16" />

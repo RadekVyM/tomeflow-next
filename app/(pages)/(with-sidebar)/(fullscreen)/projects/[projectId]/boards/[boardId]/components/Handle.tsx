@@ -3,7 +3,7 @@
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { cn } from "@/app/utils/tailwind";
-import { LuGripVertical } from "react-icons/lu";
+import { TbGripVertical } from "react-icons/tb";
 import Button from "@/app/components/input/Button";
 
 export default function Handle(props: {
@@ -25,7 +25,7 @@ export default function Handle(props: {
             disabled={props.disabled}
             {...props.attributes}
             {...props.listeners}>
-            <LuGripVertical />
+            <TbGripVertical />
         </Button>
     );
 }

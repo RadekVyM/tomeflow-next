@@ -9,7 +9,7 @@ import { ProjectPageContext } from "@/app/(pages)/(with-sidebar)/(scrollable)/pr
 import useDialog from "@/app/hooks/useDialog";
 import { useAction } from "next-safe-action/hooks";
 import { useContext } from "react";
-import { LuCircleCheck, LuDownload, LuImage, LuLayoutDashboard, LuPencil, LuTextCursorInput, LuTrash } from "react-icons/lu";
+import { TbCircleCheck, TbDownload, TbPhoto, TbLayoutDashboard, TbPencil, TbForms, TbTrash } from "react-icons/tb";
 import { createBoardAction } from "@/app/actions/boards";
 import { downloadExportedData } from "@/app/services/client/export";
 import ImagesDialog from "@/app/components/images/ImagesDialog";
@@ -28,7 +28,6 @@ export default function MoreButton(props: {
     return (
         <MoreDropdownButton
             id={props.id}
-            size="sm"
             disabled={props.disabled}>
             <NewBoardButton
                 projectId={props.projectId} />
@@ -39,7 +38,7 @@ export default function MoreButton(props: {
                 className="w-full"
                 size="sm"
                 onClick={() => setDescriptionEditable(true)}>
-                <LuPencil /> Edit description
+                <TbPencil /> Edit description
             </Button>
             <ImagesButton
                 projectId={props.projectId} />
@@ -66,7 +65,7 @@ function RenameButton(props: {
         <>
             <MoreDropdownListButton
                 onClick={dialogState.show}
-                icon={LuTextCursorInput}
+                icon={TbForms}
                 title="Rename project" />
 
             <TextInputDialog
@@ -94,7 +93,7 @@ function NewBoardButton(props: {
         <>
             <MoreDropdownListButton
                 onClick={dialogState.show}
-                icon={LuLayoutDashboard}
+                icon={TbLayoutDashboard}
                 title="New board" />
 
             <TextInputDialog
@@ -117,7 +116,7 @@ function ExportButton(props: {
 
         try {
             await downloadExportedData(`/api/projects/${props.projectId}/export`, props.projectTitle.replace(" ", "_"));
-            closeToast?.("Exported projects successfully", LuCircleCheck);
+            closeToast?.("Exported projects successfully", TbCircleCheck);
         }
         catch (e) {
             console.error(e);
@@ -128,7 +127,7 @@ function ExportButton(props: {
     return (
         <MoreDropdownListButton
             onClick={onExportClick}
-            icon={LuDownload}
+            icon={TbDownload}
             title="Export project" />
     );
 }
@@ -142,7 +141,7 @@ function ImagesButton(props: {
         <>
             <MoreDropdownListButton
                 onClick={dialogState.show}
-                icon={LuImage}
+                icon={TbPhoto}
                 title="Images" />
 
             <ImagesDialog
@@ -172,7 +171,7 @@ function DeleteButton(props: {
 
         // For some reason, the onSuccess callback of useAction() is never called here
         if (!result.serverError && !result.validationErrors) {
-            toast("Deleted the project successfully", "default", LuCircleCheck);
+            toast("Deleted the project successfully", "default", TbCircleCheck);
         }
     }
 
@@ -180,7 +179,7 @@ function DeleteButton(props: {
         <MoreDropdownListButton
             className="text-danger"
             onClick={onDeleteClick}
-            icon={LuTrash}
+            icon={TbTrash}
             title="Delete project" />
     );
 }

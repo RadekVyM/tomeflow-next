@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { LuFile, LuFileUp } from "react-icons/lu";
+import { TbFile, TbFileUpload } from "react-icons/tb";
 import { cn } from "../../utils/tailwind";
 import type { VariantProps } from "class-variance-authority";
 import type { buttonVariants } from "../variants/buttonVariants";
@@ -22,7 +22,7 @@ export function FileSelection(props: {
             fileType={props.fileType}
             variant="container"
             disabled={props.disabled}>
-            <LuFile
+            <TbFile
                 className="w-4 h-4"/>
             <span className="truncate">{props.file?.name || "Choose file"}</span>
         </FileSelectionBase>
@@ -50,8 +50,8 @@ export function LargeFileSelection(props: {
             disabled={props.disabled}>
             <div
                 className="grid grid-flow-row justify-items-center gap-y-4">
-                <LuFileUp
-                    className="w-8 h-8"/>
+                <TbFileUpload
+                    className="w-8 h-8" />
                 <span className="font-semibold">
                     Click to upload <span className="font-normal">or drag and drop</span>
                 </span>

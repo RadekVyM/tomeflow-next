@@ -1,5 +1,5 @@
 import { ProjectBoardSchema, ProjectDocumentSchema } from "@/db/schema";
-import { LuFile, LuLayoutDashboard } from "react-icons/lu";
+import { TbFile, TbLayoutDashboard } from "react-icons/tb";
 
 export function lastSeenAt(entity: {
     createdAt: number,
@@ -18,12 +18,12 @@ export function mergeDocumentsAndBoards<TBoard extends ProjectBoardSchema, TDocu
         ...boards.map((b) => ({
             ...b,
             url: `/projects/${b.projectId}/boards/${b.id}`,
-            icon: LuLayoutDashboard,
+            icon: TbLayoutDashboard,
         })),
         ...documents.map((d) => ({
             ...d,
             url: `/projects/${d.projectId}/documents/${d.id}`,
-            icon: LuFile,
+            icon: TbFile,
         })),
     ].slice(0, limit);
 

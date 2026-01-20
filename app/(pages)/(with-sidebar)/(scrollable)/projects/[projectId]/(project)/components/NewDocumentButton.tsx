@@ -2,12 +2,13 @@
 
 import { createDocumentAction } from "@/app/actions/documents";
 import Button from "@/app/components/input/Button";
+import DefaultButton from "@/app/components/input/DefaultButton";
 import TextInputDialog from "@/app/components/TextInputDialog";
 import toast from "@/app/components/toast";
 import useDialog from "@/app/hooks/useDialog";
 import useMediaQuery from "@/app/hooks/useMediaQuery";
 import { useAction } from "next-safe-action/hooks";
-import { LuFilePlus } from "react-icons/lu";
+import { TbPlus } from "react-icons/tb";
 
 export default function NewDocumentButton(props: {
     className?: string,
@@ -24,15 +25,15 @@ export default function NewDocumentButton(props: {
 
     return (
         <>
-            <Button
+            <DefaultButton
                 variant={props.nondynamic ? "primary" : "dynamic-primary"}
                 title={isLarge ? undefined : "New document"}
-                size="sm"
                 className={props.className}
                 onClick={dialogState.show}
-                disabled={props.disabled}>
-                <LuFilePlus /> <span>New document</span>
-            </Button>
+                disabled={props.disabled}
+                icon={TbPlus}>
+                New document
+            </DefaultButton>
 
             <TextInputDialog
                 state={dialogState}

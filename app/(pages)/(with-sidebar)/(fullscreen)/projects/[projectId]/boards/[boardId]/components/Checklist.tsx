@@ -10,7 +10,7 @@ import Handle from "./Handle";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { cn } from "@/app/utils/tailwind";
 import { createPortal } from "react-dom";
-import { LuEllipsisVertical, LuSave, LuTrash, LuX } from "react-icons/lu";
+import { TbDotsVertical, TbTrash } from "react-icons/tb";
 import BoardTextArea from "./BoardTextArea";
 import DropDownButton from "@/app/components/input/DropdownButton";
 import { confirm } from "@/app/components/confirm";
@@ -304,7 +304,7 @@ function ItemContent(props: {
                 className="mt-0.5 ml-1"
                 size="sm"
                 id={`checkdrop-${props.item.id}`}
-                icon={LuEllipsisVertical}
+                icon={TbDotsVertical}
                 title="Actions"
                 variant="icon-default">
                 {!props.isDragOverlay &&
@@ -316,7 +316,7 @@ function ItemContent(props: {
                                 className="w-full text-danger"
                                 disabled={props.disabled}
                                 onClick={props.onRemoveClick}>
-                                <LuTrash /> Remove item
+                                <TbTrash /> Remove item
                             </Button>
                         </li>
                     </ul>}

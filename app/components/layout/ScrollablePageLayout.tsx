@@ -9,7 +9,7 @@ export default function ScrollablePageLayout(props: {
     children?: React.ReactNode,
 }) {
     return (
-        <div className="sm:col-start-2 min-h-dvh max-w-[calc(100dvw-var(--spacing)*4)] sm:max-w-[calc(100dvw-var(--spacing)*19)] flex flex-col">
+        <div className="sm:col-start-2 min-h-dvh max-w-[100dvw] sm:max-w-[calc(100dvw-var(--spacing)*15)] flex flex-col">
             <PageHeader
                 breadcrumbs={props.breadcrumbs}
                 pageHeading={props.pageHeading}

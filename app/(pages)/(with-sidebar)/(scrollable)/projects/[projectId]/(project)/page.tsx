@@ -87,7 +87,6 @@ function ActionButtons(props: {
                     disabled />
                 <MoreDropdownButton
                     id={id}
-                    size="sm"
                     disabled />
             </>}>
             <SuspendedActionButtons

@@ -10,13 +10,14 @@ import { getRecentProjects } from "@/app/services/projects";
 import { lastSeenAt } from "@/app/utils/entities";
 import { getSessionCached } from "@/app/utils/session";
 import { Suspense } from "react";
-import { LuFile, LuLayoutDashboard, LuLayoutGrid, LuPackage } from "react-icons/lu";
+import { TbFile, TbLayoutDashboard, TbLayoutGrid, TbPackage } from "react-icons/tb";
 import RecentContentSkeleton from "../components/RecentContent";
 import RecentProjectsHeaderSkeleton from "../components/RecentProjectsHeaderSkeleton";
 import EmptyProjects from "../components/EmptyProjects";
 import { cn } from "@/app/utils/tailwind";
 import ContentItemListHeading from "@/app/components/layout/ContentItemListHeading";
 import ScrollablePageLayout from "@/app/components/layout/ScrollablePageLayout";
+import DefaultButton from "@/app/components/input/DefaultButton";
 
 export default async function Page() {
     return (
@@ -72,7 +73,7 @@ async function RecentContent() {
                                 title={board.title}
                                 subtitle={board.project.title}
                                 lastSeenDate={new Date(lastSeenAt(board))}
-                                icon={LuLayoutDashboard} />)}
+                                icon={TbLayoutDashboard} />)}
                     </CardList>
                 </>}
             {documents.length > 0 &&
@@ -89,7 +90,7 @@ async function RecentContent() {
                                 title={document.title}
                                 subtitle={document.project.title}
                                 lastSeenDate={new Date(lastSeenAt(document))}
-                                icon={LuFile} />)}
+                                icon={TbFile} />)}
                     </CardList>
                 </>}
         </section>
@@ -107,14 +108,13 @@ function RecentProjectsHeader() {
 
             <div
                 className="flex gap-2">
-                <NewProjectButton
-                    size="sm" />
-                <Button
+                <NewProjectButton />
+                <DefaultButton
                     href="/projects"
                     variant="dynamic-container"
-                    size="sm">
-                    <LuLayoutGrid /> <span>All projects</span>
-                </Button>
+                    icon={TbLayoutGrid}>
+                    All projects
+                </DefaultButton>
             </div>
         </div>
     );
@@ -143,7 +143,7 @@ async function ProjectsList(props: {
                         href={`/projects/${project.id}`}
                         title={project.title}
                         lastSeenDate={new Date(lastSeenAt(project))}
-                        icon={LuPackage} />)}
+                        icon={TbPackage} />)}
             </CardList>
         </section>
     );

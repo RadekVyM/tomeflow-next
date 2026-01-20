@@ -6,7 +6,7 @@ import { VercelImage } from "@/app/types/VercelImage";
 import Skeleton from "../skeleton/Skeleton";
 import { cn } from "@/app/utils/tailwind";
 import { useState } from "react";
-import { LuImageOff } from "react-icons/lu";
+import { TbPhotoOff } from "react-icons/tb";
 import Button from "../input/Button";
 
 export default function LocalImage(props: {
@@ -32,8 +32,8 @@ export default function LocalImage(props: {
     if ((error || !image || loadFailed) && props.withStates) {
         return (
             <span
-                className="rounded-lg border-2 border-outline-variant border-dashed h-64 flex flex-col items-center justify-center gap-3 p-4 text-sm text-on-surface-muted">
-                <LuImageOff
+                className="rounded-xl border-2 border-outline-variant border-dashed h-64 flex flex-col items-center justify-center gap-3 p-4 text-sm text-on-surface-muted">
+                <TbPhotoOff
                     className="h-10 w-10" />
                 <span>Image could not be loaded</span>
 

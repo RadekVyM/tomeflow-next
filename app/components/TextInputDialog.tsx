@@ -4,13 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import type { DialogState } from "../types/DialogState";
 import ContentDialog from "./ContentDialog";
 import { isNullOrWhiteSpace } from "../utils/string";
-import Button from "./input/Button";
+import DefaultButton from "./input/DefaultButton";
+import { IconType } from "react-icons";
 
 export default function TextInputDialog(props: {
     state: DialogState,
     heading: string,
     placeholder: string,
     acceptTitle: string,
+    acceptIcon?: IconType,
     disabled?: boolean,
     initialValue?: string,
     onAcceptClick: (text: string) => void,
@@ -42,19 +44,20 @@ export default function TextInputDialog(props: {
                 }}>
                 <input
                     ref={inputRef}
-                    className="bg-surface border border-outline outline-primary rounded-lg py-1 px-2"
+                    className="bg-surface border border-outline outline-primary rounded-xl py-1.5 px-2.5"
                     disabled={props.disabled}
                     placeholder={props.placeholder}
                     type="text"
                     value={text}
                     onChange={(e) => setText(e.target.value)} />
-                <Button
+                <DefaultButton
                     type="submit"
                     variant="primary"
                     className="self-end"
-                    disabled={props.disabled || isNullOrWhiteSpace(text)}>
+                    disabled={props.disabled || isNullOrWhiteSpace(text)}
+                    icon={props.acceptIcon}>
                     {props.acceptTitle}
-                </Button>
+                </DefaultButton>
             </form>
         </ContentDialog>
     );

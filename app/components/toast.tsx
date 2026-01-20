@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../utils/tailwind";
-import { LuCircleAlert, LuX } from "react-icons/lu";
+import { TbAlertCircle, TbX } from "react-icons/tb";
 import { useEventListener } from "../hooks/useEventListener";
 import Loop from "../services/client/Loop";
 import Button from "./input/Button";
@@ -87,7 +87,7 @@ type ToastState = {
 export default function toast(
     title: string,
     type: ToastType = "default",
-    icon: IconType = LuCircleAlert,
+    icon: IconType = TbAlertCircle,
 ) {
     const id = crypto.randomUUID();
 
@@ -100,7 +100,7 @@ export default function toast(
     if (type === "permanent") {
         return (
             title: string,
-            icon: IconType = LuCircleAlert
+            icon: IconType = TbAlertCircle
         ) => window.dispatchEvent(new UpdatePermanentToastEvent(
             id,
             title,
@@ -295,7 +295,7 @@ function Toast(props: {
                     variant="icon-default"
                     size="sm"
                     onClick={onClose}>
-                    <LuX />
+                    <TbX />
                 </Button>}
 
             <div

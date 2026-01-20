@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { cn } from "../utils/tailwind";
 import { isMobileUserAgent } from "../utils/userAgent";
 import Button from "./input/Button";
@@ -71,7 +71,7 @@ export default function HorizontalScroller(props: {
                             size="sm"
                             className="absolute left-0 top-0"
                             onClick={() => scrollViewRef.current?.scrollBy({ left: (scrollViewRef.current?.clientWidth || 0) / -2, behavior: "smooth" })}>
-                            <LuChevronLeft
+                            <TbChevronLeft
                                 className="w-3 h-3" />
                         </Button>}
                 </>}
@@ -88,7 +88,7 @@ export default function HorizontalScroller(props: {
                             size="sm"
                             className="absolute right-0 top-0"
                             onClick={() => scrollViewRef.current?.scrollBy({ left: (scrollViewRef.current?.clientWidth || 0) / 2, behavior: "smooth" })}>
-                            <LuChevronRight
+                            <TbChevronRight
                                 className="w-3 h-3" />
                         </Button>}
                 </>}

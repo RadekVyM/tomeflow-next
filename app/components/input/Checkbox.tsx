@@ -1,4 +1,4 @@
-import { LuCheck } from "react-icons/lu";
+import { TbCheck } from "react-icons/tb";
 import { cn } from "../../utils/tailwind";
 import Button from "./Button";
 
@@ -11,7 +11,7 @@ export default function Checkbox(props: {
 }) {
     return (
         <Button
-            className={cn("p-0", props.className)}
+            className={cn("p-0 rounded-xl relative", props.className)}
             role="checkbox"
             aria-checked={props.checked}
             size="sm"
@@ -21,9 +21,9 @@ export default function Checkbox(props: {
             onClick={props.onClick}>
             <div
                 className={cn(
-                    "border w-5 h-5 rounded-md grid place-content-center transition-all duration-200",
+                    "border w-5 h-5 rounded-lg grid place-content-center transition-all duration-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
                     props.checked ? "bg-primary border-primary" : "bg-surface border-outline")}>
-                <LuCheck
+                <TbCheck
                     className={cn("text-on-primary transition-all duration-200", !props.checked && "opacity-0")} />
             </div>
         </Button>

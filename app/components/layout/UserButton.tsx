@@ -1,7 +1,7 @@
 import { getSessionCached } from "@/app/utils/session";
 import { Suspense } from "react";
 import Button from "../input/Button";
-import { LuUser } from "react-icons/lu";
+import { TbUser } from "react-icons/tb";
 import Image from "next/image";
 import UserInfoPopover from "./UserInfoPopover";
 import { cn } from "@/app/utils/tailwind";
@@ -40,7 +40,7 @@ async function SuspendedUserButton(props: {
                         alt="Profile picture" /> :
                     <div
                         className="w-9 h-9 rounded-full bg-primary grid place-content-center">
-                        <LuUser
+                        <TbUser
                             className="text-on-primary w-5 h-5" />
                     </div>}
             </Button>
@@ -59,7 +59,7 @@ function FallbackUserButton(props: {
             popoverTarget="userinfo-popover">
             <div
                 className="w-9 h-9 rounded-full bg-primary grid place-content-center">
-                <LuUser
+                <TbUser
                     className="text-on-primary w-5 h-5" />
             </div>
         </Button>

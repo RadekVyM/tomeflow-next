@@ -81,7 +81,7 @@ function ContentSkeleton() {
                     key={index}
                     className="py-0.5">
                     <Skeleton
-                        className="h-8 rounded-lg" />
+                        className="h-8 rounded-xl" />
                 </li>)}
         </ul>
     );

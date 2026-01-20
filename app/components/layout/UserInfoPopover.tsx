@@ -2,7 +2,7 @@
 
 import { signOutAction } from "@/app/actions/auth";
 import { User } from "next-auth";
-import { LuLogOut } from "react-icons/lu";
+import { TbLogout } from "react-icons/tb";
 import { useAction } from "next-safe-action/hooks";
 import Button from "../input/Button";
 import toast from "../toast";
@@ -36,7 +36,7 @@ export default function UserInfoPopover(props: {
                     type="submit"
                     onClick={() => signOut.execute()}
                     disabled={signOut.isPending}>
-                    <LuLogOut /> Sign out
+                    <TbLogout /> Sign out
                 </Button>
             </div>
         </article>

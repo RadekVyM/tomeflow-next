@@ -4,7 +4,7 @@ import LoadingIcon from "@/app/components/LoadingIcon";
 import { MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import toast from "@/app/components/toast";
 import { downloadExportedData } from "@/app/services/client/export";
-import { LuCircleCheck, LuDownload } from "react-icons/lu";
+import { TbCircleCheck, TbDownload } from "react-icons/tb";
 
 export default function ExportButton() {
     async function onExportClick() {
@@ -12,7 +12,7 @@ export default function ExportButton() {
 
         try {
             await downloadExportedData("/api/projects/export", "projects");
-            closeToast?.("Exported projects successfully", LuCircleCheck);
+            closeToast?.("Exported projects successfully", TbCircleCheck);
         }
         catch (e) {
             console.error(e);
@@ -23,7 +23,7 @@ export default function ExportButton() {
     return (
         <MoreDropdownListButton
             onClick={onExportClick}
-            icon={LuDownload}
+            icon={TbDownload}
             title="Export projects" />
     );
 }

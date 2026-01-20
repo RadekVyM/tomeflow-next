@@ -2,7 +2,7 @@
 
 import { Dialog } from "../Dialog";
 import Button from "../input/Button";
-import { LuX } from "react-icons/lu";
+import { TbX } from "react-icons/tb";
 import UniversalImage from "./UniversalImage";
 import { DialogState } from "@/app/types/DialogState";
 
@@ -29,7 +29,7 @@ export default function ImagePreviewDialog(props: {
                 variant="icon-container"
                 title="Close"
                 onClick={props.state.hide}>
-                <LuX />
+                <TbX />
             </Button>
         </Dialog>
     );

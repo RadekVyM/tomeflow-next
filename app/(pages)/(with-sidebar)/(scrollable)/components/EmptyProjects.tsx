@@ -1,11 +1,11 @@
 import NewProjectButton from "@/app/components/project/NewProjectButton";
-import { LuLayoutGrid } from "react-icons/lu";
+import { TbLayoutGrid } from "react-icons/tb";
 
 export default function EmptyProjects() {
     return (
         <section
             className="flex-1 mb-16 mx-auto flex flex-col items-center justify-center">
-            <LuLayoutGrid
+            <TbLayoutGrid
                 className="w-12 h-12 text-on-surface-muted mb-4" />
 
             <div className="w-fit text-on-surface text-lg font-semibold text-center">Oops! There's no project yet...</div>

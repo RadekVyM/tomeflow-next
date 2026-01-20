@@ -8,7 +8,7 @@ export default function CardListItemSkeleton(props: {
 }) {
     return (
         <Skeleton
-            className={cn("w-full h-full flex flex-col justify-between gap-0 items-start py-3 px-4 rounded-lg border border-transparent", props.withIcon && "pb-2", props.className)}>
+            className={cn("w-full h-full flex flex-col justify-between gap-0 items-start py-3 px-4 rounded-xl border border-transparent", props.withIcon && "pb-2", props.className)}>
             <div
                 className="mb-1">
                 <div

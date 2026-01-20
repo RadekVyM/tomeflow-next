@@ -85,7 +85,7 @@ export default function TextArea(props: {
 
     return (
         <div
-            className="markdown-textarea bg-surface-container relative isolate font-mono rounded-lg w-full border border-outline">
+            className="markdown-textarea bg-surface-container relative isolate font-mono rounded-xl w-full border border-outline">
             <pre
                 className="z-0 isolate pointer-events-none select-none absolute inset-0 py-1 px-2 w-full wrap-break-anywhere overflow-hidden whitespace-pre-wrap wrap-break-word"
                 aria-hidden
@@ -93,7 +93,7 @@ export default function TextArea(props: {
 
             <textarea
                 ref={props.ref}
-                className="relative z-30 py-1 px-2 bg-transparent text-transparent caret-primary dark:caret-primary-dim outline-primary rounded-lg w-full resize-none field-sizing-content min-h-0 m-0 -mb-2"
+                className="relative z-30 py-1 px-2 bg-transparent text-transparent caret-primary dark:caret-primary-dim outline-primary rounded-xl w-full resize-none field-sizing-content min-h-0 m-0 -mb-2"
                 style={{ height: "auto" }}
                 value={props.text}
                 onChange={(e) => {

@@ -7,13 +7,15 @@ import { buttonVariants } from "../variants/buttonVariants";
 import { cn } from "@/app/utils/tailwind";
 import Tooltip from "../Tooltip";
 
-export default function Button({ className, href, variant, size, disabled, title, ref, shortcutKeys, ...rest }: {
+export type ButtonProps = {
     children: React.ReactNode,
     className?: string,
     shortcutKeys?: string,
     href?: string,
     ref?: React.RefObject<HTMLElement | null>,
-} & React.ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants>) {
+} & React.ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants>
+
+export default function Button({ className, href, variant, size, disabled, title, ref, shortcutKeys, ...rest }: ButtonProps) {
     const elementRef = useRef<HTMLElement>(null!);
 
     if (ref) {

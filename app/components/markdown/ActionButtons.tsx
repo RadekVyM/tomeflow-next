@@ -1,12 +1,13 @@
 "use client";
 
-import { LuEye, LuFileImage, LuImage, LuLink, LuPencil, LuSave } from "react-icons/lu";
+import { TbEye, TbLibraryPhoto, TbPhotoCode, TbLink, TbPencil, TbDeviceFloppy } from "react-icons/tb";
 import SelectImageDialog from "../images/SelectImageDialog";
 import Button from "../input/Button";
 import { DataImage } from "@/app/types/DataImage";
 import useDialog from "@/app/hooks/useDialog";
 import useInsertFormatting from "./useInsertFormatting";
 import { RefObject } from "react";
+import DefaultButton from "../input/DefaultButton";
 
 export default function ActionButtons(props: {
     textAreaRef: RefObject<HTMLTextAreaElement | null>,
@@ -28,12 +29,13 @@ export default function ActionButtons(props: {
 
     if (!props.editable) {
         return (
-            <Button
+            <DefaultButton
                 key="toggle"
                 onClick={() => props.setEditable(true)}
-                variant="container">
-                <LuPencil /> Edit
-            </Button>
+                variant="container"
+                icon={TbPencil}>
+                Edit
+            </DefaultButton>
         );
     }
 
@@ -44,30 +46,32 @@ export default function ActionButtons(props: {
                 title="Insert link"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={insertLink}>
-                <LuLink />
+                <TbLink />
             </Button>
             <Button
                 variant="icon-container"
                 title="Insert image"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={insertImage}>
-                <LuImage />
+                <TbPhotoCode />
             </Button>
             <ImagesButton
                 projectId={props.projectId}
                 disabled={props.isPreview}
                 onImageSelected={props.onImageSelected} />
-            <Button
+            <DefaultButton
                 className="ml-1"
                 onClick={() => props.setIsPreview((old) => !old)}
-                variant={props.isPreview ? "dynamic-primary" : "dynamic-container"}>
-                <LuEye /> <span>Preview</span>
-            </Button>
-            <Button
+                variant={props.isPreview ? "dynamic-primary" : "dynamic-container"}
+                icon={TbEye}>
+                Preview
+            </DefaultButton>
+            <DefaultButton
                 onClick={props.onSaveClick}
-                variant="primary">
-                <LuSave /> Save
-            </Button>
+                variant="primary"
+                icon={TbDeviceFloppy}>
+                Save
+            </DefaultButton>
         </>
     );
 }
@@ -86,7 +90,7 @@ function ImagesButton(props: {
                 variant="icon-container"
                 title="Insert your image"
                 disabled={props.disabled}>
-                <LuFileImage />
+                <TbLibraryPhoto />
             </Button>
 
             <SelectImageDialog

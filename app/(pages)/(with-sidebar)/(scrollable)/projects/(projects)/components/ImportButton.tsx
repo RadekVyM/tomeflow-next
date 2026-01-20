@@ -6,7 +6,7 @@ import { MoreDropdownListButton } from "@/app/components/MoreDropdownButton";
 import toast from "@/app/components/toast";
 import { importProjectsFromZip, uploadImages } from "@/app/services/client/import";
 import { ExportedProject } from "@/app/types/export/ExportedProject";
-import { LuCircleCheck, LuUpload } from "react-icons/lu";
+import { TbCircleCheck, TbUpload } from "react-icons/tb";
 
 export default function ImportButton() {
     function onImportClick() {
@@ -44,7 +44,7 @@ export default function ImportButton() {
     return (
         <MoreDropdownListButton
             onClick={onImportClick}
-            icon={LuUpload}
+            icon={TbUpload}
             title="Import projects" />
     );
 }
@@ -71,7 +71,7 @@ async function importProjects(file: File) {
             throw new Error("Projects upload failed");
         }
 
-        closeToast?.("Imported projects successfully", LuCircleCheck);
+        closeToast?.("Imported projects successfully", TbCircleCheck);
 
         return result;
     }
@@ -92,7 +92,7 @@ async function importImages(
 
     try {
         await uploadImages(file, projects, projectIdsMapping, imageIdsMapping);
-        closeToast?.("Imported images successfully", LuCircleCheck);
+        closeToast?.("Imported images successfully", TbCircleCheck);
     }
     catch (e) {
         console.error(e);

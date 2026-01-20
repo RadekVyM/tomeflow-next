@@ -8,7 +8,7 @@ import toast from "@/app/components/toast";
 import useDialog from "@/app/hooks/useDialog";
 import { useAction } from "next-safe-action/hooks";
 import { useRouter } from "next/navigation";
-import { LuCircleCheck, LuTextCursorInput, LuTrash } from "react-icons/lu";
+import { TbCircleCheck, TbForms, TbTrash } from "react-icons/tb";
 
 export default function MoreButton(props: {
     disabled?: boolean,
@@ -19,7 +19,6 @@ export default function MoreButton(props: {
     return (
         <MoreDropdownButton
             id={props.id}
-            size="sm"
             disabled={props.disabled}>
             <RenameButton
                 documentId={props.documentId}
@@ -44,7 +43,7 @@ function RenameButton(props: {
         <>
             <MoreDropdownListButton
                 onClick={dialogState.show}
-                icon={LuTextCursorInput}
+                icon={TbForms}
                 title="Rename document" />
 
             <TextInputDialog
@@ -79,7 +78,7 @@ function DeleteButton(props: {
 
         // For some reason, the onSuccess callback of useAction() is never called here
         if (!result.serverError && !result.validationErrors) {
-            toast("Deleted the document successfully", "default", LuCircleCheck);
+            toast("Deleted the document successfully", "default", TbCircleCheck);
         }
     }
 
@@ -87,7 +86,7 @@ function DeleteButton(props: {
         <MoreDropdownListButton
             className="text-danger"
             onClick={onDeleteClick}
-            icon={LuTrash}
+            icon={TbTrash}
             title="Delete document" />
     );
 }

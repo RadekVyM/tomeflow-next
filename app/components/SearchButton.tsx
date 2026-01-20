@@ -1,6 +1,6 @@
 "use client";
 
-import { LuSearch } from "react-icons/lu";
+import { TbSearch } from "react-icons/tb";
 import Button from "./input/Button";
 import SearchDialog from "./SearchDialog";
 import useDialog from "../hooks/useDialog";
@@ -30,7 +30,7 @@ export default function SearchButton(props: {
                 variant="icon-container"
                 title="Find..."
                 onClick={dialogState.show}>
-                <LuSearch />
+                <TbSearch />
             </Button>
 
             <SearchDialog

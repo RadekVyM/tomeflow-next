@@ -8,11 +8,11 @@ import useDebouncedValue from "../hooks/useDebouncedValue";
 import { SearchResult } from "../types/SearchResult";
 import Button from "./input/Button";
 import { IconType } from "react-icons";
-import { LuChevronRight, LuCircle, LuColumns3, LuFile, LuLayoutDashboard, LuPackage, LuSquareCheck, LuSquareCheckBig } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { isNullOrWhiteSpace } from "../utils/string";
 import { cn } from "../utils/tailwind";
 import Skeleton from "./skeleton/Skeleton";
+import { TbChevronRight, TbCircle, TbColumns3, TbFile, TbLayoutDashboard, TbPackage, TbSearch, TbSquareCheck } from "react-icons/tb";
 
 const ARROW_DOWN_KEY = "ArrowDown";
 const ARROW_UP_KEY = "ArrowUp";
@@ -96,12 +96,17 @@ function Content(props: {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             className="w-full">
-            <input
-                ref={inputRef}
-                className="py-1 px-2 bg-surface-container border border-outline rounded-lg w-full outline-primary"
-                placeholder="Find anything..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)} />
+            <div
+                className="relative">
+                <input
+                    ref={inputRef}
+                    className="py-1.5 px-2.5 bg-surface-container border border-outline rounded-xl w-full outline-primary"
+                    placeholder="Search anything..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)} />
+                <TbSearch
+                    className="absolute right-3 top-3 pointer-events-none text-on-surface-container-muted" />
+            </div>
 
             {error ?
                 <div>
@@ -162,7 +167,7 @@ function ResultContent(props: {
                         <div>{props.projectTitle}</div>
                         {props.subProjectTitle &&
                             <>
-                                <LuChevronRight />
+                                <TbChevronRight />
                                 <div>{props.subProjectTitle}</div>
                             </>}
                     </div>}
@@ -179,7 +184,7 @@ function ResultsSkeleton() {
                     key={index}
                     className="py-1">
                     <Skeleton
-                        className="h-10 rounded-lg" />
+                        className="h-10 rounded-xl" />
                 </li>)}
         </>  
     );
@@ -204,20 +209,20 @@ function useSearch(searchQuery: string) {
 function resultToIcon(result: SearchResult) {
     switch (result.type) {
         case "project":
-            return LuPackage;
+            return TbPackage;
         case "board":
-            return LuLayoutDashboard;
+            return TbLayoutDashboard;
         case "document":
-            return LuFile;
+            return TbFile;
         case "section":
-            return LuColumns3;
+            return TbColumns3;
         case "item":
-            return LuSquareCheckBig;
+            return TbSquareCheck;
         case "check-item":
-            return LuSquareCheck;
+            return TbSquareCheck;
     }
 
-    return LuCircle;
+    return TbCircle;
 }
 
 function projectTitle(result: SearchResult) {

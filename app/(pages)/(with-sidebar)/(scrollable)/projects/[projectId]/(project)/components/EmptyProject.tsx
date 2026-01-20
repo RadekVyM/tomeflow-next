@@ -1,6 +1,6 @@
 "use client";
 
-import { LuBox } from "react-icons/lu";
+import { TbBox } from "react-icons/tb";
 import NewDocumentButton from "./NewDocumentButton";
 import NewBoardButton from "./NewBoardButton";
 import { useContext } from "react";
@@ -19,7 +19,7 @@ export default function EmptyProject(props: {
     return (
         <section
             className="flex-1 mb-10 mx-auto flex flex-col items-center justify-center">
-            <LuBox
+            <TbBox
                 className="w-12 h-12 text-on-surface-muted mb-4" />
 
             <div className="w-fit text-on-surface text-lg font-semibold text-center">Oops! This project is empty...</div>

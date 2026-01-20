@@ -9,7 +9,7 @@ import { removeAccents } from "@/app/utils/string";
 import { cn } from "@/app/utils/tailwind";
 import { ProjectBoardSchema, ProjectDocumentSchema } from "@/db/schema";
 import { useState } from "react";
-import { LuFile, LuLayoutDashboard } from "react-icons/lu";
+import { TbFile, TbLayoutDashboard, TbSearch } from "react-icons/tb";
 
 export default function DocumentBoardsList(props: {
     projectId: string,
@@ -31,11 +31,16 @@ export default function DocumentBoardsList(props: {
 
     return (
         <>
-            <input
-                className="py-1.5 px-2.5 bg-surface-container border border-outline-variant outline-primary hover:border-outline rounded-lg w-full mb-4"
-                placeholder="Find anything..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)} />
+            <div
+                className="relative mb-4">
+                <input
+                    className="py-1.5 pl-2.5 pr-8 bg-surface-container border border-outline-variant outline-primary hover:border-outline rounded-xl w-full"
+                    placeholder="Search project..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)} />
+                <TbSearch
+                    className="absolute right-3 top-3 pointer-events-none text-on-surface-container-muted" />
+            </div>
 
             {filteredBoards.length > 0 &&
                 <>
@@ -51,7 +56,7 @@ export default function DocumentBoardsList(props: {
                                 title={board.title}
                                 titleAs="h4"
                                 lastSeenDate={new Date(lastSeenAt(board))}
-                                icon={LuLayoutDashboard} />)}
+                                icon={TbLayoutDashboard} />)}
                     </CardList>
                 </>}
 
@@ -70,7 +75,7 @@ export default function DocumentBoardsList(props: {
                                 title={document.title}
                                 titleAs="h4"
                                 lastSeenDate={new Date(lastSeenAt(document))}
-                                icon={LuFile} />)}
+                                icon={TbFile} />)}
                     </CardList>
                 </>}
 

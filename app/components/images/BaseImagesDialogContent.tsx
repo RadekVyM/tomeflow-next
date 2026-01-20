@@ -1,6 +1,6 @@
 "use client";
 
-import { LuTrash } from "react-icons/lu";
+import { TbTrash } from "react-icons/tb";
 import Button from "../input/Button";
 import LocalImage from "./LocalImage";
 import { cn } from "@/app/utils/tailwind";
@@ -208,12 +208,12 @@ function Image(props: {
             className="max-w-full w-full relative">
             <button
                 className={cn(
-                    "relative w-full mb-1 rounded-lg cursor-pointer hover:opacity-90 transition-opacity",
-                    props.isSelected && "after:content-[''] after:absolute after:inset-0 after:border-3 after:border-primary after:rounded-lg")}
+                    "relative w-full mb-1 rounded-xl cursor-pointer hover:opacity-90 transition-opacity",
+                    props.isSelected && "after:content-[''] after:absolute after:inset-0 after:border-3 after:border-primary after:rounded-xl")}
                 onClick={props.onClick}
                 disabled={isPending}>
                 <LocalImage
-                    className={cn("aspect-square w-full object-cover rounded-lg", props.isSelected && "border-[6px] border-surface-container rounded-xl")}
+                    className={cn("aspect-square w-full object-cover rounded-xl", props.isSelected && "border-[6px] border-surface-container rounded-xl")}
                     imageId={props.image.id} />
             </button>
             <Button
@@ -223,7 +223,7 @@ function Image(props: {
                 title="Delete"
                 onClick={onDeleteClick}
                 disabled={isPending}>
-                <LuTrash />
+                <TbTrash />
             </Button>
             <label
                 className="text-xs text-on-surface-container-muted block overflow-hidden text-ellipsis max-w-full">
@@ -240,14 +240,14 @@ function ImagesSkeleton() {
             <div
                 className="max-w-full w-full">
                 <Skeleton
-                    className="w-full h-full aspect-square mb-1" />
+                    className="w-full h-full aspect-square mb-1 rounded-xl" />
                 <Skeleton
                     className="text-xs block max-w-48" />
             </div>
             <div
                 className="max-w-full w-full">
                 <Skeleton
-                    className="w-full h-full aspect-square mb-1" />
+                    className="w-full h-full aspect-square mb-1 rounded-xl" />
                 <Skeleton
                     className="text-xs block max-w-36" />
             </div>

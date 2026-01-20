@@ -1,6 +1,6 @@
 "use client";
 
-import { LuEllipsisVertical } from "react-icons/lu";
+import { TbDotsVertical } from "react-icons/tb";
 import DropDownButton from "./input/DropdownButton";
 import { cn } from "../utils/tailwind";
 import type { IconType } from "react-icons";
@@ -20,7 +20,7 @@ export function MoreDropdownButton(props: {
             variant="icon-container"
             size={props.size}
             title="More"
-            icon={LuEllipsisVertical}
+            icon={TbDotsVertical}
             disabled={props.disabled}>
             <ul
                 className="flex flex-col items-stretch gap-1 p-1.5">
