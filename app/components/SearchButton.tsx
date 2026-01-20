@@ -29,8 +29,9 @@ export default function SearchButton(props: {
                 className={props.className}
                 variant="icon-container"
                 title="Find..."
+                size="lg"
                 onClick={dialogState.show}>
-                <TbSearch />
+                <TbSearch className="text-lg" />
             </Button>
 
             <SearchDialog

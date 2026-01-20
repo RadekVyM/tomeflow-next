@@ -12,12 +12,10 @@ export default function Loading() {
             actionButtons={
                 <MoreDropdownButton
                     id="lg-board-more"
-                    size="sm"
                     disabled />}
             smActionButtons={
                 <MoreDropdownButton
                     id="sm-board-more"
-                    size="sm"
                     disabled />}>
 
             <section

@@ -91,7 +91,6 @@ function ActionButtons(props: {
                 fallback={
                     <MoreDropdownButton
                         id={id}
-                        size="sm"
                         disabled />}>
                 <SuspendedActionButtons
                     boardId={props.boardId}

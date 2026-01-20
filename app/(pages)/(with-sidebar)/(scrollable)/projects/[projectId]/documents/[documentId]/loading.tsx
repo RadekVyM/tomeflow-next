@@ -12,12 +12,10 @@ export default function Loading() {
             actionButtons={
                 <MoreDropdownButton
                     id="lg-document-more"
-                    size="sm"
                     disabled />}
             smActionButtons={
                 <MoreDropdownButton
                     id="sm-document-more"
-                    size="sm"
                     disabled />}>
 
             <DocumentContentSkeleton />

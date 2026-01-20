@@ -19,20 +19,16 @@ export default function Loading() {
                 </PageHeading>}
             actionButtons={
                 <>
-                    <NewProjectButtonSkeleton
-                        size="sm" />
+                    <NewProjectButtonSkeleton />
                     <MoreDropdownButton
                         id="lg-projects-more"
-                        size="sm"
                         disabled />
                 </>}
             smActionButtons={
                 <>
-                    <NewProjectButtonSkeleton
-                        size="sm" />
+                    <NewProjectButtonSkeleton />
                     <MoreDropdownButton
                         id="sm-projects-more"
-                        size="sm"
                         disabled />
                 </>}>
 

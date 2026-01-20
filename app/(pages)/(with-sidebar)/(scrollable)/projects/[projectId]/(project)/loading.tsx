@@ -18,7 +18,6 @@ export default function Loading() {
                         disabled />
                     <MoreDropdownButton
                         id="lg-project-more"
-                        size="sm"
                         disabled />
                 </>}
             smActionButtons={
@@ -28,7 +27,6 @@ export default function Loading() {
                         disabled />
                     <MoreDropdownButton
                         id="sm-project-more"
-                        size="sm"
                         disabled />
                 </>}>
 

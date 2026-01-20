@@ -29,17 +29,17 @@ async function SuspendedUserButton(props: {
     return (
         <>
             <Button
-                className={cn("p-1 rounded-full", props.className)}
+                className={cn("p-1 rounded-2xl", props.className)}
                 popoverTarget="userinfo-popover">
                 {session.user.image ?
                     <Image
-                        className="w-9 h-9 rounded-full"
+                        className="w-9 h-9 rounded-xl"
                         width={128}
                         height={128}
                         src={session.user.image}
                         alt="Profile picture" /> :
                     <div
-                        className="w-9 h-9 rounded-full bg-primary grid place-content-center">
+                        className="w-9 h-9 rounded-xl bg-primary grid place-content-center">
                         <TbUser
                             className="text-on-primary w-5 h-5" />
                     </div>}
