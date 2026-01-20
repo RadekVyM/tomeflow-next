@@ -347,12 +347,12 @@ function DroppableContainer(props: {
                 </h3>
 
                 <div
-                    className="flex items-center gap-1">
+                    className="flex items-center gap-0.5">
                     <DropDownButton
                         id={`${props.id}-section-more-${props.isDragOverlay}`}
                         variant="icon-default"
+                        className="text-sm"
                         title="Actions"
-                        size="sm"
                         icon={TbDotsVertical}
                         disabled={props.isDragOverlay || props.disabled}>
                         {!props.isDragOverlay &&

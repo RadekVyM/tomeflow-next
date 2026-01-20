@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import Button from "../input/Button";
+import DefaultButton from "../input/DefaultButton";
+import { TbRefresh } from "react-icons/tb";
 
 export default function ErrorPageContent(props: {
     error: Error & { digest?: string },
@@ -21,11 +22,12 @@ export default function ErrorPageContent(props: {
                 Please try again later.
             </p>
 
-            <Button
+            <DefaultButton
                 variant="container"
-                onClick={() => props.reset()}>
+                onClick={() => props.reset()}
+                icon={TbRefresh}>
                 Try again
-            </Button>
+            </DefaultButton>
         </>
     );
 }

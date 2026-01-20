@@ -28,7 +28,7 @@ function SideBar() {
             <UserButton
                 className="sm:mb-2" />
 
-            <div className="w-10 h-px bg-outline-variant mb-2 hidden sm:block"></div>
+            <div className="w-10 h-px bg-outline-variant mb-3 hidden sm:block"></div>
 
             <SearchButton />
 

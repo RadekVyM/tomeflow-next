@@ -2,10 +2,13 @@ import Breadcrumbs from "@/app/components/Breadcrumbs";
 import PageHeading from "@/app/components/layout/PageHeading";
 import ScrollablePageLayout from "@/app/components/layout/ScrollablePageLayout";
 
-export default function NotFoundPageLayout() {
+export default function NotFoundPageLayout(props: {
+    withoutBreadcrumbs?: boolean,
+}) {
     return (
         <ScrollablePageLayout
-            breadcrumbs={
+            breadcrumbs={props.withoutBreadcrumbs ?
+                undefined :
                 <Breadcrumbs
                     locations={[
                         { href: "/", title: "Home" },

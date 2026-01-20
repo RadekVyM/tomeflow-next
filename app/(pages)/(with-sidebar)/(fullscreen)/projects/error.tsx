@@ -7,10 +7,7 @@ export default function ErrorPage(props: {
     reset: () => void,
 }) {
     return (
-        <div
-            className="px-4 pt-3.5">
-            <ErrorPageLayout
-                {...props} />
-        </div>
+        <ErrorPageLayout
+            {...props} />
     );
 }
