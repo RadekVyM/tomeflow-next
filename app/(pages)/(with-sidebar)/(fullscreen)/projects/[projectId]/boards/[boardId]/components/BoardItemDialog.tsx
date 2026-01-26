@@ -4,7 +4,6 @@ import { TbPencil, TbTrash } from "react-icons/tb";
 import type { DialogState } from "@/app/types/DialogState";
 import { confirm } from "@/app/components/confirm";
 import ContentDialog from "@/app/components/ContentDialog";
-import MarkdownPreviewer from "@/app/components/markdown/MarkdownPreviewer";
 import { useEffect, useState } from "react";
 import { cn } from "@/app/utils/tailwind";
 import useMediaQuery from "@/app/hooks/useMediaQuery";
@@ -19,6 +18,8 @@ import { isNullOrWhiteSpace } from "@/app/utils/string";
 import BoardTextArea from "./BoardTextArea";
 import MoveToSectionDialog from "./MoveToSectionDialog";
 import useDialog from "@/app/hooks/useDialog";
+import MarkdownPreview from "@/app/components/markdown/MarkdownPreview";
+import MarkdownEditorDialog from "@/app/components/markdown/MarkdownEditorDialog";
 
 export default function BoardItemDialog(props: {
     itemId: string,
@@ -27,13 +28,6 @@ export default function BoardItemDialog(props: {
     state: DialogState,
 }) {
     const { data: item } = useBoardItem(props.boardId, props.itemId);
-    const [descriptionEditable, setDescriptionEditable] = useState(false);
-
-    useEffect(() => {
-        if (props.state.isOpen) {
-            setDescriptionEditable(false);
-        }
-    }, [props.state.isOpen]);
 
     return (
         <ContentDialog
@@ -57,22 +51,16 @@ export default function BoardItemDialog(props: {
                         item={item} />
 
                     <Actions
+                        projectId={props.projectId}
                         boardId={props.boardId}
                         itemId={props.itemId}
                         dialogState={props.state}
-                        descriptionEditable={descriptionEditable}
-                        setDescriptionEditable={setDescriptionEditable}
                         item={item} />
                 </div>
 
                 <div
                     className="px-5 pb-0 pt-2 overflow-y-auto max-h-full thin-scrollbar">
                     <Description
-                        projectId={props.projectId}
-                        boardId={props.boardId}
-                        itemId={props.itemId}
-                        descriptionEditable={descriptionEditable}
-                        setDescriptionEditable={setDescriptionEditable}
                         item={item} />
                     <ChecklistSection
                         itemId={props.itemId}
@@ -198,29 +186,22 @@ function SectionButton(props: {
 
 function Actions(props: {
     className?: string,
+    projectId: string,
     boardId: string,
     itemId: string,
     dialogState: DialogState,
     item: ProjectBoardItem | undefined,
-    descriptionEditable: boolean,
-    setDescriptionEditable: (value: boolean) => void,
 }) {
-    const isLarge = useMediaQuery("(width >= 40rem)");
     const { mutate: deleteItem } = useDeleteItem(props.boardId, props.itemId);
-
-    const descriptionButtonTitle = `${props.item?.description ? "Edit" : "Add"} description`;
 
     return (
         <div
             className={cn("flex gap-2", props.className)}>
-            <Button
-                size="sm"
-                variant="dynamic-container"
-                title={isLarge ? undefined : descriptionButtonTitle}
-                onClick={() => props.setDescriptionEditable(true)}
-                disabled={props.descriptionEditable || !props.item}>
-                <TbPencil /> <span>{descriptionButtonTitle}</span>
-            </Button>
+            <EditDescriptionButton
+                item={props.item}
+                projectId={props.projectId}
+                boardId={props.boardId}
+                itemId={props.itemId} />
             <Button
                 size="sm"
                 variant="icon-container"
@@ -242,35 +223,50 @@ function Actions(props: {
     );
 }
 
-function Description(props: {
-    className?: string,
+function EditDescriptionButton(props: {
+    item: ProjectBoardItem | undefined,
     projectId: string,
     boardId: string,
     itemId: string,
-    item: ProjectBoardItem | undefined,
-    descriptionEditable: boolean,
-    setDescriptionEditable: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
+    const dialogState = useDialog();
+    const isLarge = useMediaQuery("(width >= 40rem)");
+    const descriptionButtonTitle = `${props.item?.description ? "Edit" : "Add"} description`;
     const { isPending, mutate: updateItem } = useUpdateItem(props.boardId, props.itemId);
 
+    return (
+        <>
+            <Button
+                size="sm"
+                variant="dynamic-container"
+                title={isLarge ? undefined : descriptionButtonTitle}
+                onClick={dialogState.show}
+                disabled={!props.item}>
+                <TbPencil /> <span>{descriptionButtonTitle}</span>
+            </Button>
+
+            <MarkdownEditorDialog
+                state={dialogState}
+                text={props.item?.description || undefined}
+                isSavePending={isPending}
+                onSave={(text) => updateItem({ description: text })}
+                projectId={props.projectId} />
+        </>
+    );
+}
+
+function Description(props: {
+    className?: string,
+    item: ProjectBoardItem | undefined,
+}) {
     if (!props.item) {
         return undefined;
     }
 
     return (
-        <MarkdownPreviewer
-            editButtonHidden
-            className={cn(
-                props.className,
-                (props.descriptionEditable || !isNullOrWhiteSpace(props.item.description)) && "my-2")}
-            actionsWrapperClassName="bg-linear-to-t from-surface-container to-surface-container/0 from-10%"
-            isSavePending={isPending}
-            editorType="editor-first"
-            projectId={props.projectId}
-            text={props.item.description}
-            onSave={(text) => updateItem({ description: text })}
-            editable={props.descriptionEditable}
-            setEditable={props.setDescriptionEditable} />
+        <MarkdownPreview
+            text={props.item.description || ""}
+            className={props.className} />
     );
 }
 

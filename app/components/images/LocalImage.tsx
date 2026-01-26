@@ -92,5 +92,6 @@ function useDataImage(imageId: string) {
 
             return await cacheVercelImage(image);
         },
+        retry: 1,
     });
 }

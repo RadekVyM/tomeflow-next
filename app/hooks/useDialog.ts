@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { DialogState } from "../types/DialogState";
 import { dispatchTopLayerChanged } from "../components/toast";
 
@@ -25,7 +25,7 @@ export default function useDialog(
         dispatchTopLayerChanged();
     }, [isOpen]);
 
-    function show(): Promise<void> {
+    const show = useCallback((): Promise<void> => {
         setAnimationClass(openAnimation || "backdrop:animate-fadeIn animate-slideUpIn");
         setIsOpen(true);
         return new Promise((resolve) => {
@@ -34,9 +34,9 @@ export default function useDialog(
                 resolve(undefined);
             }, ANIMATION_LENGTH);
         });
-    }
+    }, []);
 
-    function hide(): Promise<void> {
+    const hide = useCallback((): Promise<void> => {
         setAnimationClass(hideAnimation || "backdrop:animate-fadeOut animate-slideDownOut");
         return new Promise((resolve) => {
             const timeout = setTimeout(() => {
@@ -45,7 +45,7 @@ export default function useDialog(
                 resolve(undefined);
             }, ANIMATION_LENGTH);
         });
-    }
+    }, []);
 
     return {
         dialogRef,

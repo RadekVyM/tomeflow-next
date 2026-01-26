@@ -1,33 +1,32 @@
 "use client";
 
+import useDialog from "@/app/hooks/useDialog";
+import { DialogState } from "@/app/types/DialogState";
 import React, { createContext, useState } from "react";
 
 type ProjectPageContext = {
-    descriptionEditable: boolean,
+    dialogState: DialogState | null,
     description: string | null,
-    setDescriptionEditable: React.Dispatch<React.SetStateAction<boolean>>,
     setDescription: (value: string | null) => void,
 }
 
 export const ProjectPageContext = createContext<ProjectPageContext>({
-    descriptionEditable: false,
+    dialogState: null,
     description: null,
-    setDescriptionEditable: () => {},
     setDescription: () => {},
 });
 
 export function ProjectPageContextProvider(props: {
     children: React.ReactNode,
 }) {
-    const [descriptionEditable, setDescriptionEditable] = useState(false);
+    const dialogState = useDialog();
     const [description, setDescription] = useState<string | null>(null);
 
     return (
         <ProjectPageContext.Provider
             value={{
-                descriptionEditable,
+                dialogState,
                 description,
-                setDescriptionEditable,
                 setDescription,
             }}>
             {props.children}

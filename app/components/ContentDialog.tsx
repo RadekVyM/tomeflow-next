@@ -1,7 +1,7 @@
 import { cn } from "../utils/tailwind";
 import { Dialog, type DialogProps } from "./Dialog";
-import { MdClose } from "react-icons/md";
 import Button from "./input/Button";
+import { TbX } from "react-icons/tb";
 
 export default function ContentDialog(props: {
     ref: React.RefObject<HTMLDialogElement | null>,
@@ -33,7 +33,7 @@ export default function ContentDialog(props: {
                             await props.state.hide();
                         }
                     }}>
-                    <MdClose className="w-5 h-5" />
+                    <TbX className="w-5 h-5" />
                 </Button>
             </header>
 

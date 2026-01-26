@@ -80,6 +80,10 @@ body {
   @apply bg-surface text-on-surface;
 }
 
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
 #root {
   height: 100%;
 }

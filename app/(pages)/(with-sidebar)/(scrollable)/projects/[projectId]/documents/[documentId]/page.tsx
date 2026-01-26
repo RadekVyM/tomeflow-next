@@ -12,6 +12,8 @@ import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import ScrollablePageLayout from "@/app/components/layout/ScrollablePageLayout";
 import DocumentContentSkeleton from "./components/DocumentContentSkeleton";
 import { notFound } from "next/navigation";
+import EditButton from "./components/EditButton";
+import { DocumentPageContextProvider } from "./components/DocumentPageContextProvider";
 
 const getProjectCached = cache(async (projectId: string) => {
     const session = await getSessionCached();
@@ -41,35 +43,37 @@ export default async function Page(props: {
     const params = await props.params;
 
     return (
-        <ScrollablePageLayout
-            breadcrumbs={
-                <Suspense
-                    fallback={<BreadcrumbsSkeleton loadedItemsCount={1} />}>
-                    <SuspendedBreadcrumbs
-                        projectId={params.projectId} />
-                </Suspense>}
-            pageHeading={
-                <Suspense
-                    fallback={<PageHeadingSkeleton className="max-w-60" />}>
-                    <SuspendedPageHeading
-                        documentId={params.documentId} />
-                </Suspense>}
-            actionButtons={
-                <ActionButtons
-                    id="lg"
-                    documentId={params.documentId} />}
-            smActionButtons={
-                <ActionButtons
-                    id="sm"
-                    documentId={params.documentId} />}>
+        <DocumentPageContextProvider>
+            <ScrollablePageLayout
+                breadcrumbs={
+                    <Suspense
+                        fallback={<BreadcrumbsSkeleton loadedItemsCount={1} />}>
+                        <SuspendedBreadcrumbs
+                            projectId={params.projectId} />
+                    </Suspense>}
+                pageHeading={
+                    <Suspense
+                        fallback={<PageHeadingSkeleton className="max-w-60" />}>
+                        <SuspendedPageHeading
+                            documentId={params.documentId} />
+                    </Suspense>}
+                actionButtons={
+                    <ActionButtons
+                        id="lg"
+                        documentId={params.documentId} />}
+                smActionButtons={
+                    <ActionButtons
+                        id="sm"
+                        documentId={params.documentId} />}>
 
-            <Suspense
-                fallback={<DocumentContentSkeleton />}>
-                <SuspendedDocumentContent
-                    projectId={params.projectId}
-                    documentId={params.documentId} />
-            </Suspense>
-        </ScrollablePageLayout>
+                <Suspense
+                    fallback={<DocumentContentSkeleton />}>
+                    <SuspendedDocumentContent
+                        projectId={params.projectId}
+                        documentId={params.documentId} />
+                </Suspense>
+            </ScrollablePageLayout>
+        </DocumentPageContextProvider>
     );
 }
 
@@ -82,9 +86,13 @@ function ActionButtons(props: {
     return (
         <Suspense
             fallback={
-                <MoreDropdownButton
-                    id={id}
-                    disabled />}>
+                <>
+                    <EditButton
+                        disabled />
+                    <MoreDropdownButton
+                        id={id}
+                        disabled />
+                </>}>
             <SuspendedActionButtons
                 id={id}
                 documentId={props.documentId}/>
@@ -126,10 +134,13 @@ async function SuspendedActionButtons(props: {
     const document = await getDocumentCached(props.documentId);
 
     return (
-        <MoreButton
-            id={props.id}
-            documentId={props.documentId}
-            documentTitle={document.title} />
+        <>
+            <EditButton />
+            <MoreButton
+                id={props.id}
+                documentId={props.documentId}
+                documentTitle={document.title} />
+        </>
     );
 }
 

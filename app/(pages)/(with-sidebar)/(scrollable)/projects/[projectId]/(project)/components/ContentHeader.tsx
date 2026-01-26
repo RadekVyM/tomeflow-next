@@ -1,15 +1,9 @@
-"use client";
-
 import { cn } from "@/app/utils/tailwind";
-import { useContext } from "react";
-import { ProjectPageContext } from "./ProjectPageContext";
 
 export default function ContentHeader(props: {
     hasHeading?: boolean,
 }) {
-    const { descriptionEditable } = useContext(ProjectPageContext);
-
-    const showHeading = props.hasHeading || descriptionEditable;
+    const showHeading = props.hasHeading;
 
     return (
         <h3

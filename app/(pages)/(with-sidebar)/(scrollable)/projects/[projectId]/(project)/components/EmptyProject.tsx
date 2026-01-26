@@ -10,9 +10,9 @@ import { isNullOrWhiteSpace } from "@/app/utils/string";
 export default function EmptyProject(props: {
     projectId: string,
 }) {
-    const { descriptionEditable, description } = useContext(ProjectPageContext);
+    const { description } = useContext(ProjectPageContext);
 
-    if (descriptionEditable || !isNullOrWhiteSpace(description)) {
+    if (!isNullOrWhiteSpace(description)) {
         return undefined;
     }
 

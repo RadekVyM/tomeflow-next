@@ -23,8 +23,6 @@ export default function MoreButton(props: {
     projectTitle: string,
     disabled?: boolean,
 }) {
-    const { setDescriptionEditable } = useContext(ProjectPageContext);
-
     return (
         <MoreDropdownButton
             id={props.id}
@@ -34,12 +32,8 @@ export default function MoreButton(props: {
             <RenameButton
                 projectId={props.projectId}
                 projectTitle={props.projectTitle} />
-            <Button
-                className="w-full"
-                size="sm"
-                onClick={() => setDescriptionEditable(true)}>
-                <TbPencil /> Edit description
-            </Button>
+            <EditDescriptionButton 
+                projectId={props.projectId} />
             <ImagesButton
                 projectId={props.projectId} />
             <ExportButton
@@ -48,6 +42,21 @@ export default function MoreButton(props: {
             <DeleteButton
                 projectId={props.projectId} />
         </MoreDropdownButton>
+    );
+}
+
+function EditDescriptionButton(props: {
+    projectId: string,
+}) {
+    const { dialogState } = useContext(ProjectPageContext);
+
+    return (
+        <Button
+            className="w-full"
+            size="sm"
+            onClick={dialogState?.show}>
+            <TbPencil /> Edit description
+        </Button>
     );
 }
 

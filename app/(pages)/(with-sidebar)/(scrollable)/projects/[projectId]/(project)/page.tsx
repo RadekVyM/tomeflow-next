@@ -2,7 +2,6 @@ import Breadcrumbs from "@/app/components/Breadcrumbs";
 import PageHeading from "@/app/components/layout/PageHeading";
 import ProjectDescription from "@/app/(pages)/(with-sidebar)/(scrollable)/projects/[projectId]/(project)/components/ProjectDescription";
 import { getProject } from "@/app/services/projects";
-import { cn } from "@/app/utils/tailwind";
 import MoreButton from "./components/MoreButton";
 import NewDocumentButton from "./components/NewDocumentButton";
 import { ProjectPageContextProvider } from "@/app/(pages)/(with-sidebar)/(scrollable)/projects/[projectId]/(project)/components/ProjectPageContext";

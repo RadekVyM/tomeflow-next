@@ -38,11 +38,7 @@ async function SuspendedUserButton(props: {
                         height={128}
                         src={session.user.image}
                         alt="Profile picture" /> :
-                    <div
-                        className="w-9 h-9 rounded-xl bg-primary grid place-content-center">
-                        <TbUser
-                            className="text-on-primary w-5 h-5" />
-                    </div>}
+                    <FallbackPicture />}
             </Button>
             <UserInfoPopover
                 userInfo={session.user} />
@@ -57,11 +53,17 @@ function FallbackUserButton(props: {
         <Button
             className={cn("p-1 rounded-full", props.className)}
             popoverTarget="userinfo-popover">
-            <div
-                className="w-9 h-9 rounded-full bg-primary grid place-content-center">
-                <TbUser
-                    className="text-on-primary w-5 h-5" />
-            </div>
+            <FallbackPicture />
         </Button>
+    );
+}
+
+function FallbackPicture() {
+    return (
+        <div
+            className="w-9 h-9 rounded-xl bg-primary grid place-content-center">
+            <TbUser
+                className="text-on-primary w-5 h-5" />
+        </div>
     );
 }

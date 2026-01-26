@@ -25,7 +25,7 @@ export default function Breadcrumbs(props: {
                             {location.title}
                         </Button> :
                         <Skeleton
-                            className="text-sm max-w-15 mx-2" />}
+                            className="text-sm w-15 mx-2" />}
 
                     {index !== props.locations.length - 1 &&
                         <TbChevronRight

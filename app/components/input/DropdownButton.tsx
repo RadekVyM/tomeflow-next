@@ -37,9 +37,9 @@ export default function DropDownButton(props: {
 
             <article
                 id={popoverId}
-                className="dropdown-button-menu slide-down-popover-transition bg-surface-container rounded-xl mt-1 w-max
-                    border border-outline-variant
-                    drop-shadow-xl drop-shadow-shade"
+                className={cn(
+                    "dropdown-button-menu slide-down-popover-transition mt-1 w-max rounded-xl",
+                    "bg-surface-container border border-outline-variant drop-shadow-xl drop-shadow-shade")}
                 popover="auto"
                 style={{
                     "positionAnchor": anchorId,
