@@ -11,6 +11,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { Toasts } from "./components/toast";
 import { cn } from "./utils/tailwind";
+import { cookies } from "next/headers";
 
 const gabarito = Gabarito({
     variable: "--font-gabarito-sans",
@@ -52,14 +53,19 @@ export const viewport: Viewport = {
     initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const cookieStore = await cookies();
+    const theme = cookieStore.get("theme")?.value || "system";
+
     return (
         <html
-            lang="en" className={cn(gabarito.variable, googleSansCode.variable, robotoItalic.variable)}>
+            lang="en"
+            className={cn(gabarito.variable, googleSansCode.variable, robotoItalic.variable)}
+            data-theme={theme}>
             <QueryClientProvider>
                 <body className="antialiased font-sans">
                     {children}

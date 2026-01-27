@@ -1,9 +1,11 @@
 import Button from "@/app/components/input/Button";
-import UserButton from "@/app/components/layout/UserButton";
+import UserButton from "@/app/components/layout/user/UserButton";
 import SearchButton from "@/app/components/SearchButton";
 import { cn } from "@/app/utils/tailwind";
 import { TbHome, TbLayoutGrid, TbSettings } from "react-icons/tb";
 import { LuHouse } from "react-icons/lu";
+import MenuPopover from "@/app/components/layout/MenuPopover";
+import ThemeSwitcher from "@/app/components/layout/ThemeSwitcher";
 
 export default function Layout(props: {
     children?: React.ReactNode,
@@ -22,7 +24,7 @@ function SideBar() {
     return (
         <aside
             className={cn(
-                "fixed top-0 flex items-center z-50",
+                "fixed top-0 flex items-center z-40",
                 "flex-row-reverse right-0 gap-3 h-14 mr-3",
                 "sm:border-r sm:border-outline-variant sm:w-15 sm:left-0 sm:right-auto sm:h-full sm:bg-surface sm:flex-col sm:gap-0 sm:mr-0 sm:pt-1.5")}>
             <UserButton
@@ -54,13 +56,34 @@ function SideBar() {
                     </Button>
                 </div>
 
-                <Button
-                    variant="icon-default"
-                    size="lg">
-                    <TbSettings
-                        className="text-lg" />
-                </Button>
+                <SettingsButton />
             </nav>
         </aside>
+    );
+}
+
+function SettingsButton() {
+    return (
+        <>
+            <Button
+                variant="icon-default"
+                size="lg"
+                title="Settings"
+                popoverTarget="settings-popover">
+                <TbSettings
+                    className="text-lg" />
+            </Button>
+
+            <MenuPopover
+                className="bottom-3"
+                id="settings-popover">
+                <h2
+                    className="text-sm text-on-surface-container-muted font-semibold mb-2">
+                    Theme
+                </h2>
+                <ThemeSwitcher
+                    isCompact />
+            </MenuPopover>
+        </>
     );
 }

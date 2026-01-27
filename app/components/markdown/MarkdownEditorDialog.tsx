@@ -34,8 +34,8 @@ export default function MarkdownEditorDialog(props: {
             ref={props.state.dialogRef}
             state={props.state}
             onEscape={onClose}
-            outerClassName="pb-0"
-            className="thin-scrollbar bg-surface text-on-surface isolate w-full h-full max-h-full max-w-450 overflow-hidden rounded-t-2xl flex flex-col">
+            outerClassName="p-0 lg:p-5 lg:pb-0"
+            className="thin-scrollbar bg-surface text-on-surface isolate w-full h-full max-h-full max-w-450 overflow-hidden lg:rounded-t-2xl flex flex-col">
             {props.state.isOpen && <Content
                 projectId={props.projectId}
                 text={props.text}

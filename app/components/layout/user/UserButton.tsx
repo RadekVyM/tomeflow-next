@@ -1,10 +1,11 @@
 import { getSessionCached } from "@/app/utils/session";
 import { Suspense } from "react";
-import Button from "../input/Button";
+import Button from "../../input/Button";
 import { TbUser } from "react-icons/tb";
 import Image from "next/image";
 import UserInfoPopover from "./UserInfoPopover";
 import { cn } from "@/app/utils/tailwind";
+import UserButtonClient from "./UserButtonClient";
 
 export default function UserButton(props: {
     withFallback?: boolean,
@@ -28,9 +29,9 @@ async function SuspendedUserButton(props: {
 
     return (
         <>
-            <Button
-                className={cn("p-1 rounded-2xl", props.className)}
-                popoverTarget="userinfo-popover">
+            <UserButtonClient
+                className={props.className}
+                user={session.user}>
                 {session.user.image ?
                     <Image
                         className="w-9 h-9 rounded-xl"
@@ -39,7 +40,7 @@ async function SuspendedUserButton(props: {
                         src={session.user.image}
                         alt="Profile picture" /> :
                     <FallbackPicture />}
-            </Button>
+            </UserButtonClient>
             <UserInfoPopover
                 userInfo={session.user} />
         </>
@@ -51,7 +52,7 @@ function FallbackUserButton(props: {
 }) {
     return (
         <Button
-            className={cn("p-1 rounded-full", props.className)}
+            className={cn("p-1 rounded-xl", props.className)}
             popoverTarget="userinfo-popover">
             <FallbackPicture />
         </Button>

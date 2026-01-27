@@ -61,7 +61,6 @@ html {
 
   /* This allows transitions to/from 'auto' keywords */
   interpolate-size: allow-keywords;
-
 }
 
 html:not(:has(.fullscreen)) {

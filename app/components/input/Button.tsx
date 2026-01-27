@@ -30,7 +30,8 @@ export default function Button({ className, href, variant, size, disabled, title
                     aria-label={title}
                     href={href}
                     className={cn(buttonVariants({ variant, size, className }), disabled && "pointer-events-none opacity-50")}
-                    children={rest.children} /> :
+                    children={rest.children}
+                    onClick={rest.onClick as any} /> :
                 <button
                     ref={elementRef as any}
                     aria-label={title}
