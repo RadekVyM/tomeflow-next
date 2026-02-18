@@ -5,8 +5,26 @@ import Button from "../input/Button";
 import { useState } from "react";
 import { TbDeviceDesktop, TbMoon, TbSun } from "react-icons/tb";
 import { cn } from "@/app/utils/tailwind";
+import useIsClient from "@/app/hooks/useIsClient";
 
 export default function ThemeSwitcher(props: {
+    className?: string,
+    isCompact?: boolean,
+}) {
+    const isClient = useIsClient();
+
+    if (!isClient) {
+        return undefined;
+    }
+
+    return (
+        <Content
+            className={props.className}
+            isCompact={props.isCompact} />
+    );
+}
+
+function Content(props: {
     className?: string,
     isCompact?: boolean,
 }) {

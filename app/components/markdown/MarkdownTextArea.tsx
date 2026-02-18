@@ -19,11 +19,14 @@ export default function TextArea(props: {
         insertFormatting,
         insertTab,
         removeTab,
+        indent,
+        outdent,
         insertBold,
         insertItalic,
         insertInlineCode,
         insertLink,
         insertImage,
+        cutLine,
     } = useInsertFormatting(props.ref, props.text, props.setTextChanged, props.setText);
 
     const highlightedText = useMemo(() => {
@@ -52,11 +55,13 @@ export default function TextArea(props: {
 
         if (e.key === "Tab") {
             e.preventDefault();
+            const isSelection = props.ref.current.selectionStart !== props.ref.current.selectionEnd;
+
             if (e.shiftKey) {
-                removeTab();
+                isSelection ? outdent() : removeTab();
             }
             else {
-                insertTab();
+                isSelection ? indent() : insertTab();
             }
         }
 
@@ -83,6 +88,13 @@ export default function TextArea(props: {
         if (isCtrl(e) && e.key.toLowerCase() === "k") {
             e.preventDefault();
             insertLink();
+        }
+
+        if (isCtrl(e) && e.key.toLowerCase() === "x") {
+            if (props.ref.current.selectionStart === props.ref.current.selectionEnd) {
+                e.preventDefault();
+                cutLine();
+            }
         }
     }
 

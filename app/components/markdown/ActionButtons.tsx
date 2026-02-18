@@ -1,6 +1,6 @@
 "use client";
 
-import { TbLibraryPhoto, TbPhotoCode, TbLink } from "react-icons/tb";
+import { TbLibraryPhoto, TbPhotoCode, TbLink, TbIndentIncrease, TbIndentDecrease } from "react-icons/tb";
 import SelectImageDialog from "../images/SelectImageDialog";
 import Button from "../input/Button";
 import { DataImage } from "@/app/types/DataImage";
@@ -19,6 +19,8 @@ export default function ActionButtons(props: {
     const {
         insertLink,
         insertImage,
+        indent,
+        outdent,
     } = useInsertFormatting(props.textAreaRef, props.text, props.setTextChanged, props.setText);
 
     return (
@@ -40,6 +42,20 @@ export default function ActionButtons(props: {
             <ImagesButton
                 projectId={props.projectId}
                 onImageSelected={props.onImageSelected} />
+            <Button
+                variant="icon-container"
+                title="Indent"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={indent}>
+                <TbIndentIncrease />
+            </Button>
+            <Button
+                variant="icon-container"
+                title="Outdent"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={outdent}>
+                <TbIndentDecrease />
+            </Button>
         </>
     );
 }

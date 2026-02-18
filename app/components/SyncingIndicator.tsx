@@ -1,25 +1,22 @@
-"use client";
-
-import { useContext, useEffect, useState } from "react";
-import { BoardPageContext } from "./BoardPageContext";
-import { cn } from "@/app/utils/tailwind";
-import LoadingIcon from "@/app/components/LoadingIcon";
+import { useEffect, useState } from "react";
+import { cn } from "../utils/tailwind";
+import LoadingIcon from "./LoadingIcon";
 
 export default function SyncingIndicator(props: {
     className?: string,
+    isSyncing: boolean,
 }) {
-    const { isSyncing } = useContext(BoardPageContext);
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        if (isSyncing) {
+        if (props.isSyncing) {
             setIsVisible(true);
             return;
         }
 
         const timeout = setTimeout(() => setIsVisible(false), 1500);
         return () => clearTimeout(timeout);
-    }, [isSyncing]);
+    }, [props.isSyncing]);
 
     return (
         <div

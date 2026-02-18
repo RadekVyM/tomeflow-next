@@ -11,7 +11,7 @@ import PageHeadingSkeleton from "@/app/components/skeleton/PageHeadingSkeleton";
 import { MoreDropdownButton } from "@/app/components/MoreDropdownButton";
 import { notFound } from "next/navigation";
 import { BoardPageContextProvider } from "./components/BoardPageContext";
-import SyncingIndicator from "./components/SyncingIndicator";
+import BoardSyncingIndicator from "./components/BoardSyncingIndicator";
 import FullscreenPageLayout from "@/app/components/layout/FullscreenPageLayout";
 
 const getProjectCached = cache(async (projectId: string) => {
@@ -85,7 +85,7 @@ function ActionButtons(props: {
 
     return (
         <>
-            <SyncingIndicator />
+            <BoardSyncingIndicator />
 
             <Suspense
                 fallback={

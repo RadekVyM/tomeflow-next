@@ -12,6 +12,7 @@ import MarkdownPreview from "./MarkdownPreview";
 import useDebouncedValue from "@/app/hooks/useDebouncedValue";
 import useDimensionsListener from "@/app/hooks/useDimensionsListener";
 import { isNullOrWhiteSpace } from "@/app/utils/string";
+import SyncingIndicator from "../SyncingIndicator";
 
 const SAVE_INTERVAL = 5000;
 
@@ -123,9 +124,9 @@ function Content(props: {
     return (
         <>
             <header
-                className="flex justify-between items-start z-50 bg-inherit pt-4 px-5 pb-4">
+                className="flex justify-between items-start z-50 bg-inherit pt-4 px-5 pb-4 gap-2">
                 <div
-                    className="flex flex-wrap justify-center items-center gap-2 pointer-events-auto">
+                    className="flex-1 flex flex-wrap items-center gap-2 pointer-events-auto">
                     <ActionButtons
                         text={text}
                         setText={setText}
@@ -134,12 +135,9 @@ function Content(props: {
                         onImageSelected={onImageSelected}
                         projectId={props.projectId} />
                 </div>
-                <div
-                    className="text-xs text-on-surface-container bg-primary-lite px-1.5 border border-outline-variant rounded-lg -mb-1 mt-2 pointer-events-auto">
-                    {props.isSavePending ?
-                        "Saving changes..." :
-                        textChanged ? "Unsaved changes" : "All changes saved"}
-                </div>
+                <SyncingIndicator
+                    isSyncing={!!props.isSavePending}
+                    className="-mb-1 mt-2 mr-3" />
                 <Button
                     variant="icon-default"
                     onClick={props.onClose}>
