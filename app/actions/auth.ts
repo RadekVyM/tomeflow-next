@@ -12,7 +12,7 @@ export const signInAction = noauthActionClient.action(async () => {
     }
     catch (error) {
         if (error instanceof AuthError) {
-            console.log(error.message);
+            logError(error);
             switch (error.type) {
                 case "OAuthSignInError":
                     throw new Error("Failed to sign in.");
@@ -31,7 +31,7 @@ export const signOutAction = noauthActionClient.action(async () => {
     }
     catch (error) {
         if (error instanceof AuthError) {
-            console.log(error.message);
+            logError(error);
             switch (error.type) {
                 case "SignOutError":
                     throw new Error("Failed to sign out.");
@@ -42,3 +42,10 @@ export const signOutAction = noauthActionClient.action(async () => {
         throw error;
     }
 });
+
+function logError(error: AuthError) {
+    console.error("[AUTH_ERROR]", {
+        type: error.type,
+        timestamp: new Date().toISOString()
+    });
+}
