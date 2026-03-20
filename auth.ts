@@ -41,6 +41,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         async authorized({ auth, request }) {
             const protectedPaths = ["/api/projects", "/api/search", "/projects"];
+
+            const isUploadImageRoute = request.nextUrl.pathname === "/api/projects/images/upload";
+            const hasVercelSignature = request.headers.has("x-vercel-signature");
+
+            // Bypass Auth.js if it's a signed Vercel webhook
+            if (isUploadImageRoute && hasVercelSignature) {
+                return true; 
+            }
+
             const isProtected = protectedPaths.some(path => 
                 request.nextUrl.pathname.startsWith(path));
 
