@@ -13,7 +13,10 @@
     "db:push": "dotenv -e .env -- drizzle-kit push",
     "db:migrate": "dotenv -e .env -- npx drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "prod:db:migrate": "dotenv -e .env.db-production -- npx drizzle-kit migrate"
+    "prod:db:migrate": "dotenv -e .env.db-production -- npx drizzle-kit migrate",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
@@ -55,8 +58,10 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "dotenv-cli": "^11.0.0",
     "eslint": "^10.4.0",
-    "eslint-config-next": "^16.2.6",
+    "eslint-config-next": "^16.2.9",
+    "jsdom": "^29.1.1",
     "tailwindcss": "^4.3.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
   }
 }

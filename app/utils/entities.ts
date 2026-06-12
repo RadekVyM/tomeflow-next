@@ -25,9 +25,9 @@ export function mergeDocumentsAndBoards<TBoard extends ProjectBoardSchema, TDocu
             url: `/projects/${d.projectId}/documents/${d.id}`,
             icon: TbFile,
         })),
-    ].slice(0, limit);
+    ];
 
     items.sort((a, b) => lastSeenAt(b) - lastSeenAt(a));
 
-    return items;
+    return items.slice(0, limit);
 }
