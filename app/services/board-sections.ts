@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { projectBoardSections } from "@/db/schema";
 import { and, asc, eq } from "drizzle-orm";
+import { DbClient } from "../types/database";
 
 export async function getBoardSectionTitle(userId: string, sectionId: string) {
     return await db.query.projectBoardSections.findFirst({
@@ -14,12 +15,14 @@ export async function getBoardSectionTitle(userId: string, sectionId: string) {
 export async function getBoardSections(userId: string, boardId: string) {
     return await db.query.projectBoardSections.findMany({
         where: and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.parentId, boardId)),
+        orderBy: [asc(projectBoardSections.position)],
     });
 }
 
 export async function getBoardSectionsWithItems(userId: string, boardId: string) {
     return await db.query.projectBoardSections.findMany({
         where: and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.parentId, boardId)),
+        orderBy: [asc(projectBoardSections.position)],
         with: {
             items: {
                 with: {
@@ -88,9 +91,9 @@ export async function deleteBoardSection(userId: string, sectionId: string) {
 
     const boardId = section[0].parentId;
 
-    await db.transaction(async () => {
-        const items = await getSectionsFromBoard(userId, boardId);
-        await updatePositionsOfSortedItems(items);
+    await db.transaction(async (tx) => {
+        const items = await getSectionsFromBoard(userId, boardId, tx);
+        await updatePositionsOfSortedItems(items, tx);
     });
 
     return section[0];
@@ -105,19 +108,19 @@ async function updateBoardSectionPosition(userId: string, sectionId: string, new
         throw new Error(`Section "${sectionId}" could not be found.`);
     }
 
-    await db.transaction(async () => {
-        const items = await getSectionsFromBoard(userId, sectionToUpdate.parentId);
+    await db.transaction(async (tx) => {
+        const items = await getSectionsFromBoard(userId, sectionToUpdate.parentId, tx);
 
         const oldPosition = items.findIndex((item) => item.id === sectionToUpdate.id);
         const itemToMove = items.splice(oldPosition, 1)[0];
         items.splice(newPosition, 0, itemToMove);
 
-        await updatePositionsOfSortedItems(items);
+        await updatePositionsOfSortedItems(items, tx);
     });
 }
 
-async function getSectionsFromBoard(userId: string, boardId: string) {
-    return await db.query.projectBoardSections.findMany({
+async function getSectionsFromBoard(userId: string, boardId: string, client: DbClient = db) {
+    return await client.query.projectBoardSections.findMany({
         where: and(eq(projectBoardSections.userId, userId), eq(projectBoardSections.parentId, boardId)),
         orderBy: [asc(projectBoardSections.position)],
         columns: {
@@ -127,7 +130,7 @@ async function getSectionsFromBoard(userId: string, boardId: string) {
     });
 }
 
-async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, }>) {
+async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, }>, client: DbClient = db) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
         const now = Date.now();
@@ -136,7 +139,7 @@ async function updatePositionsOfSortedItems(items: Array<{ id: string, position:
             continue;
         }
 
-        await db.update(projectBoardSections)
+        await client.update(projectBoardSections)
             .set({
                 updatedAt: now,
                 position: i,

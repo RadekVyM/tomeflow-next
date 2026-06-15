@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { projectBoardCheckItems, projectBoardItems, projectBoards, projectBoardSections, projectDocuments, projects } from "@/db/schema";
 import { ExportedProject } from "../types/export/ExportedProject";
+import { DbClient } from "../types/database";
 
 type InsertProject = {
     id: string,
@@ -129,34 +130,34 @@ export async function importProjects(userId: string, projects: Array<ExportedPro
         }
     }
 
-    await db.transaction(async () => {
+    await db.transaction(async (tx) => {
         if (projectsToInsert.length > 0) {
-            await insertProjects(userId, projectsToInsert);
+            await insertProjects(userId, projectsToInsert, tx);
         }
         if (documentsToInsert.length > 0) {
-            await insertDocuments(userId, documentsToInsert);
+            await insertDocuments(userId, documentsToInsert, tx);
         }
         if (boardsToInsert.length > 0) {
-            await insertBoards(userId, boardsToInsert);
+            await insertBoards(userId, boardsToInsert, tx);
         }
         if (sectionsToInsert.length > 0) {
-            await insertBoardSections(userId, sectionsToInsert);
+            await insertBoardSections(userId, sectionsToInsert, tx);
         }
         if (itemsToInsert.length > 0) {
-            await insertBoardItems(userId, itemsToInsert);
+            await insertBoardItems(userId, itemsToInsert, tx);
         }
         if (checkItemsToInsert.length > 0) {
-            await insertBoardCheckItems(userId, checkItemsToInsert);
+            await insertBoardCheckItems(userId, checkItemsToInsert, tx);
         }
     });
 
     return projectIdsMapping;
 }
 
-async function insertProjects(userId: string, newProjects: Array<InsertProject>) {
+async function insertProjects(userId: string, newProjects: Array<InsertProject>, client: DbClient = db) {
     const now = Date.now();
 
-    await db.insert(projects).values(newProjects.map((p) => ({
+    await client.insert(projects).values(newProjects.map((p) => ({
         id: p.id,
         userId: userId,
         title: p.title,
@@ -167,10 +168,10 @@ async function insertProjects(userId: string, newProjects: Array<InsertProject>)
     })));
 }
 
-async function insertDocuments(userId: string, newDocuments: Array<InsertProjectDocument>) {
+async function insertDocuments(userId: string, newDocuments: Array<InsertProjectDocument>, client: DbClient = db) {
     const now = Date.now();
 
-    await db.insert(projectDocuments).values(newDocuments.map((d) => ({
+    await client.insert(projectDocuments).values(newDocuments.map((d) => ({
         id: d.id,
         userId: userId,
         projectId: d.projectId,
@@ -182,10 +183,10 @@ async function insertDocuments(userId: string, newDocuments: Array<InsertProject
     })));
 }
 
-async function insertBoards(userId: string, newBoards: Array<InsertProjectBoard>) {
+async function insertBoards(userId: string, newBoards: Array<InsertProjectBoard>, client: DbClient = db) {
     const now = Date.now();
 
-    await db.insert(projectBoards).values(newBoards.map((b) => ({
+    await client.insert(projectBoards).values(newBoards.map((b) => ({
         id: b.id,
         userId: userId,
         projectId: b.projectId,
@@ -196,10 +197,10 @@ async function insertBoards(userId: string, newBoards: Array<InsertProjectBoard>
     })));
 }
 
-async function insertBoardSections(userId: string, newSections: Array<InsertProjectBoardSection>) {
+async function insertBoardSections(userId: string, newSections: Array<InsertProjectBoardSection>, client: DbClient = db) {
     const now = Date.now();
 
-    await db.insert(projectBoardSections).values(newSections.map((s) => ({
+    await client.insert(projectBoardSections).values(newSections.map((s) => ({
         id: s.id,
         userId: userId,
         parentId: s.parentId,
@@ -210,10 +211,10 @@ async function insertBoardSections(userId: string, newSections: Array<InsertProj
     })));
 }
 
-async function insertBoardItems(userId: string, newItems: Array<InsertProjectBoardItem>) {
+async function insertBoardItems(userId: string, newItems: Array<InsertProjectBoardItem>, client: DbClient = db) {
     const now = Date.now();
 
-    await db.insert(projectBoardItems).values(newItems.map((i) => ({
+    await client.insert(projectBoardItems).values(newItems.map((i) => ({
         id: i.id,
         userId: userId,
         parentId: i.parentId,
@@ -227,10 +228,10 @@ async function insertBoardItems(userId: string, newItems: Array<InsertProjectBoa
     })));
 }
 
-async function insertBoardCheckItems(userId: string, newCheckItems: Array<InsertProjectBoardCheckItem>) {
+async function insertBoardCheckItems(userId: string, newCheckItems: Array<InsertProjectBoardCheckItem>, client: DbClient = db) {
     const now = Date.now();
 
-    await db.insert(projectBoardCheckItems).values(newCheckItems.map((c) => ({
+    await client.insert(projectBoardCheckItems).values(newCheckItems.map((c) => ({
         id: c.id,
         userId: userId,
         parentId: c.parentId,

@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { projectBoardItems } from "@/db/schema";
 import { and, asc, eq } from "drizzle-orm";
+import { DbClient } from "../types/database";
 
 export async function getBoardItem(userId: string, itemId: string) {
     return await db.query.projectBoardItems.findFirst({
@@ -87,9 +88,9 @@ export async function deleteBoardItem(userId: string, itemId: string) {
 
     const sectionId = item[0].parentId;
 
-    await db.transaction(async () => {
-        const items = await getItemsFromSection(userId, sectionId);
-        await updatePositionsOfSortedItems(items);
+    await db.transaction(async (tx) => {
+        const items = await getItemsFromSection(userId, sectionId, tx);
+        await updatePositionsOfSortedItems(items, undefined, tx);
     });
 
     return item[0];
@@ -103,28 +104,28 @@ async function moveBoardItemToSection(userId: string, itemId: string, targetSect
         return;
     }
 
-    await db.transaction(async () => {
+    await db.transaction(async (tx) => {
         const sourceSectionId = itemToUpdate.parentId;
-        const targetItems = await getItemsFromSection(userId, targetSectionId);
+        const targetItems = await getItemsFromSection(userId, targetSectionId, tx);
         targetItems.splice(newPosition, 0, { id: itemId, position: itemToUpdate.position, parentId: itemToUpdate.parentId, });
-        await updatePositionsOfSortedItems(targetItems, targetSectionId);
+        await updatePositionsOfSortedItems(targetItems, targetSectionId, tx);
 
-        const sourceItems = await getItemsFromSection(userId, sourceSectionId);
-        await updatePositionsOfSortedItems(sourceItems);
+        const sourceItems = await getItemsFromSection(userId, sourceSectionId, tx);
+        await updatePositionsOfSortedItems(sourceItems, undefined, tx);
     });
 }
 
 async function updateBoardItemPosition(userId: string, itemId: string, newPosition: number) {
     const itemToUpdate = await findItemById(userId, itemId);
 
-    await db.transaction(async () => {
-        const items = await getItemsFromSection(userId, itemToUpdate.parentId);
+    await db.transaction(async (tx) => {
+        const items = await getItemsFromSection(userId, itemToUpdate.parentId, tx);
 
         const oldPosition = items.findIndex((item) => item.id === itemToUpdate.id);
         const itemToMove = items.splice(oldPosition, 1)[0];
         items.splice(newPosition, 0, itemToMove);
 
-        await updatePositionsOfSortedItems(items);
+        await updatePositionsOfSortedItems(items, undefined, tx);
     });
 }
 
@@ -140,8 +141,8 @@ async function findItemById(userId: string, itemId: string) {
     return item;
 }
 
-async function getItemsFromSection(userId: string, sectionId: string) {
-    return await db.query.projectBoardItems.findMany({
+async function getItemsFromSection(userId: string, sectionId: string, client: DbClient = db) {
+    return await client.query.projectBoardItems.findMany({
         where: and(eq(projectBoardItems.userId, userId), eq(projectBoardItems.parentId, sectionId)),
         orderBy: [asc(projectBoardItems.position)],
         columns: {
@@ -152,7 +153,7 @@ async function getItemsFromSection(userId: string, sectionId: string) {
     });
 }
 
-async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, parentId: string, }>, sectionId?: string) {
+async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, parentId: string, }>, sectionId?: string, client: DbClient = db) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
         const now = Date.now();
@@ -161,7 +162,7 @@ async function updatePositionsOfSortedItems(items: Array<{ id: string, position:
             continue;
         }
 
-        await db.update(projectBoardItems)
+        await client.update(projectBoardItems)
             .set({
                 updatedAt: now,
                 position: i,

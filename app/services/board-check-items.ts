@@ -1,10 +1,12 @@
 import { db } from "@/db";
 import { projectBoardCheckItems } from "@/db/schema";
 import { and, asc, eq } from "drizzle-orm";
+import { DbClient } from "../types/database";
 
 export async function getBoardItemCheckItems(userId: string, itemId: string) {
     return await db.query.projectBoardCheckItems.findMany({
         where: and(eq(projectBoardCheckItems.userId, userId), eq(projectBoardCheckItems.parentId, itemId)),
+        orderBy: [asc(projectBoardCheckItems.position)],
     });
 }
 
@@ -68,9 +70,9 @@ export async function deleteBoardCheckItem(userId: string, checkItemId: string) 
 
     const itemId = item[0].parentId;
 
-    await db.transaction(async () => {
-        const checkItems = await getCheckItemsFromItem(userId, itemId);
-        await updatePositionsOfSortedItems(checkItems);
+    await db.transaction(async (tx) => {
+        const checkItems = await getCheckItemsFromItem(userId, itemId, tx);
+        await updatePositionsOfSortedItems(checkItems, tx);
     });
 
     return item[0];
@@ -85,19 +87,19 @@ async function updateBoardCheckItemPosition(userId: string, checkItemId: string,
         throw new Error(`Check item "${checkItemId}" could not be found.`);
     }
 
-    await db.transaction(async () => {
+    await db.transaction(async (tx) => {
         const items = await getCheckItemsFromItem(userId, itemToUpdate.parentId);
 
-        const oldPosition = items.findIndex((item) => item.id === itemToUpdate.id);
+        const oldPosition = items.findIndex((item) => item.id === itemToUpdate.id, tx);
         const itemToMove = items.splice(oldPosition, 1)[0];
         items.splice(newPosition, 0, itemToMove);
 
-        await updatePositionsOfSortedItems(items);
+        await updatePositionsOfSortedItems(items, tx);
     });
 }
 
-async function getCheckItemsFromItem(userId: string, itemId: string) {
-    return await db.query.projectBoardCheckItems.findMany({
+async function getCheckItemsFromItem(userId: string, itemId: string, client: DbClient = db) {
+    return await client.query.projectBoardCheckItems.findMany({
         where: and(eq(projectBoardCheckItems.userId, userId), eq(projectBoardCheckItems.parentId, itemId)),
         orderBy: [asc(projectBoardCheckItems.position)],
         columns: {
@@ -107,7 +109,7 @@ async function getCheckItemsFromItem(userId: string, itemId: string) {
     });
 }
 
-async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, }>) {
+async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, }>, client: DbClient = db) {
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
         const now = Date.now();
@@ -116,7 +118,7 @@ async function updatePositionsOfSortedItems(items: Array<{ id: string, position:
             continue;
         }
 
-        await db.update(projectBoardCheckItems)
+        await client.update(projectBoardCheckItems)
             .set({
                 updatedAt: now,
                 position: i,

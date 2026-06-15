@@ -54,16 +54,20 @@ afterEach(async () => {
         "search_index",
     ];
 
-    await dbInstance.run(sql`PRAGMA foreign_keys = OFF`);
-    for (const table of tables) {
-        try {
-            await dbInstance.run(sql`DELETE FROM ${sql.raw(`\`${table}\``)}`);
-        }
-        catch (e) {
-            // Ignore tables that might not exist yet in schema migrations
+    try {
+        await dbInstance.run(sql`PRAGMA foreign_keys = OFF`);
+        for (const table of tables) {
+            try {
+                await dbInstance.run(sql`DELETE FROM ${sql.raw(`\`${table}\``)}`);
+            }
+            catch (e) {
+                // Ignore tables that might not exist yet in schema migrations
+            }
         }
     }
-    await dbInstance.run(sql`PRAGMA foreign_keys = ON`);
+    finally {
+        await dbInstance.run(sql`PRAGMA foreign_keys = ON`);
+    }
 
     // Reset all mock call histories between tests
     vi.clearAllMocks();
