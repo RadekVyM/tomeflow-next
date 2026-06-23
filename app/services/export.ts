@@ -70,7 +70,7 @@ export async function exportProject(userId: string, projectId: string): Promise<
     };
 }
 
-export async function exportProjectsByUser(userId: string): Promise<Array<ExportedProject> | null> {
+export async function exportProjectsByUser(userId: string): Promise<Array<ExportedProject>> {
     const dbProjects = await db.query.projects.findMany({
         where: and(eq(projects.userId, userId)),
     });

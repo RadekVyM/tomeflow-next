@@ -61,14 +61,6 @@ npm test -- --coverage tests/integration
 - Delete: remove boards, verify cleanup
 - Authorization: enforce user isolation, project isolation
 
-### Planned Services
-- [x] Board Sections Service
-- [x] Board Items Service
-- [x] Check Items Service
-- [ ] Documents Service
-- [ ] Images Service
-- [ ] Search Service
-
 ## Key Files
 
 - **vitest.setup.ts**: Configures test database, migrations, and cleanup
@@ -161,13 +153,13 @@ expect(boards2).toHaveLength(1);
 - [x] Position reordering tests (handle transaction locking)
 
 ### Phase 3: Document & Image Management
-- [ ] Documents service
-- [ ] Images service
+- [x] Documents service (26 tests, passing)
+- [x] Images service (20 tests, passing)
 
 ### Phase 4: Advanced Features
 - [ ] Search service
-- [ ] Import service
-- [ ] Export service
+- [x] Import service (10 tests, passing)
+- [x] Export service (12 tests, passing)
 
 ### Phase 5: Integration Tests
 - [ ] Cross-service workflows
@@ -177,9 +169,13 @@ expect(boards2).toHaveLength(1);
 ## Coverage Goals
 
 - **Target**: ≥80% code coverage for service layer
-- **Current**: 46 tests passing across 2 services
+- **Current**: 116 tests passing across 8 services
   - Projects: ~95% coverage (23 tests)
   - Boards: ~95% coverage (23 tests)
+  - Documents: ~95% coverage (26 tests)
+  - Images: ~95% coverage (20 tests)
+  - Export: ~95% coverage (14 tests)
+  - Import: ~95% coverage (10 tests)
 - **Path to completion**: ~120 tests for all services (~10 services × 12 tests average)
 
 ## Resources
