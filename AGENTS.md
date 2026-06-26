@@ -44,3 +44,35 @@ Run `lint && build` before committing.
 - DB migrations: `drizzle.config.ts` imports `envConfig.ts` to load env vars for CLI. Use `dotenv -e .env -- drizzle-kit ...` for manual migration commands.
 - CI (push to `main`): runs `drizzle-kit migrate` against remote Turso.
 - `data/` is gitignored (local DBs, test DBs). `data/local.db` is the local Turso dev DB.
+
+## Code Formatting
+
+- **Closing paren on same line**: When a function call spans multiple lines, put `)` on the same line as the last argument, never on its own line.
+  ```typescript
+  // ✓ correct
+  const boardId = await boardsService.createBoard(
+      "My Board",
+      testUserId,
+      testProjectId);
+
+  // ✗ wrong
+  const boardId = await boardsService.createBoard(
+      "My Board",
+      testUserId,
+      testProjectId
+  );
+  ```
+- **Object literals**: `});` closing an object literal passed as a function argument may be on its own line (e.g. `result.push({ ... });`).
+- **Chained calls**: Each `.method()` goes on its own line, indented; closing `)` at end of the line.
+- **Catch/finally**: `catch` and `finally` go on their own line (not `} catch`).
+  ```typescript
+  try { ... }
+  catch (error) { ... }
+  finally { ... }
+  ```
+- **Semicolons**: Always present.
+- **Quotes**: Double quotes for strings.
+- **Arrow functions**: Parentheses around parameters even without types: `(r) => r.type`.
+- **Trailing commas**: On multi-line parameter lists and object literals.
+- **Type annotations**: Space after colon (`userId: string`).
+- **Arrays**: `Array<T>` instead of `T[]`. `new Array<T>()` instead of `[]` when the type cannot be inferred from the left side.

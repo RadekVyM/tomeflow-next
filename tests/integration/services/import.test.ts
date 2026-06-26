@@ -411,4 +411,49 @@ describe("Import Service Integration Tests", () => {
             expect(sections[2].title).toBe("Third");
         });
     });
+
+    describe("import atomicity", () => {
+        it("should commit all data on success and roll back all data on failure", async () => {
+            const goodData = {
+                id: crypto.randomUUID(),
+                title: "Good Import",
+                description: null as string | null,
+                documents: [
+                    { id: crypto.randomUUID(), projectId: crypto.randomUUID(), title: "Doc", content: "Content" },
+                ],
+                boards: [
+                    { id: crypto.randomUUID(), projectId: crypto.randomUUID(), title: "Board" },
+                ],
+                boardSections: [],
+                boardItems: [],
+                boardCheckItems: [],
+            };
+
+            const mapping = await importService.importProjects(testUserId, [goodData]);
+            expect(mapping).toHaveLength(1);
+            const projectsAfterGood = await projectsService.getAllProjects(testUserId);
+            expect(projectsAfterGood).toHaveLength(1);
+            expect(projectsAfterGood.map((p) => p.title)).toContain("Good Import");
+
+            const badData = {
+                id: crypto.randomUUID(),
+                title: "Bad Import",
+                description: null as string | null,
+                documents: [],
+                boards: [],
+                boardSections: [
+                    { id: crypto.randomUUID(), parentId: crypto.randomUUID(), title: "Orphan Section", position: 0 },
+                ],
+                boardItems: [],
+                boardCheckItems: [],
+            };
+
+            await expect(
+                importService.importProjects(testUserId, [badData])
+            ).rejects.toThrow();
+
+            const projectsAfterBad = await projectsService.getAllProjects(testUserId);
+            expect(projectsAfterBad).toHaveLength(1); // No extra project from failed import
+        });
+    });
 });

@@ -9,13 +9,28 @@ Comprehensive integration tests for the Tomeflow project using Turso database an
 ```
 tests/integration/
 ├── fixtures/
-│   ├── users.ts       - User factory functions
-│   ├── projects.ts    - Project factory functions
-│   └── boards.ts      - Board factory functions
+│   ├── users.ts            - User factory functions
+│   ├── projects.ts         - Project factory functions
+│   ├── boards.ts           - Board factory functions
+│   ├── sections.ts         - Board section factory functions
+│   ├── items.ts            - Board item factory functions
+│   ├── check-items.ts      - Board check-item factory functions
+│   ├── documents.ts        - Document factory functions
+│   ├── images.ts           - Image factory functions
+│   └── search-index.ts     - Search index factory functions
 └── services/
-    ├── projects.test.ts    - Projects service tests
-    └── boards.test.ts      - Boards service tests
-	└── ...
+    ├── projects.test.ts          - Projects service tests
+    ├── boards.test.ts            - Boards service tests
+    ├── board-sections.test.ts    - Board sections service tests
+    ├── board-items.test.ts       - Board items service tests
+    ├── board-check-items.test.ts - Board check-items service tests
+    ├── documents.test.ts         - Documents service tests
+    ├── images.test.ts            - Images service tests
+    ├── search.test.ts            - Search service tests
+    ├── export.test.ts            - Export service tests
+    ├── import.test.ts            - Import service tests
+    ├── cascade-delete.test.ts    - Cascade delete verification
+    └── cross-service-workflows.test.ts - Cross-service workflow tests
 ```
 
 ## Setup
@@ -157,26 +172,31 @@ expect(boards2).toHaveLength(1);
 - [x] Images service (20 tests, passing)
 
 ### Phase 4: Advanced Features
-- [ ] Search service
+- [x] Search service (23 tests, passing)
 - [x] Import service (10 tests, passing)
 - [x] Export service (12 tests, passing)
 
-### Phase 5: Integration Tests
-- [ ] Cross-service workflows
-- [ ] Cascade delete verification
-- [ ] Complex transaction scenarios
+### Phase 5: Integration Tests ✓
+- [x] Cross-service workflows (`cross-service-workflows.test.ts`, 5 tests)
+- [x] Cascade delete verification (`cascade-delete.test.ts`, 5 tests)
 
 ## Coverage Goals
 
 - **Target**: ≥80% code coverage for service layer
-- **Current**: 116 tests passing across 8 services
+- **Current**: 179 tests passing across 13 test files (13 service files)
   - Projects: ~95% coverage (23 tests)
   - Boards: ~95% coverage (23 tests)
+  - Board Sections: ~95% coverage (8 tests)
+  - Board Items: ~95% coverage (9 tests)
+  - Board Check Items: ~95% coverage (8 tests)
   - Documents: ~95% coverage (26 tests)
   - Images: ~95% coverage (20 tests)
-  - Export: ~95% coverage (14 tests)
+  - Search: ~95% coverage (23 tests)
+  - Export: ~95% coverage (13 tests)
   - Import: ~95% coverage (10 tests)
-- **Path to completion**: ~120 tests for all services (~10 services × 12 tests average)
+  - Cascade Delete: cross-service coverage (5 tests)
+  - Cross-Service Workflows: end-to-end coverage (5 tests)
+- **Status**: All phases complete
 
 ## Resources
 

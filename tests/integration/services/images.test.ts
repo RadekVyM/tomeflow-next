@@ -142,6 +142,11 @@ describe("Images Service Integration Tests", () => {
     });
 
     describe("getImages", () => {
+        it("should return empty array for empty ID list", async () => {
+            const images = await imagesService.getImages(testUserId, []);
+            expect(images).toHaveLength(0);
+        });
+
         it("should retrieve multiple images by IDs", async () => {
             const id1 = await createTestImage(testUserId, testProjectId, "Image 1");
             const id2 = await createTestImage(testUserId, testProjectId, "Image 2");

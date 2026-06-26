@@ -279,8 +279,14 @@ describe("Boards Service Integration Tests", () => {
 		});
 	});
 
-	describe("getRecentBoards", () => {
-		it("should return at most 6 recent boards", async () => {
+    describe("getRecentBoards", () => {
+        it("should return empty array for user with no boards", async () => {
+            const newUser = await createTestUser();
+            const recent = await boardsService.getRecentBoards(newUser.id);
+            expect(recent).toHaveLength(0);
+        });
+
+        it("should return at most 6 recent boards", async () => {
 			// Create multiple projects and boards
 			for (let i = 0; i < 3; i++) {
 				const projectId = await createTestProject(

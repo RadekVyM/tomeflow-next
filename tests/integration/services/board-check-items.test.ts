@@ -88,6 +88,12 @@ describe("Board Check Items Service Integration Tests", () => {
             expect(items[1].id).toBe(thirdId);
             expect(items[2].id).toBe(firstId);
         });
+
+        it("should throw when updating non-existent check item with position", async () => {
+            await expect(
+                boardCheckItemsService.updateBoardCheckItem(testUserId, crypto.randomUUID(), { position: 0 })
+            ).rejects.toThrow("could not be found");
+        });
     });
 
     describe("deleteBoardCheckItem", () => {

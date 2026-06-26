@@ -106,6 +106,13 @@ describe("Documents Service Integration Tests", () => {
     });
 
     describe("getAllProjectDocuments", () => {
+        it("should return empty array for non-existent project", async () => {
+            const docs = await documentsService.getAllProjectDocuments(
+                testUserId,
+                crypto.randomUUID());
+            expect(docs).toHaveLength(0);
+        });
+
         it("should retrieve all documents for a project", async () => {
             await createTestDocument(testUserId, testProjectId, "Doc 1");
             await createTestDocument(testUserId, testProjectId, "Doc 2");
