@@ -90,7 +90,7 @@ async function updateBoardCheckItemPosition(userId: string, checkItemId: string,
     await db.transaction(async (tx) => {
         const items = await getCheckItemsFromItem(userId, itemToUpdate.parentId);
 
-        const oldPosition = items.findIndex((item) => item.id === itemToUpdate.id, tx);
+        const oldPosition = items.findIndex((item) => item.id === itemToUpdate.id);
         const itemToMove = items.splice(oldPosition, 1)[0];
         items.splice(newPosition, 0, itemToMove);
 

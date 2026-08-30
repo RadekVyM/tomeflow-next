@@ -54,6 +54,39 @@ const MarkdownPreview = memo((props: {
                                 {...props} />
                         );
                     },
+                    a(props) {
+                        const videoId = props.href ? extractYouTubeVideoId(props.href) : null;
+
+                        if (videoId) {
+                            return (
+                                <span
+                                    className="block relative w-full aspect-video my-4">
+                                    <iframe
+                                        className="absolute inset-0 w-full h-full rounded-xl"
+                                        src={`https://www.youtube.com/embed/${videoId}`}
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title="YouTube video" />
+                                </span>
+                            );
+                        }
+
+                        if (props.href && isVideoUrl(props.href)) {
+                            return (
+                                <span>
+                                    <a {...props} />
+                                    <video
+                                        className="block w-full rounded-xl my-2 max-h-[calc(100dvh-10rem)]"
+                                        controls>
+                                        <source
+                                            src={props.href} />
+                                    </video>
+                                </span>
+                            );
+                        }
+
+                        return <a {...props} />;
+                    },
                     pre: (props) => {
                         if (!highlightSyntax) {
                             return (
@@ -132,4 +165,29 @@ function CustomImage(props: {
                 {...props} />
         </>
     );
+}
+
+const VIDEO_EXTENSIONS = /\.(mp4|webm|mov|avi|mkv|ogv)(\?.*)?$/i;
+
+function isVideoUrl(url: string): boolean {
+    return VIDEO_EXTENSIONS.test(url);
+}
+
+function extractYouTubeVideoId(url: string): string | null {
+    try {
+        const parsed = new URL(url);
+
+        if (parsed.hostname === "youtu.be") {
+            return parsed.pathname.slice(1);
+        }
+
+        if (parsed.hostname.includes("youtube.com")) {
+            return parsed.searchParams.get("v");
+        }
+
+        return null;
+    }
+    catch {
+        return null;
+    }
 }
