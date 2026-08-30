@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { projectBoardItems } from "@/db/schema";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { DbClient } from "../types/database";
 
 export async function getBoardItem(userId: string, itemId: string) {
@@ -154,20 +154,27 @@ async function getItemsFromSection(userId: string, sectionId: string, client: Db
 }
 
 async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, parentId: string, }>, sectionId?: string, client: DbClient = db) {
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        const now = Date.now();
+    if (items.length === 0) {
+        return;
+    }
 
-        if (item.position === i && sectionId === item.parentId) {
-            continue;
-        }
+    const now = Date.now();
 
-        await client.update(projectBoardItems)
-            .set({
-                updatedAt: now,
-                position: i,
-                parentId: sectionId,
-            })
-            .where(eq(projectBoardItems.id, item.id));
+    if (sectionId !== undefined) {
+        await client.run(sql`
+            UPDATE ${projectBoardItems}
+            SET position = CASE id ${sql.join(items.map((item, i) => sql`WHEN ${item.id} THEN ${i}`), sql` `)} END,
+                section_id = CASE id ${sql.join(items.map((item) => sql`WHEN ${item.id} THEN ${sectionId}`), sql` `)} END,
+                updated_at = CASE id ${sql.join(items.map((item) => sql`WHEN ${item.id} THEN ${now}`), sql` `)} END
+            WHERE id IN (${sql.join(items.map((item) => sql`${item.id}`), sql`, `)})
+        `);
+    }
+    else {
+        await client.run(sql`
+            UPDATE ${projectBoardItems}
+            SET position = CASE id ${sql.join(items.map((item, i) => sql`WHEN ${item.id} THEN ${i}`), sql` `)} END,
+                updated_at = CASE id ${sql.join(items.map((item) => sql`WHEN ${item.id} THEN ${now}`), sql` `)} END
+            WHERE id IN (${sql.join(items.map((item) => sql`${item.id}`), sql`, `)})
+        `);
     }
 }

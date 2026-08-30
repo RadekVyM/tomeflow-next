@@ -131,6 +131,15 @@ describe("Board Sections Service Integration Tests", () => {
             expect(sections[0].id).toBe(secondSectionId);
             expect(sections[0].position).toBe(0);
         });
+
+        it("should delete the only section in a board", async () => {
+            const sectionId = await createTestBoardSection(testUserId, testBoardId, 0, "Solo Section");
+
+            await boardSectionsService.deleteBoardSection(testUserId, sectionId);
+
+            const sections = await boardSectionsService.getBoardSections(testUserId, testBoardId);
+            expect(sections).toHaveLength(0);
+        });
     });
 
     describe("delete parent section with children", () => {

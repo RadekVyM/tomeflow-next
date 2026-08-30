@@ -7,6 +7,13 @@ import { ProjectBoardItem } from "@/app/types/ProjectBoardItem";
 import { SimpleProjectBoardSection } from "@/app/types/ProjectBoardSection";
 import { isNullOrWhiteSpace } from "@/app/utils/string";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
+
+// Shared version counter for all mutation hooks in this file. When a new
+// optimistic mutation starts, it increments currentVersion. When any earlier
+// mutation settles, it only refetches if its version still matches — preventing
+// a stale server response from briefly reverting the UI during rapid actions.
+let currentVersion = 0;
 
 export function useBoard(boardId: string) {
     return useQuery({
@@ -48,23 +55,35 @@ export function useSections(boardId: string) {
 
 export function useAddSection(boardId: string) {
     const queryClient = useQueryClient();
+    const pendingIdRef = useRef("");
 
     return useMutation({
         mutationFn: async (data: { title: string, position: number }) => {
-            const id = crypto.randomUUID();
-
-            optimisticAddSection(queryClient, boardId, id, data.title, data.position);
-
-            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
             await fetchPost(`/api/projects/boards/${boardId}/sections`, {
-                id,
-                ...data,
+                id: pendingIdRef.current,
+                title: data.title,
+                position: data.position,
             });
         },
-        onError: () => toast("Failed to add a new section"),
-        onSettled: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
-            await queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+        onMutate: async (data) => {
+            const id = crypto.randomUUID();
+            pendingIdRef.current = id;
+
+            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            optimisticAddSection(queryClient, boardId, id, data.title, data.position);
+            currentVersion++;
+            return { previousBoard, version: currentVersion };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to add a new section");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+                queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+            }
         },
     });
 }
@@ -72,17 +91,29 @@ export function useAddSection(boardId: string) {
 export function useUpdateSectionPosition(boardId: string) {
     const queryClient = useQueryClient();
 
+
     return useMutation({
         mutationFn: async (data: { position: number, sectionId: string }) => {
-            optimisticUpdateSectionPosition(queryClient, boardId, data.sectionId, data.position);
-
-            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
             await fetchPut(
                 `/api/projects/board-sections/${data.sectionId}`,
                 { position: data.position });
         },
-        onError: () => toast("Failed to update the section position"),
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
+        onMutate: async (data) => {
+            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            optimisticUpdateSectionPosition(queryClient, boardId, data.sectionId, data.position);
+            currentVersion++;
+            return { previousBoard, version: currentVersion };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to update the section position");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+            }
+        },
     });
 }
 
@@ -91,17 +122,26 @@ export function useRenameSection(boardId: string) {
 
     return useMutation({
         mutationFn: async (data: { sectionId: string, title: string }) => {
-            optimisticRenameSection(queryClient, boardId, data.sectionId, data.title);
-
-            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
             await fetchPut(
                 `/api/projects/board-sections/${data.sectionId}`,
                 { title: data.title });
         },
-        onError: () => toast("Failed to rename the section"),
-        onSettled: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
-            await queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+        onMutate: async (data) => {
+            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            optimisticRenameSection(queryClient, boardId, data.sectionId, data.title);
+            currentVersion++;
+            return { previousBoard, version: currentVersion };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to rename the section");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+                queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+            }
         },
     });
 }
@@ -109,17 +149,27 @@ export function useRenameSection(boardId: string) {
 export function useDeleteSection(boardId: string) {
     const queryClient = useQueryClient();
 
+
     return useMutation({
         mutationFn: async (data: { sectionId: string }) => {
-            optimisticDeleteSection(queryClient, boardId, data.sectionId);
-
-            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
             await fetchDelete(`/api/projects/board-sections/${data.sectionId}`);
         },
-        onError: () => toast("Failed to delete the section"),
-        onSettled: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
-            await queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+        onMutate: async (data) => {
+            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            optimisticDeleteSection(queryClient, boardId, data.sectionId);
+            currentVersion++;
+            return { previousBoard, version: currentVersion };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to delete the section");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+                queryClient.invalidateQueries({ queryKey: ["board-sections", { boardId }] });
+            }
         },
     });
 }
@@ -145,21 +195,36 @@ export function useBoardItem(boardId: string, itemId: string) {
 
 export function useAddItem(boardId: string) {
     const queryClient = useQueryClient();
+    const pendingIdRef = useRef("");
 
     return useMutation({
         mutationFn: async (data: { title: string, position: number, sectionId: string }) => {
-            const id = crypto.randomUUID();
-
-            optimisticAddItem(queryClient, boardId, data.sectionId, id, data.title, data.position);
-
-            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] })
             await fetchPost(`/api/projects/board-sections/${data.sectionId}/items`, {
-                id,
-                ...data,
+                id: pendingIdRef.current,
+                title: data.title,
+                position: data.position,
+                sectionId: data.sectionId,
             });
         },
-        onError: () => toast("Failed to add a new item"),
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
+        onMutate: async (data) => {
+            const id = crypto.randomUUID();
+            pendingIdRef.current = id;
+
+            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            optimisticAddItem(queryClient, boardId, data.sectionId, id, data.title, data.position);
+            currentVersion++;
+            return { previousBoard, version: currentVersion };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to add a new item");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+            }
+        },
     });
 }
 
@@ -168,15 +233,6 @@ export function useUpdateItem(boardId: string, itemId: string) {
 
     return useMutation({
         mutationFn: async (data: { title?: string, description?: string, isDone?: boolean }) => {
-            queryClient.setQueryData(["board-item", { itemId }], (old: ProjectBoardItem) => ({
-                ...old,
-                title: data.title !== undefined ? data.title : old.title,
-                description: data.description !== undefined ? data.description : old.description,
-                isDone: data.isDone !== undefined ? data.isDone : old.isDone,
-            }));
-            queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, itemId, data));
-
-            await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             return await fetchPut(`/api/projects/board-items/${itemId}`, data)
                 .then(async (res) => {
                     if (!res.ok) {
@@ -186,7 +242,26 @@ export function useUpdateItem(boardId: string, itemId: string) {
                     return await res.json() as ProjectBoardItem;
                 });
         },
-        onError: () => toast("Failed to update the item"),
+        onMutate: async (data) => {
+            await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            const previousItem = queryClient.getQueryData(["board-item", { itemId }]);
+
+            queryClient.setQueryData(["board-item", { itemId }], (old: ProjectBoardItem) => ({
+                ...old,
+                title: data.title !== undefined ? data.title : old.title,
+                description: data.description !== undefined ? data.description : old.description,
+                isDone: data.isDone !== undefined ? data.isDone : old.isDone,
+            }));
+            queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, itemId, data));
+
+            return { previousBoard, previousItem };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board-item", { itemId }], context?.previousItem);
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to update the item");
+        },
         onSuccess: (data) => {
             queryClient.setQueryData(["board-item", { itemId }], data);
             queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, data.id, data));
@@ -199,8 +274,6 @@ export function useUpdateItemFromBoard(boardId: string) {
 
     return useMutation({
         mutationFn: async (data: { itemId: string, isDone?: boolean }) => {
-            queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, data.itemId, data));
-
             return await fetchPut(
                 `/api/projects/board-items/${data.itemId}`,
                 {
@@ -214,7 +287,15 @@ export function useUpdateItemFromBoard(boardId: string) {
                     return await res.json() as ProjectBoardItem;
                 });
         },
-        onError: () => toast("Failed to update the item"),
+        onMutate: async (data) => {
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, data.itemId, data));
+            return { previousBoard };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to update the item");
+        },
         onSuccess: (data) => queryClient.setQueryData(["board", { boardId }], (old: ProjectBoard) => updatedBoardWithItem(old, data.id, data)),
     });
 }
@@ -222,92 +303,153 @@ export function useUpdateItemFromBoard(boardId: string) {
 export function useUpdateItemPosition(boardId: string) {
     const queryClient = useQueryClient();
 
+
     return useMutation({
         mutationFn: async (data: { position: number, itemId: string, targetSectionId: string }) => {
-            optimisticUpdateItemPosition(queryClient, boardId, data.itemId, data.position, data.targetSectionId);
-
-            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
             await fetchPut(
                 `/api/projects/board-items/${data.itemId}`,
                 {
                     position: data.position,
                     sectionId: data.targetSectionId,
                 });
-            await queryClient.invalidateQueries({ queryKey: ["board-item", { itemId: data.itemId }] });
         },
-        onError: () => toast("Failed to update the item position"),
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
+        onMutate: async (data) => {
+            await queryClient.cancelQueries({ queryKey: ["board", { boardId }] });
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            optimisticUpdateItemPosition(queryClient, boardId, data.itemId, data.position, data.targetSectionId);
+            currentVersion++;
+            return { previousBoard, version: currentVersion };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to update the item position");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+            }
+        },
     });
 }
 
 export function useDeleteItem(boardId: string, itemId: string) {
     const queryClient = useQueryClient();
 
+
     return useMutation({
         mutationFn: async () => {
-            optimisticDeleteItem(queryClient, boardId, itemId);
-
+            await fetchDelete(`/api/projects/board-items/${itemId}`);
+        },
+        onMutate: async () => {
             await Promise.all([
                 queryClient.cancelQueries({ queryKey: ["board", { boardId }] }),
                 queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] }),
             ]);
-
-            await fetchDelete(`/api/projects/board-items/${itemId}`);
+            const previousBoard = queryClient.getQueryData(["board", { boardId }]);
+            optimisticDeleteItem(queryClient, boardId, itemId);
+            currentVersion++;
+            return { previousBoard, version: currentVersion };
         },
-        onError: () => toast("Failed to delete the item"),
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board", { boardId }] }),
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board", { boardId }], context?.previousBoard);
+            toast("Failed to delete the item");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+            }
+        },
     });
 }
 
 export function useAddCheckItem(itemId: string) {
     const queryClient = useQueryClient();
 
+    const pendingIdRef = useRef("");
+
     return useMutation({
         mutationFn: async (data: { title: string, position: number }) => {
-            const id = crypto.randomUUID();
-
-            optimisticAddCheckItem(queryClient, itemId, id, data.title, data.position);
-
-            await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             await fetchPost(`/api/projects/board-items/${itemId}/check-items`, {
-                id,
-                ...data,
+                id: pendingIdRef.current,
+                title: data.title,
+                position: data.position,
             });
         },
-        onError: () => toast("Failed to add a new item to the checklist"),
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
+        onMutate: async (data) => {
+            const id = crypto.randomUUID();
+            pendingIdRef.current = id;
+
+            await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
+            const previousItem = queryClient.getQueryData(["board-item", { itemId }]);
+            optimisticAddCheckItem(queryClient, itemId, id, data.title, data.position);
+            currentVersion++;
+            return { previousItem, version: currentVersion };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board-item", { itemId }], context?.previousItem);
+            toast("Failed to add a new item to the checklist");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] });
+            }
+        },
     });
 }
 
 export function useUpdateCheckItem(itemId: string) {
     const queryClient = useQueryClient();
 
+
     return useMutation({
         mutationFn: async (data: { checkItemId: string, position?: number, title?: string, isDone?: boolean, }) => {
-            optimisticUpdateCheckItem(queryClient, itemId, data.checkItemId, data);
-
-            await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             await fetchPut(
                 `/api/projects/board-check-items/${data.checkItemId}`,
                 { position: data.position, isDone: data.isDone, title: data.title });
         },
-        onError: () => toast("Failed to update the item"),
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
+        onMutate: async (data) => {
+            await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
+            const previousItem = queryClient.getQueryData(["board-item", { itemId }]);
+            optimisticUpdateCheckItem(queryClient, itemId, data.checkItemId, data);
+            currentVersion++;
+            return { previousItem, version: currentVersion };
+        },
+        onError: (err, data, context) => {
+            queryClient.setQueryData(["board-item", { itemId }], context?.previousItem);
+            toast("Failed to update the item");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] });
+            }
+        },
     });
 }
 
 export function useDeleteCheckItem(itemId: string) {
     const queryClient = useQueryClient();
 
+
     return useMutation({
         mutationFn: async (checkItemId: string) => {
-            optimisticDeleteCheckItem(queryClient, itemId, checkItemId);
-
-            await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
             await fetchDelete(`/api/projects/board-check-items/${checkItemId}`);
         },
-        onError: () => toast("Failed to delete the item"),
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] }),
+        onMutate: async (checkItemId: string) => {
+            await queryClient.cancelQueries({ queryKey: ["board-item", { itemId }] });
+            const previousItem = queryClient.getQueryData(["board-item", { itemId }]);
+            optimisticDeleteCheckItem(queryClient, itemId, checkItemId);
+            currentVersion++;
+            return { previousItem, version: currentVersion };
+        },
+        onError: (err, checkItemId, context) => {
+            queryClient.setQueryData(["board-item", { itemId }], context?.previousItem);
+            toast("Failed to delete the item");
+        },
+        onSettled: (data, error, variables, context) => {
+            if (context?.version === currentVersion) {
+                queryClient.invalidateQueries({ queryKey: ["board-item", { itemId }] });
+            }
+        },
     });
 }
 

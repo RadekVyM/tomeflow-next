@@ -94,6 +94,12 @@ describe("Board Check Items Service Integration Tests", () => {
                 boardCheckItemsService.updateBoardCheckItem(testUserId, crypto.randomUUID(), { position: 0 })
             ).rejects.toThrow("could not be found");
         });
+
+        it("should throw when deleting non-existent check item", async () => {
+            await expect(
+                boardCheckItemsService.deleteBoardCheckItem(testUserId, crypto.randomUUID())
+            ).rejects.toThrow();
+        });
     });
 
     describe("deleteBoardCheckItem", () => {
@@ -117,6 +123,15 @@ describe("Board Check Items Service Integration Tests", () => {
 
             await expect(
                 boardCheckItemsService.updateBoardCheckItem(otherUser.id, checkItemId, { title: "Hack" })
+            ).rejects.toThrow();
+        });
+
+        it("should not allow other users to delete check items", async () => {
+            const checkItemId = await createTestBoardCheckItem(testUserId, testItemId, 0, "Private");
+            const otherUser = await createTestUser();
+
+            await expect(
+                boardCheckItemsService.deleteBoardCheckItem(otherUser.id, checkItemId)
             ).rejects.toThrow();
         });
     });

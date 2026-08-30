@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import * as boardItemsService from "@/app/services/board-items";
 import * as boardSectionsService from "@/app/services/board-sections";
+import * as boardCheckItemsService from "@/app/services/board-check-items";
 import { createTestUser } from "../fixtures/users";
 import { createTestProject } from "../fixtures/projects";
 import { createTestBoard } from "../fixtures/boards";
 import { createTestBoardSection } from "../fixtures/sections";
 import { createTestBoardItem } from "../fixtures/items";
+import { createTestBoardCheckItem } from "../fixtures/check-items";
 
 describe("Board Items Service Integration Tests", () => {
     let testUserId: string;
@@ -143,6 +145,28 @@ describe("Board Items Service Integration Tests", () => {
                 boardItemsService.updateBoardItem(testUserId, crypto.randomUUID(), { position: 0 })
             ).rejects.toThrow("could not be found");
         });
+
+        it("should move item to an empty target section", async () => {
+            const sourceItemId = await createTestBoardItem(testUserId, testSectionId, 0, "Move Me");
+            const targetSectionId = await createTestBoardSection(testUserId, testBoardId, 1, "Empty Section");
+
+            await boardItemsService.updateBoardItem(testUserId, sourceItemId, {
+                sectionId: targetSectionId,
+                position: 0,
+            });
+
+            const movedItem = await boardItemsService.getBoardItem(testUserId, sourceItemId);
+            expect(movedItem?.parentId).toBe(targetSectionId);
+            expect(movedItem?.position).toBe(0);
+
+            const sourceItems = await boardSectionsService.getBoardSectionsWithItems(testUserId, testBoardId);
+            const sourceSection = sourceItems.find((s) => s.id === testSectionId)!;
+            expect(sourceSection.items).toHaveLength(0);
+
+            const targetSection = sourceItems.find((s) => s.id === targetSectionId)!;
+            expect(targetSection.items).toHaveLength(1);
+            expect(targetSection.items[0].id).toBe(sourceItemId);
+        });
     });
 
     describe("deleteBoardItem", () => {
@@ -155,6 +179,38 @@ describe("Board Items Service Integration Tests", () => {
             const remaining = await boardItemsService.getBoardItem(testUserId, secondId);
             expect(remaining).toBeDefined();
             expect(remaining?.position).toBe(0);
+        });
+
+        it("should throw when deleting non-existent item", async () => {
+            await expect(
+                boardItemsService.deleteBoardItem(testUserId, crypto.randomUUID())
+            ).rejects.toThrow();
+        });
+
+        it("should delete item with check items and reindex", async () => {
+            const firstId = await createTestBoardItem(testUserId, testSectionId, 0, "One");
+            const secondId = await createTestBoardItem(testUserId, testSectionId, 1, "Two");
+            const thirdId = await createTestBoardItem(testUserId, testSectionId, 2, "Three");
+
+            const checkItem1 = await createTestBoardCheckItem(testUserId, firstId, 0, "Check A");
+            const checkItem2 = await createTestBoardCheckItem(testUserId, thirdId, 0, "Check B");
+
+            await boardItemsService.deleteBoardItem(testUserId, firstId);
+
+            const items = await boardSectionsService.getBoardSectionsWithItems(testUserId, testBoardId);
+            const checkItems = items[0].items;
+            expect(checkItems).toHaveLength(2);
+            expect(checkItems[0].id).toBe(secondId);
+            expect(checkItems[0].position).toBe(0);
+            expect(checkItems[1].id).toBe(thirdId);
+            expect(checkItems[1].position).toBe(1);
+
+            const deletedChecks = await boardCheckItemsService.getBoardItemCheckItems(testUserId, firstId);
+            expect(deletedChecks).toHaveLength(0);
+
+            const survivingChecks = await boardCheckItemsService.getBoardItemCheckItems(testUserId, thirdId);
+            expect(survivingChecks).toHaveLength(1);
+            expect(survivingChecks[0].id).toBe(checkItem2);
         });
     });
 

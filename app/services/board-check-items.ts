@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { projectBoardCheckItems } from "@/db/schema";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { DbClient } from "../types/database";
 
 export async function getBoardItemCheckItems(userId: string, itemId: string) {
@@ -110,19 +110,16 @@ async function getCheckItemsFromItem(userId: string, itemId: string, client: DbC
 }
 
 async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, }>, client: DbClient = db) {
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        const now = Date.now();
-
-        if (item.position === i) {
-            continue;
-        }
-
-        await client.update(projectBoardCheckItems)
-            .set({
-                updatedAt: now,
-                position: i,
-            })
-            .where(eq(projectBoardCheckItems.id, item.id));
+    if (items.length === 0) {
+        return;
     }
+
+    const now = Date.now();
+
+    await client.run(sql`
+        UPDATE ${projectBoardCheckItems}
+        SET position = CASE id ${sql.join(items.map((item, i) => sql`WHEN ${item.id} THEN ${i}`), sql` `)} END,
+            updated_at = CASE id ${sql.join(items.map((item) => sql`WHEN ${item.id} THEN ${now}`), sql` `)} END
+        WHERE id IN (${sql.join(items.map((item) => sql`${item.id}`), sql`, `)})
+    `);
 }

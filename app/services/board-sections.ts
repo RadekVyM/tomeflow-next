@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { projectBoardSections } from "@/db/schema";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { DbClient } from "../types/database";
 
 export async function getBoardSectionTitle(userId: string, sectionId: string) {
@@ -131,19 +131,16 @@ async function getSectionsFromBoard(userId: string, boardId: string, client: DbC
 }
 
 async function updatePositionsOfSortedItems(items: Array<{ id: string, position: number, }>, client: DbClient = db) {
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        const now = Date.now();
-
-        if (item.position === i) {
-            continue;
-        }
-
-        await client.update(projectBoardSections)
-            .set({
-                updatedAt: now,
-                position: i,
-            })
-            .where(eq(projectBoardSections.id, item.id));
+    if (items.length === 0) {
+        return;
     }
+
+    const now = Date.now();
+
+    await client.run(sql`
+        UPDATE ${projectBoardSections}
+        SET position = CASE id ${sql.join(items.map((item, i) => sql`WHEN ${item.id} THEN ${i}`), sql` `)} END,
+            updated_at = CASE id ${sql.join(items.map((item) => sql`WHEN ${item.id} THEN ${now}`), sql` `)} END
+        WHERE id IN (${sql.join(items.map((item) => sql`${item.id}`), sql`, `)})
+    `);
 }
