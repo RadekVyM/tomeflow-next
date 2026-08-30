@@ -5,7 +5,7 @@ import Button from "./input/Button";
 import SearchDialog from "./SearchDialog";
 import useDialog from "../hooks/useDialog";
 import { useEventListener } from "../hooks/useEventListener";
-import { isEditableElement } from "../utils/html";
+import { isCtrl, isEditableElement } from "../utils/html";
 
 export default function SearchButton(props: {
     className?: string,
@@ -14,6 +14,10 @@ export default function SearchButton(props: {
 
     useEventListener("keydown", async (e) => {
         if (window.document.activeElement && isEditableElement(window.document.activeElement)) {
+            return;
+        }
+
+        if (isCtrl(e)) {
             return;
         }
 
