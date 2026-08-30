@@ -6,7 +6,8 @@
 |---|---|
 | `npm run dev` | Dev server with Turbopack |
 | `npm run build` | Production build |
-| `npm run lint` | ESLint (next lint) |
+| `npm run lint` | ESLint (`eslint .`) |
+| `npm run typecheck` | TypeScript type-checking (TS 7 via `tsc --noEmit`) |
 | `npm test` | Vitest (unit + integration) |
 | `npm run test:watch` | Vitest watch |
 | `npm run test:e2e` | Playwright (sequential, single-worker) |
@@ -15,7 +16,7 @@
 | `npm run db:migrate` | Run migrations (uses `.env`) |
 | `npm run turso:dev` | Local Turso at `./data/local.db` |
 
-Run `lint && build` before committing.
+Run `lint && typecheck && build` before committing.
 
 ## Architecture
 
@@ -39,6 +40,7 @@ Run `lint && build` before committing.
 ## Key Conventions
 
 - ESLint has many rules disabled (`exhaustive-deps`, `no-explicit-any`, `no-unused-vars`, etc.) — don't fight them.
+- **TypeScript 7 side-by-side setup**: `typescript` is aliased to `@typescript/typescript6` (TS 6 API, needed by `typescript-eslint`). `@typescript/native` provides TS 7's fast `tsc` binary. `npx tsc --version` → 7.0.2. When TS 7.1 ships a new API, the alias can be removed.
 - `@/*` path alias maps to project root.
 - Theme stored in cookie named `"theme"`.
 - DB migrations: `drizzle.config.ts` imports `envConfig.ts` to load env vars for CLI. Use `dotenv -e .env -- drizzle-kit ...` for manual migration commands.
